@@ -1,0 +1,46 @@
+from pathlib import Path
+from saml2 import BINDING_HTTP_POST
+# from saml2.saml import NAME_FORMAT_BASIC
+from saml2.metadata import entity_descriptor
+from saml2.server import Server
+
+BASE_DIR = Path(__file__).resolve().parent
+BASE = "http://localhost:54321"
+
+CONFIG = {
+    "entityid": "spid-idp-test",
+    "name": "Test IdP",
+    "service": {
+        "idp": {
+            "endpoints": {
+                "single_sign_on_service": [
+                    (f"{BASE}/sso", BINDING_HTTP_POST)],
+                "single_logout_service": [
+                    (f"{BASE}/slop", BINDING_HTTP_POST)]
+            },
+        },
+    },
+    "debug": 1,
+    "key_file": f"{BASE_DIR}/private.key",
+    "cert_file": f"{BASE_DIR}/public.cert",
+    # "xmlsec_binary": xmlsec_path,
+    "metadata": [],
+    # "attribute_map_dir": full_path("attributemaps"),
+    "organization": {
+        "name": "Exempel AB",
+        "display_name": [("Exempel AB", "se"), ("Example Co.", "en")],
+        "url": "http://www.example.com/roland",
+    },
+    "contact_person": [
+        {
+            "given_name": "John",
+            "sur_name": "Smith",
+            "email_address": ["john.smith@example.com"],
+            "contact_type": "technical",
+        },
+    ],
+}
+
+
+IDP_SERVER = Server(CONFIG)
+IDP_METADATA = entity_descriptor(IDP_SERVER.config)

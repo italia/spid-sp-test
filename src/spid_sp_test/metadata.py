@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 import requests
@@ -11,7 +12,9 @@ from tempfile import NamedTemporaryFile
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
 from spid_sp_test import constants
-from spid_sp_test.utils import del_ns
+from spid_sp_test.dump_pem import dump_metadata_pem
+from spid_sp_test.utils import del_ns, parse_pem
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,11 +30,13 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
     def __init__(self, 
                  metadata_url, 
                  xsds_files:list = None,
-                 xsds_files_path:str = None):
+                 xsds_files_path:str = None,
+                 extra:bool=False):
         
-        super(AbstractSpidCheck, self).__init__()
-        
+        super(SpidSpMetadataCheck, self).__init__()
+
         self.logger = logger
+        self.extra = extra
         self.metadata_url = metadata_url
         self.metadata = self.__class__.get(metadata_url)
         self.xsds_files = xsds_files or self.xsds_files
@@ -72,6 +77,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
 
     def test_EntityDescriptor(self):
+        self.error_counter = 0
         entity_desc = self.doc.xpath('//EntityDescriptor')
         if not self.doc.attrib.get('entityID'):
             _msg = (f'Missing entityID in {self.doc.attrib}: '
@@ -83,13 +89,17 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         elif not entity_desc[0].get('entityID'):
             _msg = 'The entityID attribute must have a value - TR pag. 19'
             self.handle_result('error', _msg)
-        else:
-            self.handle_result('info', f'{self.__class__.__name__}.test_EntityDescriptor : OK')
-            return True
+        
+        self._assertIsValidHttpsUrl(
+            self.doc.attrib.get('entityID'),
+            'The entityID attribute must be a valid HTTPS url'
+        )
+            
+        return self.is_ok(f'{self.__class__.__name__}.test_EntityDescriptor : OK')
 
 
     def test_SPSSODescriptor(self):
-        spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')[0]
+        spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')
         self.error_counter = 0
         self._assertTrue((len(spsso) == 1),
                          'Only one SPSSODescriptor element must be present')
@@ -98,7 +108,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             self._assertTrue((attr in spsso[0].attrib),
                              'The %s attribute must be present - TR pag. 20' % attr)
 
-            a = spsso.get(attr)
+            a = spsso[0].get(attr)
             self._assertIsNotNone(
                 a,
                 'The %s attribute must have a value - TR pag. 20' % attr
@@ -111,39 +121,39 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     'The %s attribute must be true - TR pag. 20' % attr
                 )
 
-        # extra
-        for attr in ['protocolSupportEnumeration', 'WantAssertionsSigned']:
-            self._assertTrue(
-                (attr in spsso.attrib),
-                'The %s attribute must be present' % attr
-            )
-
-            if attr == 'protocolSupportEnumeration':
-                a = spsso.get(attr)
-                self._assertIsNotNone(
-                    a,
-                    'The %s attribute must have a value' % attr
+        if self.extra:
+            for attr in ['protocolSupportEnumeration', 'WantAssertionsSigned']:
+                self._assertTrue(
+                    (attr in spsso[0].attrib),
+                    'The %s attribute must be present' % attr
                 )
-
-                self._assertEqual(
-                    a,
-                    'urn:oasis:names:tc:SAML:2.0:protocol',
-                    'The %s attribute must be '
-                    'urn:oasis:names:tc:SAML:2.0:protocol' % attr
-                )
-
-            if attr == 'WantAssertionsSigned':
-                a = spsso.get(attr)
-                self._assertIsNotNone(
-                    a,
-                    'The %s attribute must have a value' % attr
-                )
-
-                self._assertEqual(
-                    a.lower(),
-                    'true',
-                    'The %s attribute must be true' % attr
-                )
+    
+                if attr == 'protocolSupportEnumeration':
+                    a = spsso[0].get(attr)
+                    self._assertIsNotNone(
+                        a,
+                        'The %s attribute must have a value' % attr
+                    )
+    
+                    self._assertEqual(
+                        a,
+                        'urn:oasis:names:tc:SAML:2.0:protocol',
+                        'The %s attribute must be '
+                        'urn:oasis:names:tc:SAML:2.0:protocol' % attr
+                    )
+    
+                if attr == 'WantAssertionsSigned':
+                    a = spsso[0].get(attr)
+                    self._assertIsNotNone(
+                        a,
+                        'The %s attribute must have a value' % attr
+                    )
+    
+                    self._assertEqual(
+                        a.lower(),
+                        'true',
+                        'The %s attribute must be true' % attr
+                    )
 
         return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor : OK')
 
@@ -241,9 +251,45 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self._assertIn(alg, constants.ALLOWED_DGST_ALGS,
                        (('The digest algorithm must be one of [%s] - TR pag. 19') %
                         (', '.join(constants.ALLOWED_DGST_ALGS))))
-
-        # save the grubbed certificate for future alanysis
-        # cert = sign[0].xpath('./KeyInfo/X509Data/X509Certificate')[0]
+        
+        # extra - check signature x509 capabilities
+        if self.extra:
+            cert = sign[0].xpath('./KeyInfo/X509Data/X509Certificate')[0]
+            fname = dump_metadata_pem(cert, 'sp', 'signature', '/tmp')
+            
+            r = parse_pem(fname)
+            self._assertFalse(
+                r[0].lower().startswith('sha1'),
+                (('The certificate must not use '
+                  f'weak signature algorithm: {r[0].lower()}'))
+            )
+    
+            exp = ['rsaEncryption', 'id-ecPublicKey']
+            self._assertIn(
+                r[2],
+                exp,
+                (('The key type of certificate must be one of [%s] - TR pag. 19') %
+                 (', '.join(exp)))
+            )
+    
+            if r[2] == 'rsaEncryption':
+                exp = constants.MINIMUM_CERTIFICATE_LENGHT
+            elif r[2] == 'id-ecPublicKey':
+                exp = 256
+            else:
+                pass
+            
+            self._assertTrue(
+                (int(r[1]) >= exp),
+                (('The key length of certificate must be >= %d. Instead it is '+ r[1]) %
+                 (exp))
+            )
+    
+            self._assertTrue(
+                (datetime.datetime.strptime(r[3], "%b %d %H:%M:%S %Y") >= datetime.datetime.now()),
+                (('The certificate is expired. It was valid till '+r[3]))
+            )
+            os.remove(fname)
         return self.is_ok(f'{self.__class__.__name__}.test_Signature : OK')
 
 
@@ -426,20 +472,20 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 'AttributeConsumigService must not contain duplicated RequestedAttribute - TR pag. 20'
             )
         
-        # extra
-        for acs in acss:
-            ras = acs.xpath('./RequestedAttribute')
-            for ra in ras:
-                a = ra.get('NameFormat')
-                if a is not None:
-                    self._assertIn(
-                        a,
-                        common.constants.ALLOWED_FORMATS,
-                        (('The NameFormat attribute '
-                          'in RequestedAttribute element '
-                          'must be one of [%s]') %
-                         (', '.join(common.constants.ALLOWED_FORMATS)))
-                    )
+        if self.extra:
+            for acs in acss:
+                ras = acs.xpath('./RequestedAttribute')
+                for ra in ras:
+                    a = ra.get('NameFormat')
+                    if a is not None:
+                        self._assertIn(
+                            a,
+                            common.constants.ALLOWED_FORMATS,
+                            (('The NameFormat attribute '
+                              'in RequestedAttribute element '
+                              'must be one of [%s]') %
+                             (', '.join(common.constants.ALLOWED_FORMATS)))
+                        )
 
         return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService : OK')
 
@@ -483,18 +529,18 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                             'The %s -element must be a valid URL - TR pag. 20' % ename
                         )
             
-            # extra
-            for elem in ['Name', 'URL', 'DisplayName']:
-                e = org.xpath(
-                    './Organization%s[@xml:lang="it"]' % elem,
-                    namespaces={
-                        'xml': 'http://www.w3.org/XML/1998/namespace',
-                    }
-                )
-                self._assertTrue(
-                    (len(e) == 1),
-                    'An IT localised Organization%s must be present' % elem
-                )
+            if self.extra:
+                for elem in ['Name', 'URL', 'DisplayName']:
+                    e = org.xpath(
+                        './Organization%s[@xml:lang="it"]' % elem,
+                        namespaces={
+                            'xml': 'http://www.w3.org/XML/1998/namespace',
+                        }
+                    )
+                    self._assertTrue(
+                        (len(e) == 1),
+                        'An IT localised Organization%s must be present' % elem
+                    )
             
         return self.is_ok(f'{self.__class__.__name__}.test_Organization : OK')
 
@@ -512,3 +558,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.test_AssertionConsumerService()
         self.test_AttributeConsumingService()
         self.test_Organization()
+        
+        return self.results
+        

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class AbstractSpidCheck(object):
     def __init__(self, *args, **kwargs):
-        self.messages = []
+        self.results = []
         self.errors = []
         self.logger = logger
         self.error_counter = 0
@@ -28,18 +28,40 @@ class AbstractSpidCheck(object):
     
     def handle_result(self, 
                       level:str, 
-                      title:str, description:str='', traceback:str=None):
+                      title:str, description:str='', 
+                      traceback:str=None):
         msg = f'{title} [{description}]' if description else f'{title}'
         getattr(self.logger, level, 'warning')(msg)
-
+        if level not in ('error', 'debug', 'critical', 'warning'):
+            # here report as json
+            self.results.append(
+                {
+                    "result": "success",
+                    "test":  title,
+                    "value": description
+                }
+            )
     
     def handle_error(self, error_message, description = ''):
         self.handle_result('error', error_message, description)
         self.error_counter += 1
+        # here report as json
+        data = {
+                "result": "failure",
+                "test":  error_message,
+                "value": description
+        }
+        self.errors.append(data)
+        self.results.append(data)
 
-    
+
     def _assertTrue(self, check, error_message):
         if not check:
+            self.handle_error(error_message)
+
+
+    def _assertFalse(self, check, error_message):
+        if check:
             self.handle_error(error_message)
 
 
