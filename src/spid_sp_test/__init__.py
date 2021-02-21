@@ -1,4 +1,5 @@
 import logging
+import re
 
 from pathlib import Path
 
@@ -14,7 +15,7 @@ class AbstractSpidCheck(object):
         self.logger = logger
         self.error_counter = 0
 
-        
+
     def report_to_json(self):
         pass
 
@@ -57,6 +58,11 @@ class AbstractSpidCheck(object):
             self.handle_error(error_message)
 
 
+    def _assertGreater(self, first, second, error_message):
+        if not first > second:
+            self.handle_error(error_message)
+
+
     def _assertEqual(self, first, second, error_message):
         if not first == second:
             self.handle_error(error_message)
@@ -64,4 +70,8 @@ class AbstractSpidCheck(object):
 
     def _assertIsValidHttpsUrl(self, check, error_message):
         if check[0:8] != 'https://':
+            self.handle_error(error_message, description = check)
+
+    def _assertIsValidHttpUrl(self, check, error_message):
+        if not re.match('https?://', check):
             self.handle_error(error_message, description = check)

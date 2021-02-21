@@ -89,33 +89,64 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
 
     def test_SPSSODescriptor(self):
-        spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')
-        errors = 0
-        if len(spsso) > 1:
-            _msg = 'Only one SPSSODescriptor element must be present'
-            self.handle_result('error', _msg)
-            errors += 1
-            
-        for attr in ('protocolSupportEnumeration', 'AuthnRequestsSigned'):
-            if attr not in spsso[0].attrib:
-                _msg = f'The {attr} attribute must be present - TR pag. 20'
-                self.handle_result('error', _msg)
-                errors += 1
-                
-            va = spsso[0].get(attr)
-            if not va:
-                _msg = f'The {attr} attribute must have a value - TR pag. 20'
-                self.handle_result('error', _msg)
-                errors += 1
+        spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')[0]
+        self.error_counter = 0
+        self._assertTrue((len(spsso) == 1),
+                         'Only one SPSSODescriptor element must be present')
+        
+        for attr in ['protocolSupportEnumeration', 'AuthnRequestsSigned']:
+            self._assertTrue((attr in spsso[0].attrib),
+                             'The %s attribute must be present - TR pag. 20' % attr)
 
-            if attr == 'AuthnRequestsSigned' and va.lower() != 'true':
-                _msg = f'The {attr} attribute must be true - TR pag. 20'
-                self.handle_result('error', _msg)
-                errors += 1
+            a = spsso.get(attr)
+            self._assertIsNotNone(
+                a,
+                'The %s attribute must have a value - TR pag. 20' % attr
+            )
 
-        if not errors:
-            self.handle_result('info', f'{self.__class__.__name__}.test_SPSSODescriptor : OK')
-            return True
+            if attr == 'AuthnRequestsSigned':
+                self._assertEqual(
+                    a.lower(),
+                    'true',
+                    'The %s attribute must be true - TR pag. 20' % attr
+                )
+
+        # extra
+        for attr in ['protocolSupportEnumeration', 'WantAssertionsSigned']:
+            self._assertTrue(
+                (attr in spsso.attrib),
+                'The %s attribute must be present' % attr
+            )
+
+            if attr == 'protocolSupportEnumeration':
+                a = spsso.get(attr)
+                self._assertIsNotNone(
+                    a,
+                    'The %s attribute must have a value' % attr
+                )
+
+                self._assertEqual(
+                    a,
+                    'urn:oasis:names:tc:SAML:2.0:protocol',
+                    'The %s attribute must be '
+                    'urn:oasis:names:tc:SAML:2.0:protocol' % attr
+                )
+
+            if attr == 'WantAssertionsSigned':
+                a = spsso.get(attr)
+                self._assertIsNotNone(
+                    a,
+                    'The %s attribute must have a value' % attr
+                )
+
+                self._assertEqual(
+                    a.lower(),
+                    'true',
+                    'The %s attribute must be true' % attr
+                )
+
+        return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor : OK')
+
 
 
     def test_xmldsig(self):
@@ -394,13 +425,84 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 len(set(al)),
                 'AttributeConsumigService must not contain duplicated RequestedAttribute - TR pag. 20'
             )
+        
+        # extra
+        for acs in acss:
+            ras = acs.xpath('./RequestedAttribute')
+            for ra in ras:
+                a = ra.get('NameFormat')
+                if a is not None:
+                    self._assertIn(
+                        a,
+                        common.constants.ALLOWED_FORMATS,
+                        (('The NameFormat attribute '
+                          'in RequestedAttribute element '
+                          'must be one of [%s]') %
+                         (', '.join(common.constants.ALLOWED_FORMATS)))
+                    )
+
         return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService : OK')
 
+
+    def test_Organization(self):
+        '''Test the compliance of Organization element'''
+        self.error_counter = 0
         
-    def test_metadata(self):
+        orgs = self.doc.xpath('//EntityDescriptor/Organization')
+        self._assertTrue((len(orgs) <= 1),
+                         'Only one Organization element can be present - TR pag. 20')
+
+        if len(orgs) == 1:
+            org = orgs[0]
+            for ename in ['OrganizationName', 'OrganizationDisplayName',
+                          'OrganizationURL']:
+                elements = org.xpath('./%s' % ename)
+                self._assertGreater(
+                    len(elements),
+                    0,
+                    'One or more %s elements must be present - TR pag. 20' % ename
+                )
+
+                for element in elements:
+                    self._assertTrue(
+                        ('{http://www.w3.org/XML/1998/namespace}lang' in element.attrib),  # noqa
+                        'The lang attribute in %s element must be present - TR pag. 20' % ename  # noqa
+                    )
+
+                    self._assertIsNotNone(
+                        element.text,
+                        'The %s element must have a value  - TR pag. 20' % ename
+                    )
+
+                    if ename == 'OrganizationURL':
+                        OrganizationURLvalue = element.text.strip()
+                        if not (OrganizationURLvalue.startswith('http://') or OrganizationURLvalue.startswith('https://')):
+                            OrganizationURLvalue = 'https://'+OrganizationURLvalue
+                        self._assertIsValidHttpUrl(
+                            OrganizationURLvalue,
+                            'The %s -element must be a valid URL - TR pag. 20' % ename
+                        )
+            
+            # extra
+            for elem in ['Name', 'URL', 'DisplayName']:
+                e = org.xpath(
+                    './Organization%s[@xml:lang="it"]' % elem,
+                    namespaces={
+                        'xml': 'http://www.w3.org/XML/1998/namespace',
+                    }
+                )
+                self._assertTrue(
+                    (len(e) == 1),
+                    'An IT localised Organization%s must be present' % elem
+                )
+            
+        return self.is_ok(f'{self.__class__.__name__}.test_Organization : OK')
+
+
+    def test_all(self):
         self.xsd_check()
         
-        # loop for all the attrs that starts with test_ ...
+        # loop for all the attrs that starts with test_ ... todo?
         self.test_EntityDescriptor()
         self.test_SPSSODescriptor()
         self.test_xmldsig()
@@ -409,3 +511,4 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.test_SingleLogoutService()
         self.test_AssertionConsumerService()
         self.test_AttributeConsumingService()
+        self.test_Organization()

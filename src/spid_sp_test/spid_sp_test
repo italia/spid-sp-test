@@ -31,6 +31,6 @@ if __name__ == '__main__':
     logging.basicConfig(level=getattr(logging, args.debug))
     
     if args.metadata_url:
-        metadata_test = SpidSpMetadataCheck(metadata_url = args.metadata_url)
-        json_result = metadata_test.test_metadata()
+        metadata_check = SpidSpMetadataCheck(metadata_url = args.metadata_url)
+        json_result = metadata_check.test_all()
     
