@@ -1,0 +1,15 @@
+SATOSA/
+*/__pyc__/*
+example/logs/*.log
+example/metadata/*.md
+*.pyc
+*pyFF_example/info.log
+*pyFF_example/error.log
+*pyFF_example/access.log
+*pyFF_example/md*
+*pyFF_example/*pid
+*pyFF_example/*sqlite
+*pyFF_example/.whoosh
+*pyFF_example/garr
+*pyFF_example/entities
+env/

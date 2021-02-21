@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+import argparse
+import logging
+
+from metadata import SpidSpMetadataCheck
+
+logger = logging.getLogger(__name__)
+
+
+if __name__ == '__main__':
+    _desc = (f'{__name__} -h for help')
+    _epilog = f'{__name__} '
+    
+    
+    parser = argparse.ArgumentParser(description = _desc, epilog = _epilog)
+    parser.add_argument('-metadata_url', required=False, default=None,
+                        help=("URL where SAML2 Metadata resides: "
+                              "it can be file://path or https://fqdn"))
+    parser.add_argument('-debug', required=False, 
+                    choices=('CRITICAL', 'ERROR', 
+                             'WARNING', 'INFO', 'DEBUG'), 
+                    default='INFO',
+                    help="Debug level, see python logging")
+    args = parser.parse_args()
+    
+    logging.basicConfig(level=getattr(logging, args.debug))
+    
+    if args.metadata_url:
+        metadata_test = SpidSpMetadataCheck(metadata_url = args.metadata_url)
+        json_result = metadata_test.test_metadata()
+    

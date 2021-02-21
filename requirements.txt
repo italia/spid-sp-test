@@ -1,0 +1,4 @@
+pysaml2
+xmlschema
+xsdata
+requests
