@@ -10,11 +10,12 @@ logger = logging.getLogger(__name__)
 
 class AbstractSpidCheck(object):
     def __init__(self, *args, **kwargs):
+        self.extra = kwargs.get('extra', False)
         self.results = []
         self.errors = []
         self.logger = logger
         self.error_counter = 0
-
+        
 
     def report_to_json(self):
         pass
@@ -23,6 +24,7 @@ class AbstractSpidCheck(object):
     def is_ok(self, msg):
         if not self.error_counter:
             self.handle_result('info', msg)
+            self.error_counter = 0
             return True
 
     
@@ -74,7 +76,7 @@ class AbstractSpidCheck(object):
         if first not in second:
             self.handle_error(error_message)
 
-    
+
     def _assertGreaterEqual(self, first, second, error_message):
         if not first >= second:
             self.handle_error(error_message)
@@ -93,6 +95,7 @@ class AbstractSpidCheck(object):
     def _assertIsValidHttpsUrl(self, check, error_message):
         if check[0:8] != 'https://':
             self.handle_error(error_message, description = check)
+
 
     def _assertIsValidHttpUrl(self, check, error_message):
         if not re.match('https?://', check):

@@ -33,10 +33,9 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                  xsds_files_path:str = None,
                  extra:bool=False):
         
-        super(SpidSpMetadataCheck, self).__init__()
+        super(SpidSpMetadataCheck, self).__init__(extra=extra)
 
         self.logger = logger
-        self.extra = extra
         self.metadata_url = metadata_url
         self.metadata = self.__class__.get(metadata_url)
         self.xsds_files = xsds_files or self.xsds_files
@@ -77,7 +76,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
 
     def test_EntityDescriptor(self):
-        self.error_counter = 0
         entity_desc = self.doc.xpath('//EntityDescriptor')
         if not self.doc.attrib.get('entityID'):
             _msg = (f'Missing entityID in {self.doc.attrib}: '
@@ -94,13 +92,11 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             self.doc.attrib.get('entityID'),
             'The entityID attribute must be a valid HTTPS url'
         )
-            
         return self.is_ok(f'{self.__class__.__name__}.test_EntityDescriptor : OK')
 
 
     def test_SPSSODescriptor(self):
         spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')
-        self.error_counter = 0
         self._assertTrue((len(spsso) == 1),
                          'Only one SPSSODescriptor element must be present')
         
@@ -220,8 +216,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
     def test_Signature(self):
         '''Test the compliance of Signature element'''
-        self.error_counter = 0
-        
         sign = self.doc.xpath('//EntityDescriptor/Signature')
         self._assertTrue((len(sign) == 1),
                          'The Signature element must be present - TR pag. 19')
@@ -295,7 +289,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
     def test_KeyDescriptor(self):
         '''Test the compliance of KeyDescriptor element(s)'''
-        self.error_counter = 0
         kds = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
                              '/KeyDescriptor[@use="signing"]')
         self._assertGreaterEqual(len(kds), 1,
@@ -323,7 +316,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
     def test_SingleLogoutService(self):
         '''Test the compliance of SingleLogoutService element(s)'''
-        self.error_counter = 0
         slos = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
                               '/SingleLogoutService')
         self._assertGreaterEqual(
@@ -366,7 +358,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
     def test_AssertionConsumerService(self):
         '''Test the compliance of AssertionConsumerService element(s)'''
-        self.error_counter = 0
         acss = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
                               '/AssertionConsumerService')
         self._assertGreaterEqual(len(acss), 1,
@@ -415,8 +406,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
     def test_AttributeConsumingService(self):
         '''Test the compliance of AttributeConsumingService element(s)'''
-        self.error_counter = 0
-        
         acss = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
                               '/AttributeConsumingService')
         self._assertGreaterEqual(
@@ -492,8 +481,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
     def test_Organization(self):
         '''Test the compliance of Organization element'''
-        self.error_counter = 0
-        
         orgs = self.doc.xpath('//EntityDescriptor/Organization')
         self._assertTrue((len(orgs) <= 1),
                          'Only one Organization element can be present - TR pag. 20')

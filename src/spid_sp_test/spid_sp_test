@@ -6,6 +6,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
 from spid_sp_test.metadata import SpidSpMetadataCheck
+from spid_sp_test.authn_request import SpidSpAuthnReqCheck
 
 logger = logging.getLogger(__name__)
 
@@ -75,4 +76,10 @@ if __name__ == '__main__':
             
             # here report to export ...
             # print(metadata_json_result)
-        
+    
+    if args.authn_url:
+        authn_check = SpidSpAuthnReqCheck(
+                        authn_request_url = args.authn_url,
+                        extra=args.extra
+        )
+        authn_json_result = authn_check.test_all()

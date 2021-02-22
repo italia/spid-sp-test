@@ -1,5 +1,14 @@
+import base64
 import lxml.objectify
+import re
 import subprocess
+
+
+from . exceptions import *
+
+
+form_samlreq_regex = '[\s\n.]*name="SAMLRequest"'
+form_samlreq_value_regex = 'value="(?P<value>[a-zA-Z0-9+=]*)"[\s\n.]*'
 
 
 def del_ns(root):
@@ -120,3 +129,21 @@ def parse_pem(cert):
         return []
 
     return result
+
+
+def samlreq_from_htmlform(html_content):
+    saml_request = re.search(form_samlreq_regex, html_content)
+    if not saml_request:
+        raise SAMLRequestNotFound()
+    
+    saml_req_value = re.search(form_samlreq_value_regex, html_content)
+    if not saml_req_value:
+        raise SAMLRequestValueNotFound()
+    
+    # base64 encoded
+    return saml_req_value.groups()[0]
+
+
+def decoded_samlreq_from_htmlform(html_content):
+    base64_encoded = samlreq_from_htmlform(html_content)
+    return base64.b64decode(base64_encoded)
