@@ -400,7 +400,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self._assertTrue(
             ('AllowCreate' not in e.attrib),
-            'The AllowCreate attribute must not be present - AV n°5 '
+            'The AllowCreate attribute must not be present - AV n.5 '
         )
 
         attr = 'Format'
@@ -507,7 +507,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self._assertTrue(
             bool(constants.SPID_LEVEL_ALL.search(acr.text)),
-            'The AuthnContextClassRef element must have a valid SPID level - TR pag. 9 and AV n°5'
+            'The AuthnContextClassRef element must have a valid SPID level - TR pag. 9 and AV n.5'
         )
         return self.is_ok(f'{self.__class__.__name__}.test_RequestedAuthnContext : OK')
 
@@ -572,7 +572,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self._assertEqual(
             len(e),
             0,
-            'The Scoping element must not be present - AV n°5'
+            'The Scoping element must not be present - AV n.5'
         )
         return self.is_ok(f'{self.__class__.__name__}.test_Scoping : OK')
         
@@ -583,7 +583,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self._assertEqual(
             len(e),
             0,
-            'The RequesterID  element must not be present - AV n°5'
+            'The RequesterID  element must not be present - AV n.5'
         )
         return self.is_ok(f'{self.__class__.__name__}.test_RequesterID : OK')
 

@@ -175,8 +175,9 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             return
 
         xmlsec_cmd_string = ' '.join(xmlsec_cmd)
-        _msg = f'{self.__class__.__name__}.test_xmldsig with `{xmlsec_cmd_string}` : OK'
-        self.handle_result('info', _msg)
+        _msg = f'{self.__class__.__name__}.test_xmldsig: OK'
+        self.handle_result('info', 
+                           _msg, description=f"`{xmlsec_cmd_string}`")
         return is_valid
 
 
@@ -249,7 +250,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self._assertGreaterEqual(
             len(slos),
             1,
-            'One or more SingleLogoutService elements must be present - AV n° 3'
+            'One or more SingleLogoutService elements must be present - AV n. 3'
         )
 
         for slo in slos:
@@ -257,7 +258,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 self._assertTrue((attr in slo.attrib),
                                  'The %s attribute '
                                  'in SingleLogoutService element '
-                                 'must be present - AV n° 3' % attr)
+                                 'must be present - AV n. 3' % attr)
 
                 a = slo.get(attr)
                 self._assertIsNotNone(
@@ -271,7 +272,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     self._assertIn(
                         a,
                         constants.ALLOWED_SINGLELOGOUT_BINDINGS,
-                        (('The %s attribute in SingleLogoutService element must be one of [%s] - AV n° 3') %  # noqa
+                        (('The %s attribute in SingleLogoutService element must be one of [%s] - AV n. 3') %  # noqa
                          (attr, ', '.join(constants.ALLOWED_BINDINGS)))  # noqa
                     )
                 if attr == 'Location':
@@ -279,7 +280,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         a,
                         'The %s attribute '
                         'in SingleLogoutService element '
-                        'must be a valid URL - AV n° 1 and n° 3' % attr
+                        'must be a valid URL - AV n. 1 and n. 3' % attr
                     )
         return self.is_ok(f'{self.__class__.__name__}.test_SingleLogoutService : OK')
 
@@ -311,7 +312,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 elif attr == 'Location':
                     self._assertIsValidHttpsUrl(a,
                                                 'The %s attribute must be a '
-                                                'valid HTTPS url - TR pag. 20 and AV n° 1' % attr)
+                                                'valid HTTPS url - TR pag. 20 and AV n. 1' % attr)
                 else:
                     pass
 
@@ -374,12 +375,12 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 self._assertTrue(('Name' in ra.attrib),
                                  'The Name attribute in '
                                  'RequestedAttribute element '
-                                 'must be present - TR pag. 20 and AV n° 6')
+                                 'must be present - TR pag. 20 and AV n. 6')
 
                 self._assertIn(ra.get('Name'), constants.SPID_ATTRIBUTES,
                                (('The Name attribute '
                                  'in RequestedAttribute element '
-                                 'must be one of [%s] - TR pag. 20 and AV n°6') %
+                                 'must be one of [%s] - TR pag. 20 and AV n.6') %
                                 (', '.join(constants.SPID_ATTRIBUTES))))
 
             al = acs.xpath('RequestedAttribute/@Name')
