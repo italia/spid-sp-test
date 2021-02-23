@@ -37,10 +37,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                  metadata,
                  authn_request_url, 
                  xsds_files:list = None,
-                 xsds_files_path:str = None,
-                 extra:bool=False):
+                 xsds_files_path:str = None):
         
-        super(SpidSpAuthnReqCheck, self).__init__(extra=extra)
+        super(SpidSpAuthnReqCheck, self).__init__()
         
         self.logger = logger
         self.metadata = metadata

@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 class AbstractSpidCheck(object):
     def __init__(self, *args, **kwargs):
-        self.extra = kwargs.get('extra', False)
         self.results = []
         self.errors = []
         self.logger = logger
