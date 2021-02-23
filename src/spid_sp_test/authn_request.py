@@ -23,7 +23,9 @@ from spid_sp_test.utils import (decode_samlreq,
                                 parse_pem, 
                                 samlreq_from_htmlform,
                                 relaystate_from_htmlform)
-                                
+
+
+from . exceptions import SAMLRequestNotFound
 
 
 logger = logging.getLogger(__name__)
@@ -36,7 +38,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
     
     def __init__(self, 
                  metadata,
-                 authn_request_url, 
+                 authn_request_url:str=None, 
+                 authn_request:dict={},
                  xsds_files:list = None,
                  xsds_files_path:str = None,
                  verify_ssl:bool=False):
@@ -46,13 +49,20 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self.logger = logger
         self.metadata = metadata
         
-        self.authn_request_url = authn_request_url
-        self.authn_req_html_form = self.get(authn_request_url)
-        
-        self.authn_request_encoded = samlreq_from_htmlform(self.authn_req_html_form)
-        self.authn_request_decoded = decode_samlreq(self.authn_req_html_form)
-        self.relay_state = relaystate_from_htmlform(self.authn_req_html_form)
-        
+        # TODO HTTP-REDIRECT format support
+        if authn_request_url:
+            self.authn_request_url = authn_request_url
+            self.authn_req_html_form = self.get(authn_request_url)
+            
+            self.authn_request_encoded = samlreq_from_htmlform(self.authn_req_html_form)
+            self.authn_request_decoded = decode_samlreq(self.authn_req_html_form)
+            self.relay_state = relaystate_from_htmlform(self.authn_req_html_form)
+        elif authn_request:
+            self.authn_request_encoded = authn_request['SAMLRequest']
+            self.authn_request_decoded = base64.b64decode(self.authn_request_encoded)
+        else:
+            raise SAMLRequestNotFound()
+            
         self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f'{BASE_DIR}/xsd'
         
