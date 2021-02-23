@@ -33,7 +33,8 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                  verify_ssl:bool=False):
         
         super(SpidSpMetadataCheck, self).__init__(verify_ssl=verify_ssl)
-
+        self.category = 'metadata_strict'
+        
         self.logger = logger
         self.metadata_url = metadata_url
         self.metadata = self.__class__.get(metadata_url)
@@ -124,7 +125,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         tmp_file = NamedTemporaryFile()
         tmp_file.write(self.metadata)
         tmp_file.seek(0)
-        
+
         xmlsec_cmd = ['xmlsec1',
                       '--verify',
                       '--insecure',
@@ -135,6 +136,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         cmd = ' '.join(xmlsec_cmd)
         is_valid = True
         msg = 'the metadata signature must be valid - TR pag. 19'
+
         try:
             subprocess.run(cmd, shell=True, check=True, 
                            stdout=subprocess.PIPE,
@@ -441,6 +443,4 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.test_AssertionConsumerService()
         self.test_AttributeConsumingService()
         self.test_Organization()
-        
-        return self.results
         

@@ -6,7 +6,8 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
     def __init__(self, *args, **kwargs):
         
         super(SpidSpAuthnReqCheckExtra, self).__init__(*args, **kwargs)
-
+        self.category = 'authnrequest_strict'
+        
     def test_AuthnRequest_extra(self):
         '''Test the compliance of AuthnRequest element'''
 

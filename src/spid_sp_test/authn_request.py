@@ -45,6 +45,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                  verify_ssl:bool=False):
         
         super(SpidSpAuthnReqCheck, self).__init__(verify_ssl=verify_ssl)
+        self.category = 'authnrequest_strict'
         
         self.logger = logger
         self.metadata = metadata
@@ -60,6 +61,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         elif authn_request:
             self.authn_request_encoded = authn_request['SAMLRequest']
             self.authn_request_decoded = base64.b64decode(self.authn_request_encoded)
+            self.relay_state = authn_request['RelayState']
         else:
             raise SAMLRequestNotFound()
             

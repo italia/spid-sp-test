@@ -13,6 +13,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
     def __init__(self, *args, **kwargs):
         
         super(SpidSpMetadataCheckExtra, self).__init__(*args, **kwargs)
+        self.category = 'metadata_extra'
 
     def test_Signature_extra(self):
         '''Test the compliance of AuthnRequest element'''
@@ -85,12 +86,13 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     a,
                     'The %s attribute must have a value' % attr
                 )
-
-                self._assertEqual(
-                    a.lower(),
-                    'true',
-                    'The %s attribute must be true' % attr
-                )
+                
+                if a:
+                    self._assertEqual(
+                        a.lower(),
+                        'true',
+                        'The %s attribute must be true' % attr
+                    )
         return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor_extra : OK')
 
 
@@ -117,19 +119,20 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         orgs = self.doc.xpath('//EntityDescriptor/Organization')
         self._assertTrue((len(orgs) == 1), 'An Organization must be present')
         
-        org = orgs[0]
-        for elem in ['Name', 'URL', 'DisplayName']:
-            e = org.xpath(
-                './Organization%s[@xml:lang="it"]' % elem,
-                namespaces={
-                    'xml': 'http://www.w3.org/XML/1998/namespace',
-                }
-            )
-            self._assertTrue(
-                (len(e) == 1),
-                'An IT localised Organization%s must be present' % elem
-            )
-        return self.is_ok(f'{self.__class__.__name__}.test_Organization : OK')
+        if orgs:
+            org = orgs[0]
+            for elem in ['Name', 'URL', 'DisplayName']:
+                e = org.xpath(
+                    './Organization%s[@xml:lang="it"]' % elem,
+                    namespaces={
+                        'xml': 'http://www.w3.org/XML/1998/namespace',
+                    }
+                )
+                self._assertTrue(
+                    (len(e) == 1),
+                    'An IT localised Organization%s must be present' % elem
+                )
+            return self.is_ok(f'{self.__class__.__name__}.test_Organization : OK')
 
 
     def test_all(self):
@@ -138,4 +141,3 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         self.test_AttributeConsumingService_extra()
         self.test_SPSSODescriptor_extra()
         self.test_Organization_extra()
-    

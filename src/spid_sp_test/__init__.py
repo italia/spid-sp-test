@@ -15,9 +15,16 @@ class AbstractSpidCheck(object):
         self.logger = logger
         self.error_counter = 0
         self.verify_ssl = kwargs.get('verify_ssl', False)
-
-    def report_to_json(self):
-        pass
+        self.category = ''
+    
+    def report_to_dict(self):
+        res = {
+                self.category: {
+                    self.__class__.__name__: self.results
+              }
+        }
+        
+        return res
 
 
     def is_ok(self, msg):
@@ -103,7 +110,7 @@ class AbstractSpidCheck(object):
             self.handle_error(error_message, description = check)
 
 
-
+    # maybe useful .. one day ?!
         # idp_server = self.idp()
         # pysaml2 auth req object with signature check
         

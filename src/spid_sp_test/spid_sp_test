@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import logging
 import os
 import sys
@@ -37,16 +38,22 @@ if __name__ == '__main__':
     parser.add_argument('--idp-metadata', 
                         action="store_true", default=False,
                         help="get example IdP metadata")
-    parser.add_argument('-l','--list', nargs='*', 
-                        help='esecute only selected checks', 
-                        required=False)
+    # parser.add_argument('-l','--list', nargs='*', 
+                        # help='esecute only selected checks', 
+                        # required=False)
     parser.add_argument('--extra', 
                         action="store_true", default=False,
                         help="execute extra checks")
-
+    
     parser.add_argument('--authn-url', required=False, default=None,
                         help=("URL where the SP initializes "
                               "the Authentication Request to this IDP"))
+
+    parser.add_argument('-json', action="store_true", 
+                        help="json output")
+
+    parser.add_argument('-o', required=False, 
+                        help="json output to file")
 
     parser.add_argument('-debug', required=False, 
                     choices=('CRITICAL', 'ERROR', 
@@ -61,6 +68,8 @@ if __name__ == '__main__':
         parser.print_help(sys.stderr)
         sys.exit(1)
     
+    tests_done = []
+    
     if args.idp_metadata:
         from spid_sp_test.idp.idp import SAML2_IDP_CONFIG
         
@@ -74,12 +83,13 @@ if __name__ == '__main__':
                                 metadata_url = args.metadata_url,
         )
         metadata_json_result = metadata_check.test_all()
+        tests_done.append(metadata_check)
         if args.extra:
             metadata_check_extra = SpidSpMetadataCheckExtra(
                                     metadata_url = args.metadata_url,
             )
             metadata_check_result_extra = metadata_check_extra.test_all()
-        
+            tests_done.append(metadata_check_extra)
         # if args.list:
             # for method in args.list:
                 # meth = getattr(metadata_check, method, None)
@@ -101,6 +111,7 @@ if __name__ == '__main__':
                         authn_request_url = args.authn_url
         )
         authn_json_result = authn_check.test_all()
+        tests_done.append(authn_check)
         
         if args.extra:
             authn_check_extra = SpidSpAuthnReqCheckExtra(
@@ -108,3 +119,22 @@ if __name__ == '__main__':
                                     authn_request_url = args.authn_url,
             )
             authn_json_result_extra = authn_check_extra.test_all()
+            tests_done.append(authn_check_extra)
+            
+    if args.o or args.json:
+        data = {
+          "test": {
+            "sp": {}
+            }
+        }
+        
+        for i in tests_done:
+            data['test']['sp'][i.category] = i.report_to_dict()[i.category]
+        
+        output = json.dumps(data, indent=2)
+        print(output)
+        
+        if args.o:
+            with open(args.o, 'w') as f:
+                f.write(output)
+    
