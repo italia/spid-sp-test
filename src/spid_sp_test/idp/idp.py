@@ -1,14 +1,13 @@
 from pathlib import Path
 from saml2 import BINDING_HTTP_POST
 # from saml2.saml import NAME_FORMAT_BASIC
-from saml2.metadata import entity_descriptor
-from saml2.server import Server
+
 
 BASE_DIR = Path(__file__).resolve().parent
 BASE = "http://localhost:54321"
 
-CONFIG = {
-    "entityid": "spid-idp-test",
+SAML2_IDP_CONFIG = {
+    "entityid": "http://localhost:54321",
     "name": "Test IdP",
     "service": {
         "idp": {
@@ -20,7 +19,7 @@ CONFIG = {
             },
         },
     },
-    "debug": 1,
+    "debug": 0,
     "key_file": f"{BASE_DIR}/private.key",
     "cert_file": f"{BASE_DIR}/public.cert",
     # "xmlsec_binary": xmlsec_path,
@@ -40,7 +39,3 @@ CONFIG = {
         },
     ],
 }
-
-
-IDP_SERVER = Server(CONFIG)
-IDP_METADATA = entity_descriptor(IDP_SERVER.config)

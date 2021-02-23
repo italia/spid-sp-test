@@ -24,8 +24,10 @@ class AbstractSpidCheck(object):
     def is_ok(self, msg):
         if not self.error_counter:
             self.handle_result('info', msg)
-            self.error_counter = 0
             return True
+        else:
+            self.error_counter = 0
+            return False
 
     
     def handle_result(self, 
@@ -100,3 +102,16 @@ class AbstractSpidCheck(object):
     def _assertIsValidHttpUrl(self, check, error_message):
         if not re.match('https?://', check):
             self.handle_error(error_message, description = check)
+
+
+
+        # idp_server = self.idp()
+        # pysaml2 auth req object with signature check
+        
+        # SPID IdP not completely compliant to SAML2-core about Destination attribute
+        # saml2.request:http://localhost:8088 not in ['http://localhost:54321/sso']
+        # try:
+            # req_obj = idp_server.parse_authn_request(self.authn_request_encoded, 
+                                                     # BINDING_HTTP_POST)
+        # except OtherError as e:
+            # pass

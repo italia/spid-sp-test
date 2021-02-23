@@ -5,6 +5,8 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
+from saml2.metadata import entity_descriptor
+from saml2.server import Server
 from spid_sp_test.metadata import SpidSpMetadataCheck
 from spid_sp_test.authn_request import SpidSpAuthnReqCheck
 
@@ -58,11 +60,14 @@ if __name__ == '__main__':
         sys.exit(1)
     
     if args.idp_metadata:
-        from spid_sp_test.idp.idp import IDP_METADATA
-        print(IDP_METADATA.to_string().decode())
+        from spid_sp_test.idp.idp import SAML2_IDP_CONFIG
+        
+        idp_server = Server(SAML2_IDP_CONFIG)
+        idp_metadata = entity_descriptor(idp_server.config)
+        print(idp_metadata.to_string().decode())
         sys.exit(0)
     
-    if args.metadata_url:
+    elif args.metadata_url:
         metadata_check = SpidSpMetadataCheck(
                                 metadata_url = args.metadata_url,
                                 extra=args.extra
@@ -76,9 +81,13 @@ if __name__ == '__main__':
             
             # here report to export ...
             # print(metadata_json_result)
+    else:
+        logging.error('At least --id-metadata or --metadata-url is needed!')
+        sys.exit(1)
     
+    # authn request
     if args.authn_url:
-        authn_check = SpidSpAuthnReqCheck(
+        authn_check = SpidSpAuthnReqCheck(metadata = metadata_check.metadata,
                         authn_request_url = args.authn_url,
                         extra=args.extra
         )

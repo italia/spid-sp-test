@@ -3,6 +3,14 @@ spid-sp-test
 
 introduction
 
+Setup
+-----
+
+````
+apt install libxml2-dev libxmlsec1-dev libxmlsec1-openssl
+pip install xmlsec
+````
+
 
 Examples
 --------
