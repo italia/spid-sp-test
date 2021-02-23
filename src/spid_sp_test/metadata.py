@@ -29,9 +29,10 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
     def __init__(self, 
                  metadata_url, 
                  xsds_files:list = None,
-                 xsds_files_path:str = None):
+                 xsds_files_path:str = None,
+                 verify_ssl:bool=False):
         
-        super(SpidSpMetadataCheck, self).__init__()
+        super(SpidSpMetadataCheck, self).__init__(verify_ssl=verify_ssl)
 
         self.logger = logger
         self.metadata_url = metadata_url

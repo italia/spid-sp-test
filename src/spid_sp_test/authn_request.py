@@ -18,10 +18,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
 from spid_sp_test import constants
 from spid_sp_test.idp.idp import SAML2_IDP_CONFIG
-from spid_sp_test.utils import (decoded_samlreq_from_htmlform,
+from spid_sp_test.utils import (decode_samlreq,
                                 del_ns, 
                                 parse_pem, 
-                                samlreq_from_htmlform)
+                                samlreq_from_htmlform,
+                                relaystate_from_htmlform)
                                 
 
 
@@ -37,15 +38,21 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                  metadata,
                  authn_request_url, 
                  xsds_files:list = None,
-                 xsds_files_path:str = None):
+                 xsds_files_path:str = None,
+                 verify_ssl:bool=False):
         
-        super(SpidSpAuthnReqCheck, self).__init__()
+        super(SpidSpAuthnReqCheck, self).__init__(verify_ssl=verify_ssl)
         
         self.logger = logger
         self.metadata = metadata
+        
         self.authn_request_url = authn_request_url
-        self.authn_request_encoded = self.__class__.get_encoded(authn_request_url)
-        self.authn_request_decoded = self.__class__.get_decoded(authn_request_url)
+        self.authn_req_html_form = self.get(authn_request_url)
+        
+        self.authn_request_encoded = samlreq_from_htmlform(self.authn_req_html_form)
+        self.authn_request_decoded = decode_samlreq(self.authn_req_html_form)
+        self.relay_state = relaystate_from_htmlform(self.authn_req_html_form)
+        
         self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f'{BASE_DIR}/xsd'
         
@@ -59,25 +66,17 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         # binding detection
         self.IS_HTTP_REDIRECT = False
         # HTTP-REDIRECT params
-        self.params = []
+        self.params = {'RelayState': self.relay_state}
+        
 
-
-    @staticmethod
-    def get(authn_request_url, funcname):
-        page = requests.get(authn_request_url, 
-                            verify=False).content.decode()
-        saml_req = funcname(page)
-        return saml_req
-
-
-    @classmethod
-    def get_encoded(cls, authn_request_url):
-        return cls.get(authn_request_url, samlreq_from_htmlform)
-
-
-    @classmethod
-    def get_decoded(cls, authn_request_url):
-        return cls.get(authn_request_url, decoded_samlreq_from_htmlform)
+    def get(self, authn_request_url:str):
+        if authn_request_url[0:7] == 'file://':
+            return open(authn_request_url[7:], 'rb').read()
+        else:
+            return requests.get(
+                    authn_request_url, 
+                    verify=self.verify_ssl
+            ).content.decode()
 
 
     def idp(self):
@@ -545,7 +544,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         '''Test the compliance of RelayState parameter'''
 
         if ('RelayState' in self.params):
-            relaystate = self.params.get('RelayState')[0]
+            relaystate = self.params.get('RelayState')
             self._assertTrue(
                 (relaystate.find('http') == -1 ),
                 'RelayState must not be immediately intelligible - TR pag. 14 or pag. 15'

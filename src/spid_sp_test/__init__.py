@@ -14,7 +14,7 @@ class AbstractSpidCheck(object):
         self.errors = []
         self.logger = logger
         self.error_counter = 0
-        
+        self.verify_ssl = kwargs.get('verify_ssl', False)
 
     def report_to_json(self):
         pass

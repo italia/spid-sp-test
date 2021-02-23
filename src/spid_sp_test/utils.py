@@ -9,6 +9,7 @@ from . exceptions import *
 
 form_samlreq_regex = '[\s\n.]*name="SAMLRequest"'
 form_samlreq_value_regex = 'value="(?P<value>[a-zA-Z0-9+=]*)"[\s\n.]*'
+form_relaystate_regexp = 'name="RelayState" value="(?P<value>[a-zA-Z0-9+=\/\_\.]*)"'
 
 
 def del_ns(root):
@@ -144,6 +145,12 @@ def samlreq_from_htmlform(html_content):
     return saml_req_value.groups()[0]
 
 
-def decoded_samlreq_from_htmlform(html_content):
+def relaystate_from_htmlform(html_content):
+    relay_state = re.search(form_relaystate_regexp, html_content)
+    if relay_state.groups():
+        return relay_state.groups()[0]
+
+
+def decode_samlreq(html_content):
     base64_encoded = samlreq_from_htmlform(html_content)
     return base64.b64decode(base64_encoded)
