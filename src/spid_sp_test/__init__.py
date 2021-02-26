@@ -45,23 +45,26 @@ class AbstractSpidCheck(object):
         getattr(self.logger, level, 'debug')(msg)
         if level not in ('error', 'debug', 'critical', 'warning'):
             # here report as json
+            value = f'{description}' if not traceback else f'{description}: {traceback }'
             self.results.append(
                 {
                     "result": "success",
                     "test":  title,
-                    "value": description
+                    "value": value
                 }
             )
 
 
-    def handle_error(self, error_message, description = ''):
+    def handle_error(self, error_message, description = '',
+                     traceback:str=None):
         self.handle_result('error', f"{error_message} : FAILED", description)
         self.error_counter += 1
         # here report as json
+        value = f'{description}' if not traceback else f'{description}: {traceback }'
         data = {
                 "result": "failure",
                 "test":  error_message,
-                "value": description
+                "value": value
         }
         self.errors.append(data)
         self.results.append(data)

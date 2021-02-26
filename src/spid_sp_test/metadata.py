@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 class SpidSpMetadataCheck(AbstractSpidCheck):
     xsds_files = [
         'saml-schema-metadata-2.0.xsd',
-        # 'saml-schema-metadata-sp-spid-av29.xsd',
-        'saml-schema-metadata-sp-spid-av29_old.xsd',
+        'saml-schema-metadata-sp-spid-av29.xsd',
+        # 'saml-schema-metadata-sp-spid-av29_old.xsd',
         'saml-schema-metadata-sp-spid.xsd',
     ]
 
@@ -66,13 +66,15 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 schema = xmlschema.XMLSchema(schema_file)
                 if not schema.is_valid(metadata):
                     schema.validate(metadata)
-                    self.handle_result('error', 
-                                       ' '.join((msg, '-> FAILED!')))
+                    self.handle_result('error', ' '.join((msg)))
                     raise Exception('Validation Error')
                 logger.info(' '.join((msg, '-> OK')))
             except Exception as e:
-                self.handle_result('critical', 
-                                   '-> '.join((msg, f'{e}')))
+                self.handle_error(msg,
+                                  description = 'xsd test failed',
+                                  traceback = f'{e}')
+                
+        return self.is_ok(f'{self.__class__.__name__}.xsd_check')
 
 
     def test_EntityDescriptor(self):

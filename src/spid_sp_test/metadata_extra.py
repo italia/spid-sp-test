@@ -19,42 +19,46 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         '''Test the compliance of AuthnRequest element'''
 
         sign = self.doc.xpath('//EntityDescriptor/Signature')
-        cert = sign[0].xpath('./KeyInfo/X509Data/X509Certificate')[0]
-        fname = dump_metadata_pem(cert, 'sp', 'signature', '/tmp')
+        for si in sign:
+            certs = si.xpath('./KeyInfo/X509Data/X509Certificate')
+            
+            for i in range(len(certs)):
+                cert = certs[i]
+                fname = dump_metadata_pem(cert, 'sp', 'signature', '/tmp')
+                
+                r = parse_pem(fname)
+                self._assertFalse(
+                    r[0].lower().startswith('sha1'),
+                    ((f'The certificate #{i} must not use '
+                      f'weak signature algorithm: {r[0].lower()}'))
+                )
         
-        r = parse_pem(fname)
-        self._assertFalse(
-            r[0].lower().startswith('sha1'),
-            (('The certificate must not use '
-              f'weak signature algorithm: {r[0].lower()}'))
-        )
-
-        exp = ['rsaEncryption', 'id-ecPublicKey']
-        self._assertIn(
-            r[2],
-            exp,
-            (('The key type of certificate must be one of [%s] - TR pag. 19') %
-             (', '.join(exp)))
-        )
-
-        if r[2] == 'rsaEncryption':
-            exp = constants.MINIMUM_CERTIFICATE_LENGHT
-        elif r[2] == 'id-ecPublicKey':
-            exp = 256
-        else:
-            pass
+                exp = ['rsaEncryption', 'id-ecPublicKey']
+                self._assertIn(
+                    r[2],
+                    exp,
+                    ((f'The key type of certificate #{i} must be one of [%s] - TR pag. 19') %
+                     (', '.join(exp)))
+                )
         
-        self._assertTrue(
-            (int(r[1]) >= exp),
-            (('The key length of certificate must be >= %d. Instead it is '+ r[1]) %
-             (exp))
-        )
-
-        self._assertTrue(
-            (datetime.datetime.strptime(r[3], "%b %d %H:%M:%S %Y") >= datetime.datetime.now()),
-            (('The certificate is expired. It was valid till '+r[3]))
-        )
-        os.remove(fname)
+                if r[2] == 'rsaEncryption':
+                    exp = constants.MINIMUM_CERTIFICATE_LENGHT
+                elif r[2] == 'id-ecPublicKey':
+                    exp = 256
+                else:
+                    pass
+                
+                self._assertTrue(
+                    (int(r[1]) >= exp),
+                    ((f'The key length of certificate #{i} must be >= %d. Instead it is '+ r[1]) %
+                     (exp))
+                )
+        
+                self._assertTrue(
+                    (datetime.datetime.strptime(r[3], "%b %d %H:%M:%S %Y") >= datetime.datetime.now()),
+                    ((f'The certificate #{i} is expired. It was valid till '+r[3]))
+                )
+                os.remove(fname)
         return self.is_ok(f'{self.__class__.__name__}.test_Signature_extra')
 
 

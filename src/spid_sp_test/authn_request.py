@@ -14,7 +14,8 @@ from lxml import etree
 from saml2 import BINDING_HTTP_POST
 from saml2.server import Server
 # from saml2.s_utils import OtherError
-from saml2.sigver import CryptoBackendXMLSecurity, CryptoBackendXmlSec1
+from saml2.sigver import CryptoBackendXMLSecurity
+# from saml2.sigver import CryptoBackendXmlSec1
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
 from spid_sp_test import constants

@@ -42,5 +42,5 @@ spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http:
 
 JSON report (add `-o filename.json` to write to a file)
 ````
-python3 src/spid_sp_test/spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR -json
+python3 src/spid_sp_test/spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug CRITICAL -json
 ````
