@@ -7,6 +7,7 @@ import requests
 import xmlschema
 import sys
 import subprocess
+import urllib
 
 from lxml import etree
 
@@ -22,13 +23,51 @@ from spid_sp_test.utils import (decode_samlreq,
                                 del_ns, 
                                 parse_pem, 
                                 samlreq_from_htmlform,
-                                relaystate_from_htmlform)
+                                relaystate_from_htmlform,
+                                decode_authn_req_http_redirect)
 
 
 from . exceptions import SAMLRequestNotFound
 
 
 logger = logging.getLogger(__name__)
+
+
+def get_authn_request(authn_request_url, verify_ssl):
+    status = None
+    data = {}
+    if authn_request_url[0:7] == 'file://':
+        authn_request = open(authn_request_url[7:], 'rb').read()
+    else:
+        request = requests.get(
+                            authn_request_url, 
+                            verify=verify_ssl,
+                            allow_redirects=False
+        )
+        if request.status_code == 302:
+            # HTTP-REDIRECT
+            status = 302
+            redirect = request.headers['Location']
+            q_args = urllib.parse.splitquery(redirect)[1]
+            authn_request = dict(urllib.parse.parse_qsl(q_args))
+            
+            data['SAMLRequest'] = authn_request['SAMLRequest']
+            data['SAMLRequest_xml'] = decode_authn_req_http_redirect(authn_request['SAMLRequest'])
+            data['RelayState'] = authn_request['RelayState']
+            data['SigAlg'] = authn_request['SigAlg']
+            data['Signature'] = authn_request['Signature']
+            
+        elif request.status_code == 200:
+            # HTTP POST
+            status = 200
+            authn_request = request.content.decode()
+            data['SAMLRequest'] = samlreq_from_htmlform(authn_request)
+            data['SAMLRequest_xml'] = decode_samlreq(authn_request)
+            data['RelayState'] = relaystate_from_htmlform(authn_request)
+        else:
+            raise SAMLRequestNotFound()
+        
+    return data
 
 
 class SpidSpAuthnReqCheck(AbstractSpidCheck):
@@ -38,11 +77,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
     
     def __init__(self, 
                  metadata,
-                 authn_request_url:str=None, 
-                 authn_request:dict={},
+                 authn_request_url:str = None, 
+                 authn_request:dict = {},
                  xsds_files:list = None,
                  xsds_files_path:str = None,
-                 verify_ssl:bool=False):
+                 verify_ssl:bool = False):
         
         super(SpidSpAuthnReqCheck, self).__init__(verify_ssl=verify_ssl)
         self.category = 'authnrequest_strict'
@@ -50,21 +89,17 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self.logger = logger
         self.metadata = metadata
         
-        # TODO HTTP-REDIRECT format support
-        if authn_request_url:
-            self.authn_request_url = authn_request_url
-            self.authn_req_html_form = self.get(authn_request_url)
-            
-            self.authn_request_encoded = samlreq_from_htmlform(self.authn_req_html_form)
-            self.authn_request_decoded = decode_samlreq(self.authn_req_html_form)
-            self.relay_state = relaystate_from_htmlform(self.authn_req_html_form)
-        elif authn_request:
-            self.authn_request_encoded = authn_request['SAMLRequest']
-            self.authn_request_decoded = base64.b64decode(self.authn_request_encoded)
-            self.relay_state = authn_request['RelayState']
-        else:
-            raise SAMLRequestNotFound()
-            
+        self.authn_request = get_authn_request(authn_request_url,
+                                               verify_ssl=verify_ssl)
+        
+        try:
+            self.authn_request_decoded = self.authn_request['SAMLRequest_xml'] 
+            self.authn_request_encoded = self.authn_request['SAMLRequest'] 
+        except KeyError as e:
+            raise SAMLRequestNotFound(self.authn_request)
+        
+        self.relay_state = self.authn_request.get('RelayState')
+
         self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f'{BASE_DIR}/xsd'
         
@@ -76,19 +111,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         del_ns(self.doc)
         
         # binding detection
-        self.IS_HTTP_REDIRECT = False
+        self.IS_HTTP_REDIRECT = self.authn_request.get('Signature')
         # HTTP-REDIRECT params
         self.params = {'RelayState': self.relay_state}
-        
-
-    def get(self, authn_request_url:str):
-        if authn_request_url[0:7] == 'file://':
-            return open(authn_request_url[7:], 'rb').read()
-        else:
-            return requests.get(
-                    authn_request_url, 
-                    verify=self.verify_ssl
-            ).content.decode()
 
 
     def idp(self):
@@ -112,7 +137,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                'and must have a valid signature')
 
         os.chdir(self.xsds_files_path)
-        authn_request = self.authn_request_decoded.decode()
+        authn_request = self.authn_request_decoded
         schema_file = open('saml-schema-protocol-2.0.xsd', 'rb')
         msg = f'Test authn_request with {schema_file.name}'
         try:
@@ -139,7 +164,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                                               node_name=constants.NODE_NAME,
                                               node_id=None)
         self._assertTrue(is_valid, 'AuthnRequest Signature validation failed')
-        return self.is_ok(f'{self.__class__.__name__}.test_xsd_and_xmldsig : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_xsd_and_xmldsig')
 
 
     def test_AuthnRequest(self):
@@ -217,7 +242,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             availableassertionindexes = []
 
             acss = self.md.xpath('//EntityDescriptor/SPSSODescriptor'
-                           '/AssertionConsumerService')
+                                 '/AssertionConsumerService')
             for acs in acss:
                 index = acs.get('index')
                 availableassertionindexes.append(index)
@@ -297,7 +322,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertTrue(value in availableattributeindexes,
                 'The %s attribute must be equal to an AttributeConsumingService index - TR pag. 8 ' % attr
             )
-        return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest')
 
 
     def test_Subject(self):
@@ -341,7 +366,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         exp,
                         'The % attribute must be %s - TR pag. 9' % (attr, exp)
                     )
-        return self.is_ok(f'{self.__class__.__name__}.test_Subject : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_Subject')
 
 
     def test_Issuer(self):
@@ -384,7 +409,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     exp,
                     'The %s attribute must be %s - TR pag. 9' % (attr, exp)
                 )
-        return self.is_ok(f'{self.__class__.__name__}.test_Issuer : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_Issuer')
 
 
     def test_NameIDPolicy(self):
@@ -423,7 +448,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 exp,
                 'The %s attribute must be %s - TR pag. 9' % (attr, exp)
             )
-        return self.is_ok(f'{self.__class__.__name__}.test_NameIDPolicy : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_NameIDPolicy')
 
 
     def test_Conditions(self):
@@ -456,7 +481,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     bool(common.regex.UTC_STRING.search(value)),
                     'The %s attribute must have avalid UTC string - TR pag. 9' % attr
                 )
-        return self.is_ok(f'{self.__class__.__name__}.test_Conditions : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_Conditions')
 
 
     def test_RequestedAuthnContext(self):
@@ -509,7 +534,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             bool(constants.SPID_LEVEL_ALL.search(acr.text)),
             'The AuthnContextClassRef element must have a valid SPID level - TR pag. 9 and AV n.5'
         )
-        return self.is_ok(f'{self.__class__.__name__}.test_RequestedAuthnContext : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_RequestedAuthnContext')
 
 
     def test_Signature(self):
@@ -549,7 +574,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             # save the grubbed certificate for future alanysis
             # cert = sign[0].xpath('./KeyInfo/X509Data/X509Certificate')[0]
             # dump_pem.dump_request_pem(cert, 'authn', 'signature', DATA_DIR)
-        return self.is_ok(f'{self.__class__.__name__}.test_Signature : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_Signature')
 
 
     def test_RelayState(self):
@@ -563,7 +588,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             )
         else:
             self._assertTrue(False, 'RelayState is missing - TR pag. 14 or pag. 15')
-        return self.is_ok(f'{self.__class__.__name__}.test_RelayState : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_RelayState')
         
     def test_Scoping(self):
         '''Test the compliance of Scoping element'''
@@ -574,7 +599,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             0,
             'The Scoping element must not be present - AV n.5'
         )
-        return self.is_ok(f'{self.__class__.__name__}.test_Scoping : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_Scoping')
         
     def test_RequesterID(self):
         '''Test the compliance of RequesterID element'''
@@ -585,7 +610,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             0,
             'The RequesterID  element must not be present - AV n.5'
         )
-        return self.is_ok(f'{self.__class__.__name__}.test_RequesterID : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_RequesterID')
 
     def test_all(self):
         

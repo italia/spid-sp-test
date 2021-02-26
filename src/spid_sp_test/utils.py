@@ -1,8 +1,11 @@
 import base64
 import lxml.objectify
+import xml.dom.minidom
 import re
 import subprocess
+import zlib
 
+from xml.parsers.expat import ExpatError
 
 from . exceptions import *
 
@@ -154,3 +157,11 @@ def relaystate_from_htmlform(html_content):
 def decode_samlreq(html_content):
     base64_encoded = samlreq_from_htmlform(html_content)
     return base64.b64decode(base64_encoded)
+
+
+def decode_authn_req_http_redirect(saml_req_str):
+    msg = base64.b64decode(saml_req_str)
+    inflated = zlib.decompress(msg, -15)
+    return inflated.decode()
+    # dom = xml.dom.minidom.parseString(inflated.decode())
+    # return dom.toprettyxml()

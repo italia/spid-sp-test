@@ -47,7 +47,8 @@ if __name__ == '__main__':
     
     parser.add_argument('--authn-url', required=False, default=None,
                         help=("URL where the SP initializes "
-                              "the Authentication Request to this IDP"))
+                              "the Authentication Request to this IDP,"
+                              "it can also be a file:///"))
 
     parser.add_argument('-json', action="store_true", 
                         help="json output")
@@ -90,6 +91,8 @@ if __name__ == '__main__':
             )
             metadata_check_result_extra = metadata_check_extra.test_all()
             tests_done.append(metadata_check_extra)
+        
+        # TODO - better generalization for all the features
         # if args.list:
             # for method in args.list:
                 # meth = getattr(metadata_check, method, None)
@@ -120,7 +123,8 @@ if __name__ == '__main__':
             )
             authn_json_result_extra = authn_check_extra.test_all()
             tests_done.append(authn_check_extra)
-            
+    
+    # OUTPUT - REPORT
     if args.o or args.json:
         data = {
           "test": {
@@ -132,7 +136,9 @@ if __name__ == '__main__':
             data['test']['sp'][i.category] = i.report_to_dict()[i.category]
         
         output = json.dumps(data, indent=2)
-        print(output)
+        
+        if args.json:
+            print(output)
         
         if args.o:
             with open(args.o, 'w') as f:

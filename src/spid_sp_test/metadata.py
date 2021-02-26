@@ -92,7 +92,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             self.doc.attrib.get('entityID'),
             'The entityID attribute must be a valid HTTPS url'
         )
-        return self.is_ok(f'{self.__class__.__name__}.test_EntityDescriptor : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_EntityDescriptor')
 
 
     def test_SPSSODescriptor(self):
@@ -117,7 +117,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     'The %s attribute must be true - TR pag. 20' % attr
                 )
 
-        return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor')
 
 
     def test_xmldsig(self):
@@ -213,7 +213,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                        (('The digest algorithm must be one of [%s] - TR pag. 19') %
                         (', '.join(constants.ALLOWED_DGST_ALGS))))
         
-        return self.is_ok(f'{self.__class__.__name__}.test_Signature : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_Signature')
 
 
     def test_KeyDescriptor(self):
@@ -239,7 +239,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                                      'At least one encryption x509 '
                                      'must be present - TR pag. 19')
 
-        return self.is_ok(f'{self.__class__.__name__}.test_KeyDescriptor : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_KeyDescriptor')
 
 
 
@@ -282,7 +282,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         'in SingleLogoutService element '
                         'must be a valid URL - AV n. 1 and n. 3' % attr
                     )
-        return self.is_ok(f'{self.__class__.__name__}.test_SingleLogoutService : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_SingleLogoutService')
 
 
     def test_AssertionConsumerService(self):
@@ -330,7 +330,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self._assertTrue((len(acss) == 1),
                          'Must be present the default AssertionConsumerService '
                          'with index = 0 - TR pag. 20')
-        return self.is_ok(f'{self.__class__.__name__}.test_AssertionConsumerService : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_AssertionConsumerService')
 
 
     def test_AttributeConsumingService(self):
@@ -389,7 +389,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 len(set(al)),
                 'AttributeConsumigService must not contain duplicated RequestedAttribute - TR pag. 20'
             )
-        return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService')
 
 
     def test_Organization(self):
@@ -428,7 +428,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                             OrganizationURLvalue,
                             'The %s -element must be a valid URL - TR pag. 20' % ename
                         )
-        return self.is_ok(f'{self.__class__.__name__}.test_Organization : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_Organization')
 
 
     def test_all(self):

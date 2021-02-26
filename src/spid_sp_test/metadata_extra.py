@@ -55,7 +55,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
             (('The certificate is expired. It was valid till '+r[3]))
         )
         os.remove(fname)
-        return self.is_ok(f'{self.__class__.__name__}.test_Signature_extra : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_Signature_extra')
 
 
     def test_SPSSODescriptor_extra(self):
@@ -93,7 +93,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                         'true',
                         'The %s attribute must be true' % attr
                     )
-        return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor_extra : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor_extra')
 
 
     def test_AttributeConsumingService_extra(self):
@@ -112,7 +112,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                           'must be one of [%s]') %
                          (', '.join(common.constants.ALLOWED_FORMATS)))
                     )
-        return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService_extra : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService_extra')
 
     
     def test_Organization_extra(self):
@@ -132,7 +132,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     (len(e) == 1),
                     'An IT localised Organization%s must be present' % elem
                 )
-            return self.is_ok(f'{self.__class__.__name__}.test_Organization : OK')
+            return self.is_ok(f'{self.__class__.__name__}.test_Organization')
 
 
     def test_all(self):

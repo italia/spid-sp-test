@@ -29,7 +29,7 @@ class AbstractSpidCheck(object):
 
     def is_ok(self, msg):
         if not self.error_counter:
-            self.handle_result('info', msg)
+            self.handle_result('info', f"{msg} : OK")
             return True
         else:
             self.error_counter = 0
@@ -53,7 +53,7 @@ class AbstractSpidCheck(object):
             )
     
     def handle_error(self, error_message, description = ''):
-        self.handle_result('error', error_message, description)
+        self.handle_result('error', f"{error_message} : FAILED", description)
         self.error_counter += 1
         # here report as json
         data = {

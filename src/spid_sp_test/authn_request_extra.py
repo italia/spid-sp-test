@@ -31,7 +31,7 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
                 'The ForceAuthn attribute must be True '
                 'because of minimum/SpidL1'
             )
-        return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest_extra : OK')
+        return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest_extra')
     
     def test_all(self):
         self.test_AuthnRequest_extra()
