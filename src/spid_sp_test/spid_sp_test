@@ -16,6 +16,16 @@ from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
 logger = logging.getLogger(__name__)
 
 
+def selective_run(obj, meth_list):
+    if meth_list:
+        for method in meth_list:
+            meth = getattr(obj, method, None)
+            if meth: 
+                meth()
+    else:
+        obj.test_all()
+
+
 if __name__ == '__main__':
     _desc = (f'{__file__} -h for help')
     _epilog = f"""examples:
@@ -38,9 +48,9 @@ if __name__ == '__main__':
     parser.add_argument('--idp-metadata', 
                         action="store_true", default=False,
                         help="get example IdP metadata")
-    # parser.add_argument('-l','--list', nargs='*', 
-                        # help='esecute only selected checks', 
-                        # required=False)
+    parser.add_argument('-l','--list', nargs='*', 
+                        help='esecute only selected checks', 
+                        required=False)
     parser.add_argument('--extra', 
                         action="store_true", default=False,
                         help="execute extra checks")
@@ -80,50 +90,34 @@ if __name__ == '__main__':
         sys.exit(0)
     
     elif args.metadata_url:
-        metadata_check = SpidSpMetadataCheck(
-                                metadata_url = args.metadata_url,
-        )
-        metadata_json_result = metadata_check.test_all()
+        data_md = dict(metadata_url = args.metadata_url)
+        metadata_check = SpidSpMetadataCheck(**data_md)
+        selective_run(metadata_check, args.list)
         tests_done.append(metadata_check)
         if args.extra:
-            metadata_check_extra = SpidSpMetadataCheckExtra(
-                                    metadata_url = args.metadata_url,
-            )
-            metadata_check_result_extra = metadata_check_extra.test_all()
+            metadata_check_extra = SpidSpMetadataCheckExtra(**data_md)
+            selective_run(metadata_check_extra, args.list)
             tests_done.append(metadata_check_extra)
-        
-        # TODO - better generalization for all the features
-        # if args.list:
-            # for method in args.list:
-                # meth = getattr(metadata_check, method, None)
-                # if meth: 
-                    # meth()
-        # else:
-            # metadata_json_result = metadata_check.test_all()
-            
-            # here report to export ...
-            # print(metadata_json_result)
+
     else:
         logging.error('At least --id-metadata or --metadata-url is needed!')
         sys.exit(1)
-    
+
     # authn request
     if args.authn_url:
-        authn_check = SpidSpAuthnReqCheck(
-                        metadata = metadata_check.metadata,
-                        authn_request_url = args.authn_url
+        data_ac = dict(
+            metadata = metadata_check.metadata,
+            authn_request_url = args.authn_url
         )
-        authn_json_result = authn_check.test_all()
+        authn_check = SpidSpAuthnReqCheck(**data_ac)
+        selective_run(authn_check, args.list)
         tests_done.append(authn_check)
-        
+
         if args.extra:
-            authn_check_extra = SpidSpAuthnReqCheckExtra(
-                                    metadata = metadata_check.metadata,
-                                    authn_request_url = args.authn_url,
-            )
-            authn_json_result_extra = authn_check_extra.test_all()
+            authn_check_extra = SpidSpAuthnReqCheckExtra(**data_ac)
+            selective_run(authn_check_extra, args.list)
             tests_done.append(authn_check_extra)
-    
+
     # OUTPUT - REPORT
     if args.o or args.json:
         data = {

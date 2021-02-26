@@ -22,8 +22,8 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
                 and acr.text == 'https://www.spid.gov.it/SpidL1'):
             self._assertTrue(
                 ('ForceAuthn' in req.attrib),
-                'The ForceAuthn attribute must be present '
-                'because of minimum/SpidL1'
+                 'The ForceAuthn attribute must be present '
+                 'because of minimum/SpidL1'
             )
             self._assertEqual(
                 req.get('ForceAuthn').lower(),

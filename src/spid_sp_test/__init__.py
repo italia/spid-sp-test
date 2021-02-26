@@ -16,7 +16,8 @@ class AbstractSpidCheck(object):
         self.error_counter = 0
         self.verify_ssl = kwargs.get('verify_ssl', False)
         self.category = ''
-    
+
+
     def report_to_dict(self):
         res = {
                 self.category: {
@@ -35,13 +36,13 @@ class AbstractSpidCheck(object):
             self.error_counter = 0
             return False
 
-    
+
     def handle_result(self, 
                       level:str, 
                       title:str, description:str='', 
                       traceback:str=None):
         msg = f'{title} [{description}]' if description else f'{title}'
-        getattr(self.logger, level, 'warning')(msg)
+        getattr(self.logger, level, 'debug')(msg)
         if level not in ('error', 'debug', 'critical', 'warning'):
             # here report as json
             self.results.append(
@@ -51,7 +52,8 @@ class AbstractSpidCheck(object):
                     "value": description
                 }
             )
-    
+
+
     def handle_error(self, error_message, description = ''):
         self.handle_result('error', f"{error_message} : FAILED", description)
         self.error_counter += 1
@@ -68,11 +70,15 @@ class AbstractSpidCheck(object):
     def _assertTrue(self, check, error_message):
         if not check:
             self.handle_error(error_message)
+        else:
+            self.handle_result('info', f"{error_message} : OK")
 
 
     def _assertFalse(self, check, error_message):
         if check:
             self.handle_error(error_message)
+        else:
+            self.handle_result('info', f"{error_message} : OK")
 
 
     def _assertIsNotNone(self, check, error_message):
@@ -83,32 +89,43 @@ class AbstractSpidCheck(object):
     def _assertIn(self, first, second, error_message):
         if first not in second:
             self.handle_error(error_message)
+        else:
+            self.handle_result('info', f"{error_message} : OK")
 
 
     def _assertGreaterEqual(self, first, second, error_message):
         if not first >= second:
             self.handle_error(error_message)
+        else:
+            self.handle_result('info', f"{error_message} : OK")
 
 
     def _assertGreater(self, first, second, error_message):
         if not first > second:
             self.handle_error(error_message)
+        else:
+            self.handle_result('info', f"{error_message} : OK")
 
 
     def _assertEqual(self, first, second, error_message):
         if not first == second:
             self.handle_error(error_message)
+        else:
+            self.handle_result('info', f"{error_message} : OK")
 
 
     def _assertIsValidHttpsUrl(self, check, error_message):
         if check[0:8] != 'https://':
             self.handle_error(error_message, description = check)
+        else:
+            self.handle_result('info', f"{error_message} : OK")
 
 
     def _assertIsValidHttpUrl(self, check, error_message):
         if not re.match('https?://', check):
             self.handle_error(error_message, description = check)
-
+        else:
+            self.handle_result('info', f"{error_message} : OK")
 
     # maybe useful .. one day ?!
         # idp_server = self.idp()
