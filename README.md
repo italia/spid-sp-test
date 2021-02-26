@@ -1,10 +1,11 @@
 spid-sp-test
 ------------
-spid-test-env is a SAML2 SPID Service Provider validation tool that can be run from the command line.
+spid-sp-test is a SAML2 SPID Service Provider validation tool that can be run from the command line.
 This tool was born by separating the test library already present in [spid-saml-check](https://github.com/italia/spid-saml-check).
 
 
-#### Features
+Features
+--------
 
 spid-sp-test is:
 
@@ -15,8 +16,11 @@ spid-sp-test is:
 - integrable in CI
 - able to export a fully detailed report in json format, in stdout or in a file
 
+![example](gallery/example.gif)
 
-#### Roadmap
+
+Roadmap
+-------
 
 A hunderd of SAML2 SPID fake Responses ... For security assessment!
 
