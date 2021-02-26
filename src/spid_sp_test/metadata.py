@@ -30,7 +30,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                  metadata_url, 
                  xsds_files:list = None,
                  xsds_files_path:str = None,
-                 verify_ssl:bool=False):
+                 verify_ssl:bool = False):
         
         super(SpidSpMetadataCheck, self).__init__(verify_ssl=verify_ssl)
         self.category = 'metadata_strict'
