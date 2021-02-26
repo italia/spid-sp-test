@@ -36,6 +36,8 @@ pip install spid-sp-test --upgrade --no-cache
 Examples
 --------
 
+Run `spid_sp_test -h` for inline documentation.
+
 Test metadata passing a file
 ````
 spid_sp_test -metadata_url file://metadata.xml
@@ -63,7 +65,7 @@ spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http:
 
 JSON report (add `-o filename.json` to write to a file)
 ````
-python3 src/spid_sp_test/spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug CRITICAL -json
+spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug CRITICAL -json
 ````
 
 
