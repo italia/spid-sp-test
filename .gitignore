@@ -14,3 +14,9 @@ example/metadata/*.md
 *pyFF_example/entities
 env/
 *.json
+*egg-info*
+
+
+build/*
+dist/*
+

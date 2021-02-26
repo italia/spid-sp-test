@@ -1,4 +1,5 @@
 pysaml2
 xmlschema
-xsdata
 requests
+pyXMLSecurity
+lxml
