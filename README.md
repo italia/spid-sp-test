@@ -24,6 +24,12 @@ Roadmap
 
 - Next releases: a hundred of SAML2 SPID fake Responses ... For security assessment!
 
+How to handle Http Response checks?
+
+1. python `requests` and SAML2 needs to use a POST method to a ACS service. Then `requests` checks http status page in the HTTP response page, then saves HTML to a browsable folder for any further human analisys
+2. selenium HQ -> very huge to be loaded in a CI!
+
+it is possible to think of getting screenshots using selenium HQ but the use of selenium should be completely optional for the needs of CI.
 
 Setup
 -----
