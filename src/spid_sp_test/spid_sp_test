@@ -140,3 +140,7 @@ if __name__ == '__main__':
             with open(args.o, 'w') as f:
                 f.write(output)
     
+    # check exit status 
+    for i in tests_done:
+        if i.errors:
+            sys.exit(1)

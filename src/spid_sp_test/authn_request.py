@@ -37,37 +37,42 @@ logger = logging.getLogger(__name__)
 def get_authn_request(authn_request_url, verify_ssl):
     status = None
     data = {}
+    binding = 'post' or 'redirect'
     if authn_request_url[0:7] == 'file://':
         authn_request = open(authn_request_url[7:], 'rb').read()
+        if authn_request[0] == b'<' and authn_request[-1] == b'>':
+            binding = 'post'
+        else:
+            binding = 'redirect'
+
     else:
         request = requests.get(
-                            authn_request_url, 
-                            verify=verify_ssl,
-                            allow_redirects=False
+                                authn_request_url, 
+                                verify=verify_ssl,
+                                allow_redirects=False
         )
-        if request.status_code == 302:
-            # HTTP-REDIRECT
-            status = 302
-            redirect = request.headers['Location']
-            q_args = urllib.parse.splitquery(redirect)[1]
-            authn_request = dict(urllib.parse.parse_qsl(q_args))
-            
-            data['SAMLRequest'] = authn_request['SAMLRequest']
-            data['SAMLRequest_xml'] = decode_authn_req_http_redirect(authn_request['SAMLRequest'])
-            data['RelayState'] = authn_request['RelayState']
-            data['SigAlg'] = authn_request['SigAlg']
-            data['Signature'] = authn_request['Signature']
-            
-        elif request.status_code == 200:
-            # HTTP POST
-            status = 200
-            authn_request = request.content.decode()
-            data['SAMLRequest'] = samlreq_from_htmlform(authn_request)
-            data['SAMLRequest_xml'] = decode_samlreq(authn_request)
-            data['RelayState'] = relaystate_from_htmlform(authn_request)
-        else:
-            raise SAMLRequestNotFound()
+    
+    if binding == 'redirect':
+        # HTTP-REDIRECT
+        redirect = request.headers['Location']
+        q_args = urllib.parse.splitquery(redirect)[1]
+        authn_request = dict(urllib.parse.parse_qsl(q_args))
         
+        data['SAMLRequest'] = authn_request['SAMLRequest']
+        data['SAMLRequest_xml'] = decode_authn_req_http_redirect(authn_request['SAMLRequest'])
+        data['RelayState'] = authn_request['RelayState']
+        data['SigAlg'] = authn_request['SigAlg']
+        data['Signature'] = authn_request['Signature']
+        
+    elif binding == 'post':
+        # HTTP POST
+        authn_request = request.content.decode()
+        data['SAMLRequest'] = samlreq_from_htmlform(authn_request)
+        data['SAMLRequest_xml'] = decode_samlreq(authn_request)
+        data['RelayState'] = relaystate_from_htmlform(authn_request)
+    else:
+        raise SAMLRequestNotFound()
+
     return data
 
 
@@ -138,7 +143,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                'and must have a valid signature')
 
         os.chdir(self.xsds_files_path)
-        authn_request = self.authn_request_decoded
+        authn_request = self.authn_request_decoded.decode()
         schema_file = open('saml-schema-protocol-2.0.xsd', 'rb')
         msg = f'Test authn_request with {schema_file.name}'
         try:
@@ -150,7 +155,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 raise Exception('Validation Error')
             logger.info(' '.join((msg, '-> OK')))
         except Exception as e:
-            self.handle_result('critical', 
+            self.handle_result('error', 
                                '-> '.join((msg, f'{e}')))
       
         cert = self.md.xpath('//SPSSODescriptor/KeyDescriptor[@use="signing"]'

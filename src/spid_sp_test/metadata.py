@@ -70,6 +70,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     raise Exception('Validation Error')
                 logger.info(' '.join((msg, '-> OK')))
             except Exception as e:
+                logger.error(f'{msg}: {e}')
                 self.handle_error(msg,
                                   description = 'xsd test failed',
                                   traceback = f'{e}')
