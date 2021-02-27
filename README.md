@@ -14,15 +14,15 @@ spid-sp-test is:
 - able to test a SAML2 SPID Metadata file
 - able to test a SAML2 SPID AuthnRequest
 - integrable in CI
-- able to export a fully detailed report in json format, in stdout or in a file
+- able to export a detailed report in json format, in stdout or in a file.
 
-![example](gallery/example.gif)
+![example](gallery/example2.gif)
 
 
 Roadmap
 -------
 
-A hunderd of SAML2 SPID fake Responses ... For security assessment!
+- Next releases: a hundred of SAML2 SPID fake Responses ... For security assessment!
 
 
 Setup
@@ -53,9 +53,9 @@ Get fake IdP metadata and copy it to your SP metadatastore folder
 spid_sp_test --idp-metadata > /path/to/spid-django/example/spid_config/metadata/spid-sp-test.xml
 ````
 
-A more complex test
+A quite standard test
 ````
-spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8088 --extra -debug DEBUG
+spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8088 --extra
 ````
 
 Print only ERRORs
