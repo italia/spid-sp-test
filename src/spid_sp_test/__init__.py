@@ -118,14 +118,14 @@ class AbstractSpidCheck(object):
 
 
     def _assertIsValidHttpsUrl(self, check, error_message):
-        if check[0:8] != 'https://':
+        if not re.match('https://', check if check else ''):
             self.handle_error(error_message, description = check)
         else:
             self.handle_result('info', f"{error_message} : OK")
 
 
     def _assertIsValidHttpUrl(self, check, error_message):
-        if not re.match('https?://', check):
+        if not re.match('https?://', check if check else ''):
             self.handle_error(error_message, description = check)
         else:
             self.handle_result('info', f"{error_message} : OK")
