@@ -81,3 +81,11 @@ Authors
 - Giuseppe De Marco
 - Paolo Smiraglia
 - Michele D'Amico
+
+
+References
+----------
+
+TLS/SSL tests
+- [https://github.com/nabla-c0d3/sslyze](https://github.com/nabla-c0d3/sslyze)
+- [https://testssl.sh/](https://testssl.sh/)

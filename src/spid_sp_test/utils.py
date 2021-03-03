@@ -165,3 +165,11 @@ def decode_authn_req_http_redirect(saml_req_str):
     return inflated.decode()
     # dom = xml.dom.minidom.parseString(inflated.decode())
     # return dom.toprettyxml()
+
+
+def get_key_pem_wrapped_unwrapped(cert):
+    begin_cert = "-----BEGIN PRIVATE KEY-----\n"
+    end_cert = "\n-----END PRIVATE KEY-----\n"
+    unwrapped_cert = re.sub(f'{begin_cert}|{end_cert}', '', cert)
+    wrapped_cert = f'{begin_cert}{unwrapped_cert}{end_cert}'
+    return wrapped_cert, unwrapped_cert

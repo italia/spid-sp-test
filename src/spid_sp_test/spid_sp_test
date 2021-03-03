@@ -129,7 +129,7 @@ if __name__ == '__main__':
     if args.test_response:
         data_tr = dict(
             metadata_etree = metadata_check.doc,
-            authnreq_etree = authn_check.doc,
+            authn_request_url = args.authn_url,
             relay_state = authn_check.relay_state
         )
         response_check = SpidSpResponseCheck(**data_tr)

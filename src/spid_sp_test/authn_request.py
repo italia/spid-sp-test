@@ -34,12 +34,14 @@ from . exceptions import SAMLRequestNotFound
 logger = logging.getLogger(__name__)
 
 
-def get_authn_request(authn_request_url, verify_ssl):
+def get_authn_request(authn_request_url, verify_ssl=False):
     status = None
     data = {}
     binding = 'post' or 'redirect'
     if authn_request_url[0:7] == 'file://':
         authn_request = open(authn_request_url[7:], 'rb').read()
+        
+        # stupid test ... good enough for now
         if authn_request[0] == b'<' and authn_request[-1] == b'>':
             binding = 'post'
         else:
@@ -70,6 +72,7 @@ def get_authn_request(authn_request_url, verify_ssl):
         data['SAMLRequest'] = samlreq_from_htmlform(authn_request)
         data['SAMLRequest_xml'] = decode_samlreq(authn_request)
         data['RelayState'] = relaystate_from_htmlform(authn_request)
+
     else:
         raise SAMLRequestNotFound()
 
