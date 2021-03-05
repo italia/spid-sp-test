@@ -41,7 +41,7 @@ DEFAULT_RESPONSE = {
     "NameIDNameQualifier": NameIDNameQualifier,
     "NameID": "",                    # random, eg: _3fc08efa-a851-4855-9f03-9b881df8ca06
     "NotOnOrAfter": "",              # 2021-03-04T15:53:37Z
-    "NotBefore": "",                 # "2021-03-04T15:48:46Z" -> IssueInstant
+    "NotBefore": "",                 # 2021-03-04T15:48:46Z -> IssueInstant
     "AuthnIstant": "",               # 2021-03-04T15:48:46Z ~ IssueInstant
     "SessionIndex": "",              # _ffa3114b-f589-417b-8602-4b0275f6bafc
     "AuthnContextClassRef": "",      # https://www.spid.gov.it/SpidL1
@@ -57,6 +57,28 @@ ATTRIBUTE_TMPL = """
                          >{{ value }}</saml:AttributeValue>
     </saml:Attribute>
 """
+
+SIGNATURE_TMPL = """
+    <ds:Signature>
+        <ds:SignedInfo>
+            <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+            <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+            <ds:Reference URI="{{ReferenceURI}}">
+                <ds:Transforms>
+                    <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+                    <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+                </ds:Transforms>
+                <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+                    <ds:DigestValue />
+            </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue />
+        <ds:KeyInfo>
+            <ds:X509Data />
+        </ds:KeyInfo>
+    </ds:Signature>
+"""
+
 
 
 RESPONSE_TESTS = {
