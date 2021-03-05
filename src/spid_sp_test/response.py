@@ -1,11 +1,57 @@
-from jinja2 import Environment, PackageLoader, select_autoescape
+import logging 
+
+from copy import deepcopy
+from jinja2 import (Environment, 
+                    Markup, 
+                    PackageLoader, 
+                    Template, 
+                    select_autoescape)
 from lxml import etree
 
 from saml2.sigver import CryptoBackendXMLSecurity
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
 from spid_sp_test.authn_request import get_authn_request
-from spid_sp_test.idp import idp
-from spid_sp_test.utils import del_ns
+from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
+from spid_sp_test.responses import test_config
+from spid_sp_test.utils import del_ns, prettify_xml
+
+
+logger = logging.getLogger(__name__)
+
+
+class SpidSpResponse(object):
+    def __init__(self, conf=None, attributes={}):
+        self.conf = deepcopy(conf or test_config.RESPONSE_TESTS['1'])
+        self.attributes = attributes
+        self.loader = Environment(
+                    loader = PackageLoader('responses', 'templates'),
+                    autoescape = select_autoescape(['xml'])
+        )
+
+
+    def render_attributes(self, attributes={}):
+        # fill attributes
+        attr_rendr_list = []
+        attrs = attributes or self.attributes or test_config.ATTRIBUTES
+        for k,v in attrs.items():
+            template = Template(test_config.ATTRIBUTE_TMPL)
+            attr_type = test_config.ATTRIBUTES_TYPES.get(k, 'string')
+            attr_rendr = template.render(name=k, value=v, type=attr_type)
+            attr_rendr_list.append(attr_rendr)
+        return Markup('\n'.join(attr_rendr_list))
+
+
+    def render(self, template:str='base.xml', data:dict={}):
+        template = self.loader.get_template(template)
+        data['Attributes'] = self.render_attributes()
+        
+        result = template.render(**data)
+        logger.debug(f"Rendering response template {template}: {result}")
+        return result
+
+
+    def __str__(self):
+        return self.conf
 
 
 class SpidSpResponseCheck(AbstractSpidCheck):    
@@ -15,6 +61,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
     def __init__(self, *args, **kwargs):
         super(SpidSpResponseCheck, self).__init__(*args, **kwargs)
         self.category = 'response'
+        
+        self.template_base_dir = kwargs.get('template_base_dir', 
+                                            self.template_base_dir)
+        
         self.metadata_etree = kwargs.get('metadata_etree')
         self.authn_request_url = kwargs.get('authn_request_url')
         self.authn_request_data = get_authn_request(self.authn_request_url)
@@ -23,25 +73,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         
         self.relay_state = kwargs.get('relay_state')
         
-        self.loader = Environment(
-                    loader = PackageLoader('responses', 'templates'),
-                    autoescape = select_autoescape(['html', 'xml'])
-        )
-        
         self.crypto_backend = CryptoBackendXMLSecurity()
-        self.private_key_fpath = idp.SAML2_IDP_CONFIG['key_file']
-        
-        # with open(self.private_key_fpath) as key_str:
-            # self.wrapped_private_key, self.unwrapped_private_key = get_key_pem_wrapped_unwrapped(key_str.read())
-
-    def render(self, template:str='base.xml', data:dict={}):
-        template = self.loader.get_template(template)
-        result = template.render(**data)
-        self.logger.debug(f"Rendering response template {template}: {result}")
-        return result
+        self.private_key_fpath = SAML2_IDP_CONFIG['key_file']
 
 
-    def sign(self, xmlstr, key_file=None):
+    def sign(self, xmlstr, assertion=True, response=True, key_file=None):
         """
         Sign an XML statement.
 
@@ -54,27 +90,32 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'pkcs11://' URI or PEM data
         :returns: Signed XML as string
         """
-        
-        key = key_file or self.private_key_fpath
-        
-        params = dict(
-                        statement = xmlstr, 
-                        key_file = key, 
-                        node_id = 'ID'
-        )
-        
-        params['node_name'] = 'urn:oasis:names:tc:SAML:2.0:assertion:Assertion'
-        assertion_signed = self.crypto_backend.sign_statement(**params)
-        
-        params['node_name'] = 'urn:oasis:names:tc:SAML:2.0:protocol:Response'
-        response_signed = self.crypto_backend.sign_statement(**params)
-        
-        return response_signed
-        
-        
 
+        key = key_file or self.private_key_fpath
+
+        params = dict(statement = xmlstr, 
+                      key_file = key, 
+                      node_id = 'ID')
+        result = xmlstr
+
+        if assertion:
+            params['node_name'] = 'urn:oasis:names:tc:SAML:2.0:assertion:Assertion'
+            result = self.crypto_backend.sign_statement(**params)
+            params['statement'] = result
+
+        if response:
+            params['node_name'] = 'urn:oasis:names:tc:SAML:2.0:protocol:Response'
+            response_signed = self.crypto_backend.sign_statement(**params)
+
+        return response_signed
+
+
+    def load_test(self, test_name=None, attributes={}):
+        return SpidSpResponse(test_name, attributes)
 
     def test_all(self):
-        xmlstr = self.render()
+        response_obj = self.load_test()
+        xmlstr = response_obj.render() 
         result = self.sign(xmlstr)
-        print(result)
+        pretty_xml = prettify_xml(result)
+        print(pretty_xml.decode())

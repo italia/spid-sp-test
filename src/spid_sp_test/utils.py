@@ -6,6 +6,7 @@ import subprocess
 import zlib
 
 from xml.parsers.expat import ExpatError
+from lxml import etree
 
 from . exceptions import *
 
@@ -173,3 +174,12 @@ def get_key_pem_wrapped_unwrapped(cert):
     unwrapped_cert = re.sub(f'{begin_cert}|{end_cert}', '', cert)
     wrapped_cert = f'{begin_cert}{unwrapped_cert}{end_cert}'
     return wrapped_cert, unwrapped_cert
+
+
+def prettify_xml(msg_str) -> bytes:
+    msg_etree = etree.fromstring(msg_str)
+    msg = etree.tostring(
+        msg_etree,
+        pretty_print=True,
+    )
+    return msg

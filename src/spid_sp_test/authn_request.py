@@ -19,7 +19,7 @@ from saml2.sigver import CryptoBackendXMLSecurity
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
 from spid_sp_test import constants
-from spid_sp_test.idp.idp import SAML2_IDP_CONFIG
+from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
 from spid_sp_test.utils import (decode_samlreq,
                                 del_ns, 
                                 parse_pem, 
