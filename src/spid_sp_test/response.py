@@ -8,7 +8,7 @@ import string
 from copy import deepcopy
 from jinja2 import (Environment, 
                     Markup, 
-                    PackageLoader, 
+                    FileSystemLoader, 
                     Template, 
                     select_autoescape)
 from lxml import etree
@@ -46,12 +46,16 @@ def get_xmlsec1_bin():
 
 
 class SpidSpResponse(object):
-    def __init__(self, conf=None, authnreq_attrs={},attributes={}):
+    def __init__(self, 
+                 conf=None, 
+                 authnreq_attrs={}, 
+                 attributes={},
+                 template_path='./templates'):
         self.conf = deepcopy(conf or settings.RESPONSE_TESTS['1'])
         self.attributes = attributes
         self.authnreq_attrs = authnreq_attrs
         self.loader = Environment(
-                    loader = PackageLoader('responses', 'templates'),
+                    loader = FileSystemLoader(searchpath=template_path),
                     autoescape = select_autoescape(['xml'])
         )
 
@@ -83,15 +87,15 @@ class SpidSpResponse(object):
 
 
 class SpidSpResponseCheck(AbstractSpidCheck):    
-    template_base_dir = f'{BASE_DIR}/responses/test/'
+    template_path = f'{BASE_DIR}/responses/templates/'
 
 
     def __init__(self, *args, **kwargs):
         super(SpidSpResponseCheck, self).__init__(*args, **kwargs)
         self.category = 'response'
 
-        self.template_base_dir = kwargs.get('template_base_dir', 
-                                            self.template_base_dir)
+        self.template_path = kwargs.get('template_path', 
+                                        self.template_path)
 
         self.metadata_etree = kwargs.get('metadata_etree')
         self.authn_request_url = kwargs.get('authn_request_url')
@@ -125,15 +129,6 @@ class SpidSpResponseCheck(AbstractSpidCheck):
     def sign(self, xmlstr, assertion=True, response=True, key_file=None):
         """
         Sign an XML statement.
-
-        The parameters actually used in this CryptoBackend
-        implementation are :
-
-        :param statement: XML as string
-        :param node_name: Name of the node to sign
-        :param key_file: xmlsec key_spec string(), filename,
-            'pkcs11://' URI or PEM data
-        :returns: Signed XML as string
         """
         signature_node = Template(settings.SIGNATURE_TMPL)
 
@@ -176,8 +171,15 @@ class SpidSpResponseCheck(AbstractSpidCheck):
     def load_test(self, test_name=None, attributes={}):
         return SpidSpResponse(test_name, 
                               authnreq_attrs = self.authnreq_attrs, 
-                              attributes = attributes)
+                              attributes = attributes,
+                              template_path = self.template_path)
     
+    # def check_response(self, res):
+        
+        
+        # if res.status_code >= 200:
+            
+        
     
     def send_response(self, xmlstr):
         data = {
@@ -188,8 +190,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         url = self.authnreq_attrs['AssertionConsumerServiceURL']
         ua = self.authn_request_data['requests_session']
         res = ua.post(url, data=data, allow_redirects=True)
-        print(res.status_code, res.content.decode())
-
+        self.logger.debug(f'Response: {res.status_code}: {res.content.decode()}')
+        return res
+        
 
     def test_all(self):
         response_obj = self.load_test()
@@ -197,4 +200,5 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         result = self.sign(xmlstr)
         pretty_xml = prettify_xml(result)
         print(pretty_xml.decode())
-        self.send_response(result)
+        res = self.send_response(result)
+        # self.check_response(res)

@@ -8,6 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
 from saml2.metadata import entity_descriptor
 from saml2.server import Server
+from spid_sp_test import BASE_DIR
 from spid_sp_test.metadata import SpidSpMetadataCheck
 from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
 from spid_sp_test.authn_request import SpidSpAuthnReqCheck
@@ -66,6 +67,10 @@ if __name__ == '__main__':
     parser.add_argument('-tr', '--test-response', 
                         action="store_true", default=False,
                         help="execute SAML2 responses")
+    parser.add_argument('-tp', '--template-path', 
+                        default = f'{BASE_DIR}/responses/templates/',
+                        required=False,
+                        help="templates containing SAML2 xml templates, for responses")
     
     parser.add_argument('-json', action="store_true", 
                         help="json output")
@@ -130,7 +135,8 @@ if __name__ == '__main__':
         data_tr = dict(
             metadata_etree = metadata_check.doc,
             authn_request_url = args.authn_url,
-            relay_state = authn_check.relay_state
+            relay_state = authn_check.relay_state,
+            template_path = args.template_path
         )
         response_check = SpidSpResponseCheck(**data_tr)
         selective_run(response_check, args.list)
