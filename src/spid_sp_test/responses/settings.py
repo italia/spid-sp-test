@@ -73,9 +73,6 @@ SIGNATURE_TMPL = """
             </ds:Reference>
         </ds:SignedInfo>
         <ds:SignatureValue />
-        <ds:KeyInfo>
-            <ds:X509Data />
-        </ds:KeyInfo>
     </ds:Signature>
 """
 

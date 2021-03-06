@@ -1,3 +1,4 @@
+import base64
 import datetime
 import random
 import logging
@@ -24,7 +25,14 @@ logger = logging.getLogger(__name__)
 
 
 def stupid_rnd_string(N=32):
-    return '_' + ''.join(random.choice(string.ascii_lowercase + '_') for _ in range(N))
+    return ''.join(random.choice(string.ascii_lowercase) for _ in range(N))
+
+def saml_rnd_id():
+    return (f"_{stupid_rnd_string(8)}"
+            f"-{stupid_rnd_string(4)}"
+            f"-{stupid_rnd_string(4)}"
+            f"-{stupid_rnd_string(4)}"
+            f"-{stupid_rnd_string(12)}")
 
 
 def get_xmlsec1_bin():
@@ -32,7 +40,7 @@ def get_xmlsec1_bin():
     if env_bin:
         return env_bin
     else:
-        for i in ("/usr/bin/xmlsec1", "/usr/local/bin/xmlsec1"):
+        for i in ("/usr/local/bin/xmlsec1", "/usr/bin/xmlsec1"):
             if os.access(i, os.X_OK):
                 return i
 
@@ -90,18 +98,23 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.authn_request_data = get_authn_request(self.authn_request_url)
         self.authnreq_etree = etree.fromstring(self.authn_request_data['SAMLRequest_xml'])
         del_ns(self.authnreq_etree)
+        
+        self.issuer = kwargs.get('issuer', SAML2_IDP_CONFIG["entityid"])
         self.authnreq_attrs = self.authnreq_etree.xpath("/AuthnRequest")[0].attrib
+        self.authnreq_issuer = self.authnreq_etree.xpath("/AuthnRequest/Issuer")[0].attrib['NameQualifier']
         self.response_attrs = {
-            'ResponseID': stupid_rnd_string(),
+            'ResponseID': saml_rnd_id(),
             'AuthnRequestID': self.authnreq_attrs['ID'],
             'IssueInstant': self.authnreq_attrs['IssueInstant'],
             'NotOnOrAfter': (datetime.datetime.utcnow() + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'AssertionConsumerURL':  self.authnreq_attrs['AssertionConsumerServiceURL'],
             'NameIDNameQualifier': settings.DEFAULT_RESPONSE['NameIDNameQualifier'],
             'NameID': 'that-transient-opaque-value',
-            'AssertionID': stupid_rnd_string(),
+            'AssertionID': saml_rnd_id(),
             'AuthnIstant': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
-            'SessionIndex': stupid_rnd_string()
+            'SessionIndex': saml_rnd_id(),
+            'Issuer': self.issuer,
+            'Audience': self.authnreq_issuer
         }
         self.relay_state = kwargs.get('relay_state')
 
@@ -109,7 +122,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.private_key_fpath = SAML2_IDP_CONFIG['key_file']
 
 
-    def sign(self, xmlstr, assertion=True, node_name = '', response=True, key_file=None):
+    def sign(self, xmlstr, assertion=True, response=True, key_file=None):
         """
         Sign an XML statement.
 
@@ -122,12 +135,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'pkcs11://' URI or PEM data
         :returns: Signed XML as string
         """
-
-        key = key_file or self.private_key_fpath
         signature_node = Template(settings.SIGNATURE_TMPL)
 
-        params = dict(statement = xmlstr, 
-              key_file = key, 
+        params = dict(
+              statement = xmlstr, 
+              key_file = key_file or self.private_key_fpath, 
         )
 
         if assertion:
@@ -165,6 +177,19 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         return SpidSpResponse(test_name, 
                               authnreq_attrs = self.authnreq_attrs, 
                               attributes = attributes)
+    
+    
+    def send_response(self, xmlstr):
+        data = {
+            "RelayState": self.authn_request_data.get('RelayState', '/'),
+            "SAMLResponse": base64.b64encode(xmlstr.encode())
+            
+        }
+        url = self.authnreq_attrs['AssertionConsumerServiceURL']
+        ua = self.authn_request_data['requests_session']
+        res = ua.post(url, data=data, allow_redirects=True)
+        print(res.status_code, res.content.decode())
+
 
     def test_all(self):
         response_obj = self.load_test()
@@ -172,3 +197,4 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         result = self.sign(xmlstr)
         pretty_xml = prettify_xml(result)
         print(pretty_xml.decode())
+        self.send_response(result)

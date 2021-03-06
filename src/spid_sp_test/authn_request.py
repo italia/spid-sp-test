@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_authn_request(authn_request_url, verify_ssl=False):
-    status = None
+    session = None
     data = {}
     binding = 'post' or 'redirect'
     if authn_request_url[0:7] == 'file://':
@@ -48,10 +48,11 @@ def get_authn_request(authn_request_url, verify_ssl=False):
             binding = 'redirect'
 
     else:
-        request = requests.get(
-                                authn_request_url, 
-                                verify=verify_ssl,
-                                allow_redirects=False
+        requests_session = requests.Session()
+        request = requests_session.get(
+                                       authn_request_url, 
+                                       verify=verify_ssl,
+                                       allow_redirects=False
         )
     
     if binding == 'redirect':
@@ -75,7 +76,8 @@ def get_authn_request(authn_request_url, verify_ssl=False):
 
     else:
         raise SAMLRequestNotFound()
-
+    
+    data['requests_session'] = requests_session
     return data
 
 
