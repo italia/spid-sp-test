@@ -1,0 +1,2 @@
+{% extends "base.xml" %}
+{% block Issuer %}<saml:Issuer>{{Issuer}}</saml:Issuer>{% endblock %}

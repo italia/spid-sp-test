@@ -1,45 +1,52 @@
 <samlp:Response
-    Destination="{{AssertionConsumerURL}}"
-    ID="{{ResponseID}}"
-    InResponseTo="{{AuthnRequestID}}" 
-    IssueInstant="{{IssueInstant}}"
-    Version="2.0"
-    xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
-    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" 
+    {% block Destination %}Destination="{{AssertionConsumerURL}}"{% endblock %}
+    {% block ResponseID %}ID="{{ResponseID}}"{% endblock %}
+    {% block InResponseTo %}InResponseTo="{{AuthnRequestID}}"{% endblock %}
+    {% block IssueInstant %}IssueInstant="{{IssueInstant}}"{% endblock %}
+    {% block Version %}Version="2.0"{% endblock %}
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
-    <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">{{Issuer}}</saml:Issuer>
+    {% block Issuer %}<saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">{{Issuer}}</saml:Issuer>{% endblock %}
     {% block response_signature %}
     <!-- Response Signature here -->
     {% endblock response_signature %}
-    <samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status>
+    {% block Status %}<samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status>{% endblock %}
+    {% block Assertion %}
+    {% block AssertionTag %}
     <saml:Assertion ID="{{AssertionID}}" IssueInstant="{{IssueInstant}}"
         Version="2.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    {% endblock AssertionTag %}
         {% block assertion_signature %}
         <!-- Assertion Signature here -->
         {% endblock assertion_signature %}
-        <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">{{Issuer}}</saml:Issuer>
+        {% block AssertionIssuer %}<saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">{{Issuer}}</saml:Issuer>{% endblock %}
+        {% block SubjectTag %}
         <saml:Subject>
-            <saml:NameID 
+            {% block SubjectNameID %}
+            <saml:NameID
                 Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
                 NameQualifier="{{NameIDNameQualifier}}">
                     {{NameID}}
             </saml:NameID>
+            {% endblock SubjectNameID %}
             <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
-                <saml:SubjectConfirmationData 
+                <saml:SubjectConfirmationData
                     InResponseTo="{{AuthnRequestID}}"
                     NotOnOrAfter="{{NotOnOrAfter}}"
                     Recipient="{{AssertionConsumerURL}}" />
             </saml:SubjectConfirmation>
         </saml:Subject>
-        <saml:Conditions 
-            NotBefore="{{IssueInstant}}" 
+        {% endblock SubjectTag %}
+        <saml:Conditions
+            NotBefore="{{IssueInstant}}"
             NotOnOrAfter="{{NotOnOrAfter}}" >
             <saml:AudienceRestriction>
                 <saml:Audience>{{Audience}}</saml:Audience>
             </saml:AudienceRestriction>
-        </saml:Conditions> 
-        <saml:AuthnStatement 
+        </saml:Conditions>
+        <saml:AuthnStatement
             AuthnInstant="{{AuthnIstant}}"
             SessionIndex="{{SessionIndex}}" >
             <saml:AuthnContext>
@@ -50,4 +57,5 @@
             {{Attributes}}
         </saml:AttributeStatement>
     </saml:Assertion>
+    {% endblock Assertion %}
 </samlp:Response>

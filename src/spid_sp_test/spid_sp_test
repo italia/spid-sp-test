@@ -74,6 +74,11 @@ if __name__ == '__main__':
                         required=False,
                         help="templates containing SAML2 xml templates, for responses")
 
+    parser.add_argument('-tn', '--test-names',
+                        action='append', nargs='*',
+                        required=False,
+                        help="response test to be executed, eg: 01 02 03")
+
     parser.add_argument('-json', action="store_true",
                         help="json output")
 
@@ -144,7 +149,8 @@ if __name__ == '__main__':
             authn_request_url = args.authn_url,
             relay_state = authn_check.relay_state,
             template_path = args.template_path,
-            xmlsec_binary = args.xmlsec_path
+            xmlsec_binary = args.xmlsec_path,
+            test_names = args.test_names[0] if args.test_names else [],
         )
         response_check = SpidSpResponseCheck(**data_tr)
         selective_run(response_check, args.list)

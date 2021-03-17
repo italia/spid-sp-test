@@ -1,0 +1,2 @@
+{% extends "base.xml" %}
+{% block Issuer %}<saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity"></saml:Issuer>{% endblock %}

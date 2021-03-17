@@ -1,0 +1,5 @@
+{% extends "base.xml" %}
+{% block SubjectTag %}
+<saml:Subject>
+</saml:Subject>
+{% endblock SubjectTag %}

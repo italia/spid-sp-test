@@ -1,0 +1,2 @@
+{% extends "base.xml" %}
+{% block Status %}<samlp:Status><samlp:StatusCode Value=""/></samlp:Status>{% endblock %}

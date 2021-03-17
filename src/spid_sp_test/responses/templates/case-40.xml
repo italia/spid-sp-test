@@ -1,0 +1,6 @@
+{% extends "base.xml" %}
+{% block AssertionTag %}
+<saml:Assertion ID="{{AssertionID}}" IssueInstant="2099-01-01T00:00:00Z"
+    Version="2.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+{% endblock AssertionTag %}

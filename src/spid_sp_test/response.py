@@ -13,7 +13,7 @@ from jinja2 import (Environment,
                     select_autoescape)
 from lxml import etree
 
-from saml2.sigver import CryptoBackendXmlSec1
+from saml2.sigver import CryptoBackendXmlSec1, XmlsecError
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
 from spid_sp_test.authn_request import get_authn_request
 from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
@@ -39,20 +39,39 @@ def saml_rnd_id():
 class SpidSpResponse(object):
     def __init__(self,
                  conf=None,
+                 response_attrs={},
                  authnreq_attrs={},
                  attributes={},
                  template_path='./templates'):
-        self.conf = deepcopy(conf or settings.RESPONSE_TESTS['1'])
+
+        try:
+            self.conf = deepcopy(
+                            settings.RESPONSE_TESTS[conf] or
+                            settings.RESPONSE_TESTS['1']
+                        )
+        except KeyError:
+            raise Exception(f'Test {conf} doesn\'t exists')
+
         self.attributes = attributes
         self.authnreq_attrs = authnreq_attrs
+
+        # overload response args with values taken from test conf
+        self.response_attrs = response_attrs
+        if self.conf.get('response'):
+            for k,v in self.conf['response'].items():
+                logger.debug(f'Test {self.conf}: overwriting {k} with {v}')
+                self.response_attrs[k] = v
+
         self.loader = Environment(
                     loader = FileSystemLoader(searchpath=template_path),
                     autoescape = select_autoescape(['xml'])
         )
-
+        self.template_name = self.conf.get('path', 'base.xml')
 
     def render_attributes(self, attributes={}):
-        # fill attributes
+        """
+            fill values to be released as identity attributes
+        """
         attr_rendr_list = []
         attrs = attributes or self.attributes or settings.ATTRIBUTES
 
@@ -64,10 +83,10 @@ class SpidSpResponse(object):
         return Markup('\n'.join(attr_rendr_list))
 
 
-    def render(self, template:str='base.xml', data:dict={}):
-        template = self.loader.get_template(template)
+    def render(self, data:dict={}):
+        template = self.loader.get_template(self.template_name)
+        data = data or self.response_attrs
         data['Attributes'] = self.render_attributes()
-
         result = template.render(**data)
         logger.debug(f"Rendering response template {template}: {result}")
         return result
@@ -90,11 +109,20 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         self.metadata_etree = kwargs.get('metadata_etree')
         self.authn_request_url = kwargs.get('authn_request_url')
+
+        self.crypto_backend = CryptoBackendXmlSec1(
+            xmlsec_binary=kwargs.get('xmlsec_binary') or get_xmlsec1_bin()
+        )
+        self.private_key_fpath = SAML2_IDP_CONFIG['key_file']
+        self.test_names = kwargs.get('test_names') or settings.RESPONSE_TESTS.keys()
+        self.kwargs = kwargs
+
+    def do_authnrequest(self):
         self.authn_request_data = get_authn_request(self.authn_request_url)
         self.authnreq_etree = etree.fromstring(self.authn_request_data['SAMLRequest_xml'])
         del_ns(self.authnreq_etree)
 
-        self.issuer = kwargs.get('issuer', SAML2_IDP_CONFIG["entityid"])
+        self.issuer = self.kwargs.get('issuer', SAML2_IDP_CONFIG["entityid"])
         self.authnreq_attrs = self.authnreq_etree.xpath("/AuthnRequest")[0].attrib
         self.authnreq_issuer = self.authnreq_etree.xpath("/AuthnRequest/Issuer")[0].attrib['NameQualifier']
         self.response_attrs = {
@@ -111,13 +139,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'Issuer': self.issuer,
             'Audience': self.authnreq_issuer
         }
-        self.relay_state = kwargs.get('relay_state')
-
-        self.crypto_backend = CryptoBackendXmlSec1(
-            xmlsec_binary=kwargs.get('xmlsec_binary') or get_xmlsec1_bin()
-        )
-        self.private_key_fpath = SAML2_IDP_CONFIG['key_file']
-
+        self.relay_state = self.kwargs.get('relay_state')
 
     def sign(self, xmlstr, assertion=True, response=True, key_file=None):
         """
@@ -129,12 +151,12 @@ class SpidSpResponseCheck(AbstractSpidCheck):
               statement = xmlstr,
               key_file = key_file or self.private_key_fpath,
         )
-
-        if assertion:
+        asser_placeholder = '<!-- Assertion Signature here -->'
+        if assertion and asser_placeholder in xmlstr:
             value = signature_node.render(
                         {'ReferenceURI': f"#{self.response_attrs['AssertionID']}"}
             )
-            xmlstr = xmlstr.replace('<!-- Assertion Signature here -->', value)
+            xmlstr = xmlstr.replace(asser_placeholder, value)
             params.update(
                 {
                     'node_name' : 'urn:oasis:names:tc:SAML:2.0:assertion:Assertion',
@@ -144,11 +166,12 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             )
             xmlstr = self.crypto_backend.sign_statement(**params)
 
-        if response:
+        sign_placeholder = '<!-- Response Signature here -->'
+        if response and sign_placeholder in xmlstr:
             value = signature_node.render(
                         {'ReferenceURI': f"#{self.response_attrs['ResponseID']}"}
             )
-            xmlstr = xmlstr.replace('<!-- Response Signature here -->', value)
+            xmlstr = xmlstr.replace(sign_placeholder, value)
             params.update(
                 {
                     'node_name' : 'urn:oasis:names:tc:SAML:2.0:protocol:Response',
@@ -161,16 +184,20 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         return xmlstr
 
 
-    def load_test(self, test_name=None, attributes={}):
+    def load_test(self, test_name=None, attributes={}, response_attrs={}):
         return SpidSpResponse(test_name,
                               authnreq_attrs = self.authnreq_attrs,
                               attributes = attributes,
+                              response_attrs = response_attrs or self.response_attrs,
                               template_path = self.template_path)
 
-    # def check_response(self, res):
-
-
-        # if res.status_code >= 200:
+    def check_response(self, res):
+        if res.status_code > 200:
+            return False, f'KO [ http status_code: {res.status_code}]'
+        elif res.status_code == 200:
+            return True, f'OK [http status_code: {res.status_code}]'
+        else:
+            return None, f'Unknown [http status_code: {res.status_code}]'
 
 
 
@@ -187,10 +214,31 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
 
     def test_all(self):
-        response_obj = self.load_test()
-        xmlstr = response_obj.render(data = self.response_attrs)
-        result = self.sign(xmlstr)
-        pretty_xml = prettify_xml(result)
-        print(pretty_xml.decode())
-        res = self.send_response(result)
-        # self.check_response(res)
+        for i in self.test_names:
+            self.do_authnrequest()
+            response_obj = self.load_test(test_name=i)
+            msg = f'Executing SAML Response test [{i}] "{response_obj.conf["name"]}"'
+            xmlstr = response_obj.render()
+            try:
+                result = self.sign(xmlstr)
+            except XmlsecError as e:
+                logger.error(
+                    f'{msg}: Exception during xmlsec signature ({e})'
+                )
+                logger.debug('{xmlstr}')
+                break
+
+
+            pretty_xml = prettify_xml(result)
+            logger.debug(pretty_xml.decode())
+
+            res = self.send_response(result)
+            status, status_msg = self.check_response(res)
+            log_func_ = logger.info
+            if status:
+                pass
+            elif status == False:
+                log_func_ = logger.error
+            elif status == None:
+                log_func_ = logger.critical
+            log_func_(f'{msg}: {status_msg}')

@@ -1,0 +1,2 @@
+{% extends "base.xml" %}
+{% block Status %}<samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:statuscodenonvalido"/></samlp:Status>{% endblock %}

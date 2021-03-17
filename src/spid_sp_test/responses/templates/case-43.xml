@@ -1,0 +1,8 @@
+{% extends "base.xml" %}
+{% block SubjectNameID %}
+            <saml:NameID
+                Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+                NameQualifier="">
+
+            </saml:NameID>
+{% endblock SubjectNameID %}

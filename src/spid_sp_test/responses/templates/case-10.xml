@@ -1,0 +1,2 @@
+{% extends "base.xml" %}
+{% block Version %}Version="1.0"{% endblock %}

@@ -1,0 +1,3 @@
+{% extends "base.xml" %}
+{% block assertion_signature %}{% endblock %}
+{% block Assertion %}{% endblock %}
