@@ -137,7 +137,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'AuthnIstant': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
             'SessionIndex': saml_rnd_id(),
             'Issuer': self.issuer,
-            'Audience': self.authnreq_issuer
+            'Audience': self.authnreq_issuer,
+            'IssueInstantMillis': datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M%S')+ ':20.621Z'
         }
         self.relay_state = self.kwargs.get('relay_state')
 

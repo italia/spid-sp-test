@@ -1070,17 +1070,15 @@ RESPONSE_TESTS = {
         # "sign_response": True,
         # "sign_assertion": True
     # },
-
-    # definire Millis
-    # "110": {
-        # "name": "110. Response - IssueInstant con millisecondi",
-        # "description": "Attributo IssueInstant specificato con millisecondi. Risultato atteso: Ok",
-        # "status_codes": [200],
-        # "path": "case-110.xml",
-        # "response": {},
-        # "sign_response": True,
-        # "sign_assertion": True
-    # },
+    "110": {
+        "name": "110. Response - IssueInstant con millisecondi",
+        "description": "Attributo IssueInstant specificato con millisecondi. Risultato atteso: Ok",
+        "status_codes": [200],
+        "path": "case-110.xml",
+        "response": {},
+        "sign_response": True,
+        "sign_assertion": True
+    },
     "111": {
         "name": "111. Anomalie utente - Processo di autenticazione annullato dall'utente (Anomalia 25)",
         "description": "Elemento StatusCode ErrorCode nr25. Processo di autenticazione annullato dall'utente. Risultato atteso: KO. il S.P. deve mostrare schermata di errore",
