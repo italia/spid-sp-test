@@ -908,6 +908,7 @@ RESPONSE_TESTS = {
     "94": {
         "name": "94. Assertion - Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL1",
         "description": "Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL1. Risultato atteso: fare attenzione al livello richiesto sulla request.",
+        "status_codes": [200],
         "path": "base.xml",
         "response": {
 
@@ -920,6 +921,7 @@ RESPONSE_TESTS = {
     "95": {
         "name": "95. Assertion - Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL2",
         "description": "Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL2. Risultato atteso: fare attenzione al livello richiesto sulla request.",
+        "status_codes": [200],
         "path": "base.xml",
         "response": {
             "AuthnContextClassRef": "https://www.spid.gov.it/SpidL2",
@@ -930,6 +932,7 @@ RESPONSE_TESTS = {
     "96": {
         "name": "96. Assertion - Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL3",
         "description": "Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL3. Risultato atteso: fare attenzione al livello richiesto sulla request.",
+        "status_codes": [200],
         "path": "base.xml",
         "response": {
             "AuthnContextClassRef": "https://www.spid.gov.it/SpidL3",
@@ -983,6 +986,7 @@ RESPONSE_TESTS = {
     "103": {
         "name": "103. Assertion - Set di attributi inviato diverso da quello richiesto",
         "description": "Set di attributi inviato diverso da quello richiesto",
+        "status_codes": [200, 403, 500],
         "path": "base.xml",
         "response": {
 

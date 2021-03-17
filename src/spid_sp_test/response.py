@@ -192,15 +192,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                               response_attrs = response_attrs or self.response_attrs,
                               template_path = self.template_path)
 
-    def check_response(self, res):
-        if res.status_code > 200:
-            return False, f'[ http status_code: {res.status_code}]'
-        elif res.status_code == 200:
+    def check_response(self, res, attendeds=[]):
+        if res.status_code in attendeds:
             return True, f'[http status_code: {res.status_code}]'
         else:
-            return None, f'Unknown [http status_code: {res.status_code}]'
-
-
+            return False, f'[ http status_code: {res.status_code}]'
 
     def send_response(self, xmlstr):
         data = {
@@ -218,7 +214,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         for i in self.test_names:
             self.do_authnrequest()
             response_obj = self.load_test(test_name=i)
-            msg = f'Executing SAML Response test [{i}] "{response_obj.conf["description"]}"'
+            msg = f'Response [{i}] "{response_obj.conf["description"]}"'
             xmlstr = response_obj.render()
             try:
                 result = self.sign(xmlstr)
@@ -234,7 +230,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             logger.debug(pretty_xml.decode())
 
             res = self.send_response(result)
-            status, status_msg = self.check_response(res)
+            status, status_msg = self.check_response(res, attendeds=response_obj.conf['status_codes'])
             log_func_ = logger.info
             if status:
                 pass
