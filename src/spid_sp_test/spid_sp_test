@@ -14,6 +14,8 @@ from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
 from spid_sp_test.authn_request import SpidSpAuthnReqCheck
 from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
 from spid_sp_test.response import SpidSpResponseCheck
+from spid_sp_test. utils import get_xmlsec1_bin
+
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +24,7 @@ def selective_run(obj, meth_list):
     if meth_list:
         for method in meth_list:
             meth = getattr(obj, method, None)
-            if meth: 
+            if meth:
                 meth()
     else:
         obj.test_all()
@@ -40,67 +42,72 @@ if __name__ == '__main__':
 
 
     """
-    
+
     parser = argparse.ArgumentParser(
-                        description = _desc, 
+                        description = _desc,
                         epilog = _epilog,
                         formatter_class = argparse.RawTextHelpFormatter
     )
     parser.add_argument('-metadata_url', required=False, default=None,
                         help=("URL where SAML2 Metadata resides: "
                               "it can be file://path or https://fqdn"))
-    parser.add_argument('--idp-metadata', 
+    parser.add_argument('--idp-metadata',
                         action="store_true", default=False,
                         help="get example IdP metadata")
-    parser.add_argument('-l','--list', nargs='*', 
-                        help='esecute only selected checks', 
+    parser.add_argument('-l','--list', nargs='*',
+                        help='esecute only selected checks',
                         required=False)
-    parser.add_argument('--extra', 
+    parser.add_argument('--extra',
                         action="store_true", default=False,
                         help="execute extra checks")
-    
+
     parser.add_argument('--authn-url', required=False, default=None,
                         help=("URL where the SP initializes "
                               "the Authentication Request to this IDP,"
                               "it can also be a file:///"))
-    
-    parser.add_argument('-tr', '--test-response', 
+
+    parser.add_argument('-tr', '--test-response',
                         action="store_true", default=False,
                         help="execute SAML2 responses")
-    parser.add_argument('-tp', '--template-path', 
+    parser.add_argument('-tp', '--template-path',
                         default = f'{BASE_DIR}/responses/templates/',
                         required=False,
                         help="templates containing SAML2 xml templates, for responses")
-    
-    parser.add_argument('-json', action="store_true", 
+
+    parser.add_argument('-json', action="store_true",
                         help="json output")
 
-    parser.add_argument('-o', required=False, 
+    parser.add_argument('-o', required=False,
                         help="json output to file")
 
-    parser.add_argument('-debug', required=False, 
-                    choices=('CRITICAL', 'ERROR', 
-                             'WARNING', 'INFO', 'DEBUG'), 
+    parser.add_argument('-debug', required=False,
+                    choices=('CRITICAL', 'ERROR',
+                             'WARNING', 'INFO', 'DEBUG'),
                     default='INFO',
                     help="Debug level, see python logging")
+    parser.add_argument('-xp', '--xmlsec-path',
+                        default = get_xmlsec1_bin(),
+                        required=False,
+                        help="xmlsec1 executable path, eg: /usr/bin/xmlsec1")
+
     args = parser.parse_args()
-    
+
     logging.basicConfig(level = getattr(logging, args.debug))
-    
+
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         sys.exit(1)
-    
+
     tests_done = []
-    
+
     if args.idp_metadata:
         from spid_sp_test.idp.idp import SAML2_IDP_CONFIG
-        
+
         idp_server = Server(SAML2_IDP_CONFIG)
         idp_metadata = entity_descriptor(idp_server.config)
         print(idp_metadata.to_string().decode())
         sys.exit(0)
-    
+
     elif args.metadata_url:
         data_md = dict(metadata_url = args.metadata_url)
         metadata_check = SpidSpMetadataCheck(**data_md)
@@ -129,14 +136,15 @@ if __name__ == '__main__':
             authn_check_extra = SpidSpAuthnReqCheckExtra(**data_ac)
             selective_run(authn_check_extra, args.list)
             tests_done.append(authn_check_extra)
-    
+
     # Responses
     if args.test_response:
         data_tr = dict(
             metadata_etree = metadata_check.doc,
             authn_request_url = args.authn_url,
             relay_state = authn_check.relay_state,
-            template_path = args.template_path
+            template_path = args.template_path,
+            xmlsec_binary = args.xmlsec_path
         )
         response_check = SpidSpResponseCheck(**data_tr)
         selective_run(response_check, args.list)
@@ -153,17 +161,17 @@ if __name__ == '__main__':
 
         for i in tests_done:
             data['test']['sp'][i.category] = i.report_to_dict()[i.category]
-        
+
         output = json.dumps(data, indent=2)
-        
+
         if args.json:
             print(output)
-        
+
         if args.o:
             with open(args.o, 'w') as f:
                 f.write(output)
-    
-    # check exit status 
+
+    # check exit status
     for i in tests_done:
         if i.errors:
             sys.exit(1)

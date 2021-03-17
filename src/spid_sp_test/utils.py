@@ -1,5 +1,6 @@
 import base64
 import lxml.objectify
+import os
 import xml.dom.minidom
 import re
 import subprocess
@@ -140,11 +141,11 @@ def samlreq_from_htmlform(html_content):
     saml_request = re.search(form_samlreq_regex, html_content)
     if not saml_request:
         raise SAMLRequestNotFound()
-    
+
     saml_req_value = re.search(form_samlreq_value_regex, html_content)
     if not saml_req_value:
         raise SAMLRequestValueNotFound()
-    
+
     # base64 encoded
     return saml_req_value.groups()[0]
 
@@ -183,3 +184,16 @@ def prettify_xml(msg_str) -> bytes:
         pretty_print=True,
     )
     return msg
+
+
+def get_xmlsec1_bin():
+    env_bin = os.environ.get('XMLSEC1_BIN')
+    which_exe = os.popen('which xmlsec1').read()
+    if env_bin:
+        return env_bin
+    elif which_exe:
+        return which_exe.splitlines()[0]
+    else:
+        for i in ("/usr/local/bin/xmlsec1", "/usr/bin/xmlsec1"):
+            if os.access(i, os.X_OK):
+                return i

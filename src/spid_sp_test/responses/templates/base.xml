@@ -8,12 +8,16 @@
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" 
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
     <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">{{Issuer}}</saml:Issuer>
+    {% block response_signature %}
     <!-- Response Signature here -->
+    {% endblock response_signature %}
     <samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status>
     <saml:Assertion ID="{{AssertionID}}" IssueInstant="{{IssueInstant}}"
         Version="2.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        {% block assertion_signature %}
         <!-- Assertion Signature here -->
+        {% endblock assertion_signature %}
         <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">{{Issuer}}</saml:Issuer>
         <saml:Subject>
             <saml:NameID 

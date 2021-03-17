@@ -185,9 +185,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             (len(req) == 1),
             'One AuthnRequest element must be present'
         )
-
         req = req[0]
-
         for attr in ['ID', 'Version', 'IssueInstant', 'Destination']:
             self._assertTrue(
                 (attr in req.attrib),
@@ -600,7 +598,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         else:
             self._assertTrue(False, 'RelayState is missing - TR pag. 14 or pag. 15')
         return self.is_ok(f'{self.__class__.__name__}.test_RelayState')
-        
+
+
     def test_Scoping(self):
         '''Test the compliance of Scoping element'''
 
@@ -611,7 +610,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             'The Scoping element must not be present - AV n.5'
         )
         return self.is_ok(f'{self.__class__.__name__}.test_Scoping')
-        
+
+
     def test_RequesterID(self):
         '''Test the compliance of RequesterID element'''
 
@@ -622,6 +622,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             'The RequesterID  element must not be present - AV n.5'
         )
         return self.is_ok(f'{self.__class__.__name__}.test_RequesterID')
+
 
     def test_all(self):
         
