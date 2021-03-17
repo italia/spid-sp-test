@@ -1,3 +1,4 @@
+{% block pre %}{% endblock %}
 <samlp:Response
     {% block Destination %}Destination="{{AssertionConsumerURL}}"{% endblock %}
     {% block ResponseID %}ID="{{ResponseID}}"{% endblock %}
@@ -31,31 +32,43 @@
                     {{NameID}}
             </saml:NameID>
             {% endblock SubjectNameID %}
+            {% block SubjectConfirmation %}
             <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
                 <saml:SubjectConfirmationData
                     InResponseTo="{{AuthnRequestID}}"
                     NotOnOrAfter="{{NotOnOrAfter}}"
                     Recipient="{{AssertionConsumerURL}}" />
             </saml:SubjectConfirmation>
+            {% endblock SubjectConfirmation %}
         </saml:Subject>
         {% endblock SubjectTag %}
+        {% block Conditions %}
         <saml:Conditions
             NotBefore="{{IssueInstant}}"
             NotOnOrAfter="{{NotOnOrAfter}}" >
+            {% block AudienceRestriction %}
             <saml:AudienceRestriction>
                 <saml:Audience>{{Audience}}</saml:Audience>
             </saml:AudienceRestriction>
+            {% endblock  AudienceRestriction %}
         </saml:Conditions>
+        {% endblock Conditions %}
+        {% block AuthnStatement %}
         <saml:AuthnStatement
             AuthnInstant="{{AuthnIstant}}"
             SessionIndex="{{SessionIndex}}" >
+            {% block AuthnContext %}
             <saml:AuthnContext>
                 <saml:AuthnContextClassRef>{{AuthnContextClassRef}}</saml:AuthnContextClassRef>
             </saml:AuthnContext>
+            {% endblock AuthnContext %}
         </saml:AuthnStatement>
+        {% endblock AuthnStatement %}
+        {% block AttributeStatement %}
         <saml:AttributeStatement>
             {{Attributes}}
         </saml:AttributeStatement>
+        {% endblock AttributeStatement %}
     </saml:Assertion>
     {% endblock Assertion %}
 </samlp:Response>

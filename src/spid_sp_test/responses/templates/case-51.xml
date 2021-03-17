@@ -1,0 +1,5 @@
+{% extends "base.xml" %}
+{% block SubjectConfirmation %}
+<saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+</saml:SubjectConfirmation>
+{% endblock SubjectConfirmation %}

@@ -1,0 +1,4 @@
+{% extends "base.xml" %}
+        {% block AuthnStatement %}
+
+        {% endblock AuthnStatement %}

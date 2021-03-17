@@ -1,0 +1,12 @@
+{% extends "base.xml" %}
+        {% block Conditions %}
+        <saml:Conditions
+            NotBefore=""
+            NotOnOrAfter="{{NotOnOrAfter}}" >
+            {% block AudienceRestriction %}
+            <saml:AudienceRestriction>
+                <saml:Audience>{{Audience}}</saml:Audience>
+            </saml:AudienceRestriction>
+            {% endblock  AudienceRestriction %}
+        </saml:Conditions>
+        {% endblock Conditions %}

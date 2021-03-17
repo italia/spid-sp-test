@@ -1,9 +1,9 @@
 {% extends "base.xml" %}
-{% block InResponseTo %}{% endblock %}
-            {% block SubjectConfirmation %}
-            <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+{% block SubjectConfirmation %}
+            <saml:SubjectConfirmation Method="">
                 <saml:SubjectConfirmationData
+                    InResponseTo="{{AuthnRequestID}}"
                     NotOnOrAfter="{{NotOnOrAfter}}"
                     Recipient="{{AssertionConsumerURL}}" />
             </saml:SubjectConfirmation>
-            {% endblock SubjectConfirmation %}
+{% endblock SubjectConfirmation %}

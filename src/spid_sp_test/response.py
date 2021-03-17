@@ -193,9 +193,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
     def check_response(self, res):
         if res.status_code > 200:
-            return False, f'KO [ http status_code: {res.status_code}]'
+            return False, f'[ http status_code: {res.status_code}]'
         elif res.status_code == 200:
-            return True, f'OK [http status_code: {res.status_code}]'
+            return True, f'[http status_code: {res.status_code}]'
         else:
             return None, f'Unknown [http status_code: {res.status_code}]'
 
@@ -217,7 +217,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         for i in self.test_names:
             self.do_authnrequest()
             response_obj = self.load_test(test_name=i)
-            msg = f'Executing SAML Response test [{i}] "{response_obj.conf["name"]}"'
+            msg = f'Executing SAML Response test [{i}] "{response_obj.conf["description"]}"'
             xmlstr = response_obj.render()
             try:
                 result = self.sign(xmlstr)

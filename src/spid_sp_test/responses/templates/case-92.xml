@@ -1,0 +1,6 @@
+{% extends "base.xml" %}
+        {% block AuthnContext %}
+            <saml:AuthnContext>
+                <saml:AuthnContextClassRef></saml:AuthnContextClassRef>
+            </saml:AuthnContext>
+        {% endblock AuthnContext %}

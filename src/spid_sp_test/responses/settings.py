@@ -659,15 +659,16 @@ RESPONSE_TESTS = {
         "sign_response": True,
         "sign_assertion": True
     },
-    "67": {
-        "name": "67. Assertion - Elemento Issuer non specificato",
-        "description": "Elemento Issuer dell'Assertion non specificato. Risultato atteso: KO",
-        "status_codes": [403, 500],
-        "path": "case-67.xml",
-        "response": {},
-        "sign_response": True,
-        "sign_assertion": True
-    },
+    # identico al 29
+    # "67": {
+        # "name": "67. Assertion - Elemento Issuer non specificato",
+        # "description": "Elemento Issuer dell'Assertion non specificato. Risultato atteso: KO",
+        # "status_codes": [403, 500],
+        # "path": "case-67.xml",
+        # "response": {},
+        # "sign_response": True,
+        # "sign_assertion": True
+    # },
     "68": {
         "name": "68. Assertion - Elemento Issuer mancante",
         "description": "Elemento Issuer dell'Assertion mancante. Risultato atteso: KO",
@@ -812,15 +813,16 @@ RESPONSE_TESTS = {
         "sign_response": True,
         "sign_assertion": True
     },
-    "84": {
-        "name": "84. Assertion - Elemento AudienceRestriction di Condition mancante",
-        "description": "Elemento AudienceRestriction di Condition dell'Assertion mancante. Risultato atteso: KO",
-        "status_codes": [403, 500],
-        "path": "case-84.xml",
-        "response": {},
-        "sign_response": True,
-        "sign_assertion": True
-    },
+    # identico al 73
+    # "84": {
+        # "name": "84. Assertion - Elemento AudienceRestriction di Condition mancante",
+        # "description": "Elemento AudienceRestriction di Condition dell'Assertion mancante. Risultato atteso: KO",
+        # "status_codes": [403, 500],
+        # "path": "case-84.xml",
+        # "response": {},
+        # "sign_response": True,
+        # "sign_assertion": True
+    # },
     "85": {
         "name": "85. Assertion - Elemento Audience di AudienceRestriction di Condition non specificato",
         "description": "Elemento Audience di AudienceRestriction di Condition dell'Assertion non specificato. Risultato atteso: KO",
@@ -875,15 +877,16 @@ RESPONSE_TESTS = {
         "sign_response": True,
         "sign_assertion": True
     },
-    "91": {
-        "name": "91. Assertion - Elemento AuthnContext di AuthStatement mancante",
-        "description": "Elemento AuthnContext di AuthStatement dell'Assertion mancante. Risultato atteso: KO",
-        "status_codes": [403, 500],
-        "path": "case-91.xml",
-        "response": {},
-        "sign_response": True,
-        "sign_assertion": True
-    },
+    # identico a 88
+    # "91": {
+        # "name": "91. Assertion - Elemento AuthnContext di AuthStatement mancante",
+        # "description": "Elemento AuthnContext di AuthStatement dell'Assertion mancante. Risultato atteso: KO",
+        # "status_codes": [403, 500],
+        # "path": "case-91.xml",
+        # "response": {},
+        # "sign_response": True,
+        # "sign_assertion": True
+    # },
     "92": {
         "name": "92. Assertion - Elemento AuthContextClassRef di AuthnContext di AuthStatement non specificato",
         "description": "Elemento AuthContextClassRef di AuthnContext di AuthStatement dell'Assertion non specificato. Risultato atteso: KO",
@@ -1056,25 +1059,28 @@ RESPONSE_TESTS = {
         "sign_response": True,
         "sign_assertion": False
     },
-    "109": {
-        "name": "109. Attributi senza NameFormat",
-        "description": "Response corretta. Risultato atteso: Ok",
-        "status_codes": [200],
-        "path": "case-109.xml",
-        "response": {},
-        "attributesNameFormat": False,
-        "sign_response": True,
-        "sign_assertion": True
-    },
-    "110": {
-        "name": "110. Response - IssueInstant con millisecondi",
-        "description": "Attributo IssueInstant specificato con millisecondi. Risultato atteso: Ok",
-        "status_codes": [200],
-        "path": "case-110.xml",
-        "response": {},
-        "sign_response": True,
-        "sign_assertion": True
-    },
+    # ValueError: Unicode strings with encoding declaration are not supported. Please use bytes input or XML fragments without declaration.
+    # "109": {
+        # "name": "109. Attributi senza NameFormat",
+        # "description": "Response corretta. Risultato atteso: Ok",
+        # "status_codes": [200],
+        # "path": "case-109.xml",
+        # "response": {},
+        # "attributesNameFormat": False,
+        # "sign_response": True,
+        # "sign_assertion": True
+    # },
+
+    # definire Millis
+    # "110": {
+        # "name": "110. Response - IssueInstant con millisecondi",
+        # "description": "Attributo IssueInstant specificato con millisecondi. Risultato atteso: Ok",
+        # "status_codes": [200],
+        # "path": "case-110.xml",
+        # "response": {},
+        # "sign_response": True,
+        # "sign_assertion": True
+    # },
     "111": {
         "name": "111. Anomalie utente - Processo di autenticazione annullato dall'utente (Anomalia 25)",
         "description": "Elemento StatusCode ErrorCode nr25. Processo di autenticazione annullato dall'utente. Risultato atteso: KO. il S.P. deve mostrare schermata di errore",

@@ -1,0 +1,6 @@
+{% extends "base.xml" %}
+            {% block AudienceRestriction %}
+            <saml:AudienceRestriction>
+                <saml:Audience></saml:Audience>
+            </saml:AudienceRestriction>
+            {% endblock  AudienceRestriction %}
