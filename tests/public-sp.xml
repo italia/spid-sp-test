@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<md:EntityDescriptor 
+	xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" 
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
+	xmlns:spid="https://spid.gov.it/saml-extensions" ID="a088bc6e-33c5-4ff2-b35b-d9c3ff9a2c9e" entityID="https://www.puplic-sp.it/">
+
+	<md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+		<md:KeyDescriptor use="signing">
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate>MIIHgzCCBWugAwIBAgIIT5boMmgJZQQwDQYJKoZIhvcNAQENBQAwgcwxCzAJBgNV BAYTAklUMQ0wCwYDVQQHDARSb21lMSYwJAYDVQQKDB1BZ2VuemlhIHBlciBsJ0l0 YWxpYSBEaWdpdGFsZTEwMC4GA1UECwwnU2Vydml6aW8gQWNjcmVkaXRhbWVudG8g ZSBwcm9nZXR0byBTUElEMQ0wCwYDVQQDDARBZ0lEMSkwJwYJKoZIhvcNAQkBFhpw cm90b2NvbGxvQHBlYy5hZ2lkLmdvdi5pdDEaMBgGA1UEBRMRVkFUSVQtOTc3MzUw MjA1ODQwHhcNMjAwMjE4MDAwMDAwWhcNNDAwMjE3MjM1OTU5WjCB1TELMAkGA1UE BhMCSVQxDTALBgNVBAcMBFJvbWUxJjAkBgNVBAoMHUFnZW56aWEgcGVyIGwnSXRh bGlhIERpZ2l0YWxlMTAwLgYDVQQLDCdTZXJ2aXppbyBBY2NyZWRpdGFtZW50byBl IHByb2dldHRvIFNQSUQxFjAUBgNVBAMMDVByb2dldHRvIFNQSUQxKTAnBgkqhkiG 9w0BCQEWGnByb3RvY29sbG9AcGVjLmFnaWQuZ292Lml0MRowGAYDVQQFExFWQVRJ VC05NzczNTAyMDU4NDCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAJ/j 1bZoh23Q8o+lpy1irwJctv5y4hFDgsS5aDZZc/sLTrNFp+IDKusG5EgCPY97jpIR hh9JtZbc+W7qiyovPox4Jf6py24GfVKeubave4RGgHvZLrc5UmLumc0/JuBQ9NZY OmQ6V46wQxlojuwqjsuZUJq6J+rTWuNiRv4bHrbflrCPFoLpIf+XBxRruIC6ug+5 UF6I/iua/6iIb+vvwXvJWvtGYy52hqjgLN0HJ5BnZMjQ45iBQ7xEQVsiMh6xl5HL dPyaqYPj3QQgQ/VdRzUR4tXoYaQq71aYcroFra1fcIKu+wR2aiB2XPxcufJxX2yH ebDU8aC1GP6ibaTMAZx15O9Hv3caCAMZR0DhcdhTjGBYRgAwk0zwpQmmoMZ2kvz+ PfQ6GIEyiPg6N0EctoTzTpkL+eFqmFd+cDVAFtiaGyzdoUjWPKJCWYEqIUSnW3OW XoJrAQ5EknhOdkbH6sVr2MGfFEoaLe4H9Nt9ucvPnNWTAJ8zJeiWvknVoI5umNYO UWC1LXe/lsoQhbWNABpRiGcq1whXW+d45AKhjHef5naZyGN2ZZMuf32FoRjq2gXk GkK7Abx1cm6uu/rPdMTLKztVJdRglzQMp/ibbhZuFZO02jjL6XEOh4QQF2iqMQ8C 8aU9TFLbWz1iueuI3+7ML3lrIUs2AMV9o3/eNZSLAgMBAAGjggFcMIIBWDAMBgNV HRMBAf8EAjAAMB0GA1UdDgQWBBRPcCh3ZPMBNee968zNv4p5E+YXKzAfBgNVHSME GDAWgBSfx1tsJaanm4NepvvB/qN5O82PkTAOBgNVHQ8BAf8EBAMCBkAwQwYDVR0f BDwwOjA4oDagNIYyaHR0cHM6Ly93d3cvZWlkYXMuYWdpZC5nb3YuaXQvY3JsL2Ny bF9zdWJDQV9TQS5jcmwwgbIGA1UdIASBqjCBpzBMBgMrTBAwRTBDBggrBgEFBQcC ARY3aHR0cHM6Ly9laWRhcy5hZ2lkLmdvdi5pdC9jcHMvQWdJRF9lSURBU19yb290 Q0FfY3BzLnBkZjBXBgQrTBAEME8wTQYIKwYBBQUHAgIwQRo/R292ZXJubWVudCBw cm9qZWN0IFNpc3RlbWEgUHViYmxpY28gZGkgSWRlbnRpdOAgRGlnaXRhbGUgKFNQ SUQpMA0GCSqGSIb3DQEBDQUAA4ICAQCwe96Wz6JaFRjtKkokVX58GuMgAVBdMi/Y HiTwzb3RB0O7ZN27bLYXQA+r3jiYSNpOxGnmB78dxZDzHUbiLcuv8s6z1o1asMNJ 3L+Llr1/oDN5ogrJUoUlBmXTAHeFdVtooFchJS8FhAOcpq5NjJ1timuIU1c5ENE9 VRAy1C6WyiJ2hl6A+BtiaFtDotBXNp2DzK6P7HtBU1pAn+zCWXWa3/ba9UkPGdM2 LNQb5YvsqmRVtB0q4DuuCb3F6RS4/kz+dMQ79YG+NQ7z48F4JHjQDEmxsB6R2H1L T1sbj0+fOfbRoA+hM4M5lShSj/q8OgrjnJTwWz9OobOYCAyDhCH2AlZLP499Wprj INkvHtAOJh+jrJ0RTqTf99vU0P1q74hRMNLhDG9PRIyRz5BI0KlCOZGqqyRWVXxV bYI2I2WgbqSpqyFsAF/spuHuEWJCFpLWl8nBgJ6pucGmVbt5Z6XxBtg0yEvqQLle EYAnxUiOQBAz44KtPIeuYBGqcn5Ou/+uDesi241fxzgsF0CbOwofBdjCWgBo4bpS nO3LWUvLW4Vvwmfh2mWaDZE/xMSSzfF8krP0kyTWVwBDi628YazoK4Vr+Gr0gOtG ZysYIKFl8vIZ4yx3Cd/XLC3/Fqy+KL7N3OnX2XYKDskk+GdzW89Q8THQvIFW7hf7 DjpJriU2/Q==</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</md:KeyDescriptor>
+		<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://www.public-sp.it/slo"/>
+		<md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+		<md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://www.public-sp.it/sso" index="0" isDefault="true"/>
+		<md:AttributeConsumingService index="0">
+			<md:ServiceName xml:lang="it">ServiceName</md:ServiceName>
+			<md:RequestedAttribute Name="spidCode"/>
+			<md:RequestedAttribute Name="familyName"/>
+			<md:RequestedAttribute Name="name"/>
+			<md:RequestedAttribute Name="companyName"/>
+			<md:RequestedAttribute Name="fiscalNumber"/>
+			<md:RequestedAttribute Name="ivaCode"/>
+			<md:RequestedAttribute Name="email"/>
+			<md:RequestedAttribute Name="gender"/>
+			<md:RequestedAttribute Name="placeOfBirth"/>
+			<md:RequestedAttribute Name="countyOfBirth"/>
+			<md:RequestedAttribute Name="dateOfBirth"/>
+		</md:AttributeConsumingService>
+	</md:SPSSODescriptor>
+	<md:Organization>
+		<md:OrganizationName xml:lang="it">Public SP</md:OrganizationName>
+		<md:OrganizationDisplayName xml:lang="it">Public SP</md:OrganizationDisplayName>
+		<md:OrganizationURL xml:lang="it">https://www.public-sp.it</md:OrganizationURL>
+	</md:Organization>
+	<md:ContactPerson contactType="other">
+		<md:Extensions>
+			<spid:IPACode>IPA</spid:IPACode>
+			<spid:Public/>
+		</md:Extensions>
+		<md:EmailAddress>email@public-sp.it</md:EmailAddress>
+	</md:ContactPerson>
+</md:EntityDescriptor>
