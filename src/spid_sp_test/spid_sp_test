@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import datetime
 import json
 import logging
 import os
@@ -58,7 +59,8 @@ if __name__ == '__main__':
         # select which user attribute to return in response via json file
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug DEBUG -aj tests/example.attributes.json
 
-
+        # dump SP response as html page
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug ERROR -tr --html-path dumps
     """
 
     parser = argparse.ArgumentParser(
@@ -162,6 +164,12 @@ if __name__ == '__main__':
                         help="execute tests for system in production, eg: https and TLS quality"
                         )
 
+    parser.add_argument(
+                        '--html-path', '-hp',
+                        help=("Only works with Response tests activated"
+                              "Path where the html response pages will be dumped after by the SP")
+                        )
+
     args = parser.parse_args()
 
     logging.basicConfig(level = getattr(logging, args.debug))
@@ -213,6 +221,8 @@ if __name__ == '__main__':
 
     # Responses
     if args.test_response:
+        html_path = f'{args.html_path}/' #'html-dumps_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
+
         data_tr = dict(
             metadata_etree = metadata_check.doc,
             authn_request_url = args.authn_url,
@@ -222,8 +232,13 @@ if __name__ == '__main__':
             test_names = args.test_names[0] if args.test_names else [],
             test_jsons = args.test_jsons,
             attr_json = args.attr_json,
-            production = args.production
+            production = args.production,
+            html_path = html_path if args.html_path else None
         )
+
+        if args.html_path:
+            os.mkdir(html_path)
+
         response_check = SpidSpResponseCheck(**data_tr)
         selective_run(response_check, args.list)
         tests_done.append(response_check)

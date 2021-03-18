@@ -131,6 +131,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         else:
             self.user_attrs = settings.ATTRIBUTES
 
+        self.html_path = kwargs.get('html_path')
         self.kwargs = kwargs
 
     def do_authnrequest(self):
@@ -243,6 +244,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         return status, f'[http status_code: {res.status_code}]'
 
 
+    def dump_html_response(self, fname, content):
+        with open(f'{self.html_path}/{fname}.html', 'w') as f:
+            f.write(content)
+
+
     def send_response(self, xmlstr):
         data = {
             "RelayState": self.authn_request_data.get('RelayState', '/'),
@@ -281,6 +287,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                                 msg = f'Test [{i}] {test_display_desc}',
                                 attendeds=response_obj.conf['status_codes']
                                 )
+            if self.html_path:
+                self.dump_html_response(f'{i}_{status}',
+                                        res.content.decode())
+
+
             log_func_ = logger.info
             if status:
                 pass
