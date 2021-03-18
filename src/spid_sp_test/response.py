@@ -67,6 +67,8 @@ class SpidSpResponse(object):
                     autoescape = select_autoescape(['xml'])
         )
         self.template_name = self.conf.get('path', 'base.xml')
+        self.private_key = self.conf.get('sign_credentials', {}).get('privateKey')
+
 
     def render_attributes(self, attributes={}):
         """
@@ -125,11 +127,12 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.issuer = self.kwargs.get('issuer', SAML2_IDP_CONFIG["entityid"])
         self.authnreq_attrs = self.authnreq_etree.xpath("/AuthnRequest")[0].attrib
         self.authnreq_issuer = self.authnreq_etree.xpath("/AuthnRequest/Issuer")[0].attrib['NameQualifier']
+        now = datetime.datetime.utcnow()
         self.response_attrs = {
             'ResponseID': saml_rnd_id(),
             'AuthnRequestID': self.authnreq_attrs['ID'],
             'IssueInstant': self.authnreq_attrs['IssueInstant'],
-            'NotOnOrAfter': (datetime.datetime.utcnow() + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'NotOnOrAfter': (now + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'AssertionConsumerURL':  self.authnreq_attrs['AssertionConsumerServiceURL'],
             'NameIDNameQualifier': settings.DEFAULT_RESPONSE['NameIDNameQualifier'],
             'NameID': 'that-transient-opaque-value',
@@ -138,7 +141,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'SessionIndex': saml_rnd_id(),
             'Issuer': self.issuer,
             'Audience': self.authnreq_issuer,
-            'IssueInstantMillis': datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M%S')+ ':20.621Z'
+            'IssueInstantMillis': now.strftime('%Y-%m-%d %H:%M%S') + ':20.621Z'
         }
         self.relay_state = self.kwargs.get('relay_state')
 
@@ -147,9 +150,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         Sign an XML statement.
         """
         signature_node = Template(settings.SIGNATURE_TMPL)
-
         params = dict(
-              statement = xmlstr,
               key_file = key_file or self.private_key_fpath,
         )
         asser_placeholder = '<!-- Assertion Signature here -->'
@@ -218,7 +219,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             msg = f'Response [{i}] "{response_obj.conf["description"]}"'
             xmlstr = response_obj.render()
             try:
-                result = self.sign(xmlstr)
+                result = self.sign(xmlstr,
+                                   key_file = response_obj.private_key)
             except XmlsecError as e:
                 logger.error(
                     f'{msg}: Exception during xmlsec signature ({e})'
