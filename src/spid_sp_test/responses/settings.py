@@ -1,5 +1,6 @@
 from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
 
+
 NameIDNameQualifier = SAML2_IDP_CONFIG['entityid']
 
 ATTRIBUTES_TYPES = {
@@ -100,6 +101,7 @@ RESPONSE_TESTS = {
         "path": "case-03.xml",
         "response": {},
     },
+    # todo
     "4": {
         "name": "04. Response - Firma non valida",
         "description": "Response firmata con certificato diverso da quello registrato su SP. Risultato atteso: KO",
@@ -121,8 +123,6 @@ RESPONSE_TESTS = {
         # "response": {
             # "ResponseID": ""
         # },
-        #
-        #
     # },
     # "9": {
         # "name": "09. Response - ID mancante",
@@ -130,8 +130,6 @@ RESPONSE_TESTS = {
         # "status_codes": [403, 500],
         # "path": "case-09.xml",
         # "response": {},
-        #
-        #
     # },
     "10": {
         "name": "10. Response - Version diverso da 2.0",
@@ -257,8 +255,6 @@ RESPONSE_TESTS = {
         # "status_codes": [403, 500],
         # "path": "case-25.xml",
         # "response": {},
-        #
-        #
     # },
     "26": {
         "name": "26. Response - Elemento StatusCode diverso da success (non valido)",
@@ -316,8 +312,6 @@ RESPONSE_TESTS = {
         # "status_codes": [403, 500],
         # "path": "case-33.xml",
         # "response": {},
-        #
-        #
     # },
     # "34": {
         # "name": "34. Assertion - Attributo ID mancante",
@@ -325,8 +319,6 @@ RESPONSE_TESTS = {
         # "status_codes": [403, 500],
         # "path": "case-34.xml",
         # "response": {},
-        #
-        #
     # },
     "35": {
         "name": "35. Assertion - Attributo Version diverso da 2.0",
@@ -674,8 +666,6 @@ RESPONSE_TESTS = {
         # "status_codes": [403, 500],
         # "path": "case-84.xml",
         # "response": {},
-        #
-        #
     # },
     "85": {
         "name": "85. Assertion - Elemento Audience di AudienceRestriction di Condition non specificato",
@@ -726,8 +716,6 @@ RESPONSE_TESTS = {
         # "status_codes": [403, 500],
         # "path": "case-91.xml",
         # "response": {},
-        #
-        #
     # },
     "92": {
         "name": "92. Assertion - Elemento AuthContextClassRef di AuthnContext di AuthStatement non specificato",
@@ -795,6 +783,7 @@ RESPONSE_TESTS = {
         "path": "case-99.xml",
         "response": {},
     },
+    # todo
     "100": {
         "name": "100. Assertion - Firma diversa",
         "description": "Assertion firmata con certificato diverso. Risultato atteso: KO",

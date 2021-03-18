@@ -155,7 +155,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         asser_placeholder = '<!-- Assertion Signature here -->'
         if assertion and asser_placeholder in xmlstr:
             value = signature_node.render(
-                        {'ReferenceURI': f"#{self.response_attrs['AssertionID']}"}
+                {'ReferenceURI': f"#{self.response_attrs['AssertionID']}"}
             )
             xmlstr = xmlstr.replace(asser_placeholder, value)
             params.update(
@@ -170,7 +170,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         sign_placeholder = '<!-- Response Signature here -->'
         if response and sign_placeholder in xmlstr:
             value = signature_node.render(
-                        {'ReferenceURI': f"#{self.response_attrs['ResponseID']}"}
+                {'ReferenceURI': f"#{self.response_attrs['ResponseID']}"}
             )
             xmlstr = xmlstr.replace(sign_placeholder, value)
             params.update(
@@ -206,7 +206,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         url = self.authnreq_attrs['AssertionConsumerServiceURL']
         ua = self.authn_request_data['requests_session']
         res = ua.post(url, data=data, allow_redirects=True)
-        self.logger.debug(f'Response http status code [{res.status_code}]: {res.content.decode()}')
+        msg = f'Response http status code [{res.status_code}]: {res.content.decode()}'
+        self.logger.debug(msg)
         return res
 
 
@@ -225,13 +226,15 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 logger.debug('{xmlstr}')
                 break
 
-
             # pretty_xml = prettify_xml(result)
             # logger.debug(pretty_xml.decode())
             logger.debug(result)
 
             res = self.send_response(result)
-            status, status_msg = self.check_response(res, attendeds=response_obj.conf['status_codes'])
+            status, status_msg = self.check_response(
+                                res,
+                                attendeds=response_obj.conf['status_codes']
+                                )
             log_func_ = logger.info
             if status:
                 pass
