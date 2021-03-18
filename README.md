@@ -78,9 +78,9 @@ spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http
 Authors
 -------
 
-- Giuseppe De Marco
-- Paolo Smiraglia
-- Michele D'Amico
+- [Giuseppe De Marco](https://github.com/peppelinux)
+- [Paolo Smiraglia](https://github.com/psmiraglia)
+- [Michele D'Amico](https://github.com/damikael)
 
 
 References
