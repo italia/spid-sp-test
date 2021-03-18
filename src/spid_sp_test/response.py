@@ -19,6 +19,7 @@ from spid_sp_test.authn_request import get_authn_request
 from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
 from spid_sp_test.responses import settings
 from spid_sp_test.utils import del_ns, prettify_xml
+from tempfile import NamedTemporaryFile
 
 from . utils import get_xmlsec1_bin
 
@@ -150,23 +151,31 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         Sign an XML statement.
         """
         signature_node = Template(settings.SIGNATURE_TMPL)
+        key_file = key_file or self.private_key_fpath
         params = dict(
-              key_file = key_file or self.private_key_fpath,
+              key_file = key_file,
         )
+
         asser_placeholder = '<!-- Assertion Signature here -->'
         if assertion and asser_placeholder in xmlstr:
             value = signature_node.render(
                 {'ReferenceURI': f"#{self.response_attrs['AssertionID']}"}
             )
             xmlstr = xmlstr.replace(asser_placeholder, value)
-            params.update(
-                {
-                    'node_name' : 'urn:oasis:names:tc:SAML:2.0:assertion:Assertion',
-                    'node_id' : f'{self.response_attrs["AssertionID"]}',
-                    'statement': xmlstr
-                }
-            )
-            xmlstr = self.crypto_backend.sign_statement(**params)
+            with NamedTemporaryFile(suffix='.xml') as ntf:
+                ntf.write(xmlstr.encode())
+                ntf.seek(0)
+                com_list = [
+                            self.crypto_backend.xmlsec,
+                            '--sign',
+                            '--privkey-pem', key_file,
+                            '--id-attr:ID',
+                            'urn:oasis:names:tc:SAML:2.0:assertion:Assertion',
+                            # '--node-id',
+                            # f'{self.response_attrs["AssertionID"]}'
+                        ]
+                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(com_list, [ntf.name])
+                xmlstr = xmlstr.decode()
 
         sign_placeholder = '<!-- Response Signature here -->'
         if response and sign_placeholder in xmlstr:
@@ -174,16 +183,22 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 {'ReferenceURI': f"#{self.response_attrs['ResponseID']}"}
             )
             xmlstr = xmlstr.replace(sign_placeholder, value)
-            params.update(
-                {
-                    'node_name' : 'urn:oasis:names:tc:SAML:2.0:protocol:Response',
-                    'node_id' : f'{self.response_attrs["ResponseID"]}',
-                    'statement': xmlstr
-                }
-            )
-            xmlstr = self.crypto_backend.sign_statement(**params)
+            with NamedTemporaryFile(suffix='.xml') as ntf:
+                ntf.write(xmlstr.encode())
+                ntf.seek(0)
+                com_list = [
+                            self.crypto_backend.xmlsec,
+                            '--sign',
+                            '--privkey-pem', key_file,
+                            '--id-attr:ID',
+                            'urn:oasis:names:tc:SAML:2.0:protocol:Response',
+                            # '--node-id',
+                            # f'{self.response_attrs["ResponseID"]}'
+                        ]
+                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(com_list, [ntf.name])
+                xmlstr = xmlstr.decode()
 
-        return xmlstr
+        return xmlstr.decode() if isinstance(xmlstr, bytes) else xmlstr
 
 
     def load_test(self, test_name=None, attributes={}, response_attrs={}):
@@ -228,8 +243,6 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 logger.debug('{xmlstr}')
                 break
 
-            # pretty_xml = prettify_xml(result)
-            # logger.debug(pretty_xml.decode())
             logger.debug(result)
 
             res = self.send_response(result)
