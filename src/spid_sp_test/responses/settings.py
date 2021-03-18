@@ -61,31 +61,12 @@ ATTRIBUTE_TMPL = """
     </saml:Attribute>
 """
 
-# can't use reference URI 'cause of tests 33 and 34 ...
-# SIGNATURE_TMPL = """
-    # <ds:Signature>
-        # <ds:SignedInfo>
-            # <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
-            # <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
-            # <ds:Reference URI="{{ReferenceURI}}">
-                # <ds:Transforms>
-                    # <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
-                    # <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
-                # </ds:Transforms>
-                # <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
-                    # <ds:DigestValue />
-            # </ds:Reference>
-        # </ds:SignedInfo>
-        # <ds:SignatureValue />
-    # </ds:Signature>
-# """
-
 SIGNATURE_TMPL = """
     <ds:Signature>
         <ds:SignedInfo>
             <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
             <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
-            <ds:Reference>
+            <ds:Reference {% if ReferenceURI %} URI="{{ReferenceURI}}" {% endif %}>
                 <ds:Transforms>
                     <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
                     <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
@@ -97,6 +78,24 @@ SIGNATURE_TMPL = """
         <ds:SignatureValue />
     </ds:Signature>
 """
+
+# SIGNATURE_TMPL = """
+    # <ds:Signature>
+        # <ds:SignedInfo>
+            # <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+            # <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+            # <ds:Reference>
+                # <ds:Transforms>
+                    # <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+                    # <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+                # </ds:Transforms>
+                # <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+                    # <ds:DigestValue />
+            # </ds:Reference>
+        # </ds:SignedInfo>
+        # <ds:SignatureValue />
+    # </ds:Signature>
+# """
 
 RESPONSE_TESTS = {
     "1": {
@@ -137,7 +136,7 @@ RESPONSE_TESTS = {
         "status_codes": [403, 500],
         "path": "case-08.xml",
         "response": {
-            "ResponseID": ""
+            "ResponseID": None
         },
     },
     "9": {
@@ -145,7 +144,9 @@ RESPONSE_TESTS = {
         "description": "Attributo ID mancante. Risultato atteso: KO",
         "status_codes": [403, 500],
         "path": "case-09.xml",
-        "response": {},
+        "response": {
+            "ResponseID": None
+        },
     },
     "10": {
         "name": "10. Response - Version diverso da 2.0",
@@ -319,7 +320,9 @@ RESPONSE_TESTS = {
         "description": "Elemento Assertion mancante ed esito positivo autenticazione. Risultato atteso: KO",
         "status_codes": [403, 500],
         "path": "case-32.xml",
-        "response": {},
+        "response": {
+            "AssertionID": None
+        },
     },
     # manca ID per firmare con xmlsec1
     "33": {
@@ -327,14 +330,18 @@ RESPONSE_TESTS = {
         "description": "Attributo ID dell'Assertion non specificato. Risultato atteso: KO",
         "status_codes": [403, 500],
         "path": "case-33.xml",
-        "response": {},
+        "response": {
+            "AssertionID": None
+        },
     },
     "34": {
         "name": "34. Assertion - Attributo ID mancante",
         "description": "Attributo ID dell'Assertion mancante. Risultato atteso: KO",
         "status_codes": [403, 500],
         "path": "case-34.xml",
-        "response": {},
+        "response": {
+            "AssertionID": None
+        },
     },
     "35": {
         "name": "35. Assertion - Attributo Version diverso da 2.0",

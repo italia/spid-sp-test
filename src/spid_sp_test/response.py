@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 def stupid_rnd_string(N=32):
     return ''.join(random.choice(string.ascii_lowercase) for _ in range(N))
 
+
 def saml_rnd_id():
     return (f"_{stupid_rnd_string(8)}"
             f"-{stupid_rnd_string(4)}"
@@ -55,13 +56,7 @@ class SpidSpResponse(object):
 
         self.attributes = attributes
         self.authnreq_attrs = authnreq_attrs
-
-        # overload response args with values taken from test conf
         self.response_attrs = response_attrs
-        if self.conf.get('response'):
-            for k,v in self.conf['response'].items():
-                logger.debug(f'Test {self.conf}: overwriting {k} with {v}')
-                self.response_attrs[k] = v
 
         self.loader = Environment(
                     loader = FileSystemLoader(searchpath=template_path),
@@ -152,67 +147,84 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         """
         signature_node = Template(settings.SIGNATURE_TMPL)
         key_file = key_file or self.private_key_fpath
-        params = dict(
-              key_file = key_file,
-        )
+        com_list = [
+                        self.crypto_backend.xmlsec,
+                        '--sign',
+                        '--privkey-pem', key_file
+        ]
 
         asser_placeholder = '<!-- Assertion Signature here -->'
         if assertion and asser_placeholder in xmlstr:
-            value = signature_node.render(
-                {'ReferenceURI': f"#{self.response_attrs['AssertionID']}"}
-            )
+            assertion_id = self.response_attrs.get('AssertionID')
+            if assertion_id:
+                ref_data = {
+                    'ReferenceURI': f"#{assertion_id}"
+                }
+            else:
+                ref_data = {}
+            value = signature_node.render(**ref_data)
             xmlstr = xmlstr.replace(asser_placeholder, value)
+
             with NamedTemporaryFile(suffix='.xml') as ntf:
                 ntf.write(xmlstr.encode())
                 ntf.seek(0)
-                com_list = [
-                            self.crypto_backend.xmlsec,
-                            '--sign',
-                            '--privkey-pem', key_file,
+                _com_list = [
                             '--id-attr:ID',
                             'urn:oasis:names:tc:SAML:2.0:assertion:Assertion',
                             # '--node-id',
                             # f'{self.response_attrs["AssertionID"]}'
                         ]
-                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(com_list, [ntf.name])
+                _com = com_list + _com_list
+                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(_com, [ntf.name])
                 xmlstr = xmlstr.decode()
 
         sign_placeholder = '<!-- Response Signature here -->'
         if response and sign_placeholder in xmlstr:
-            value = signature_node.render(
-                {'ReferenceURI': f"#{self.response_attrs['ResponseID']}"}
-            )
+            response_id = self.response_attrs.get('ResponseID')
+            if response_id:
+                ref_data = {
+                    'ReferenceURI': f"#{response_id}"
+                }
+            else:
+                ref_data = {}
+            value = signature_node.render(**ref_data)
             xmlstr = xmlstr.replace(sign_placeholder, value)
             with NamedTemporaryFile(suffix='.xml') as ntf:
                 ntf.write(xmlstr.encode())
                 ntf.seek(0)
-                com_list = [
-                            self.crypto_backend.xmlsec,
-                            '--sign',
-                            '--privkey-pem', key_file,
+                _com_list = [
                             '--id-attr:ID',
                             'urn:oasis:names:tc:SAML:2.0:protocol:Response',
                             # '--node-id',
                             # f'{self.response_attrs["ResponseID"]}'
                         ]
-                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(com_list, [ntf.name])
+                _com = com_list + _com_list
+                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(_com, [ntf.name])
                 xmlstr = xmlstr.decode()
 
         return xmlstr.decode() if isinstance(xmlstr, bytes) else xmlstr
 
 
     def load_test(self, test_name=None, attributes={}, response_attrs={}):
-        return SpidSpResponse(test_name,
+        spid_response = SpidSpResponse(test_name,
                               authnreq_attrs = self.authnreq_attrs,
                               attributes = attributes,
                               response_attrs = response_attrs or self.response_attrs,
                               template_path = self.template_path)
+        conf = settings.RESPONSE_TESTS[test_name]
+        if conf.get('response'):
+            for k,v in conf['response'].items():
+                logger.debug(f'Test {test_name}: overwriting {k} with {v}')
+                spid_response.response_attrs[k] = v
+        return spid_response
+
 
     def check_response(self, res, attendeds=[]):
         if res.status_code in attendeds:
             return True, f'[http status_code: {res.status_code}]'
         else:
             return False, f'[ http status_code: {res.status_code}]'
+
 
     def send_response(self, xmlstr):
         data = {
