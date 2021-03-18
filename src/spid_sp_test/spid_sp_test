@@ -109,7 +109,8 @@ if __name__ == '__main__':
                         '-tp', '--template-path',
                         default = f'{BASE_DIR}/responses/templates/',
                         required=False,
-                        help="templates containing SAML2 xml templates, for responses"
+                        help=("templates containing SAML2 xml "
+                              "templates for response tests")
                         )
 
     parser.add_argument(
@@ -123,7 +124,8 @@ if __name__ == '__main__':
                         '-tj', '--test-jsons',
                         action='append', nargs='*',
                         required=False,
-                        help="custom test via json file, eg: tests/example.test-suite.json"
+                        help=("custom test via json file, "
+                              "eg: tests/example.test-suite.json")
                         )
 
     parser.add_argument(
@@ -161,13 +163,15 @@ if __name__ == '__main__':
                         '--production', '-p',
                         action="store_true",
                         default=False,
-                        help="execute tests for system in production, eg: https and TLS quality"
+                        help=("execute tests for system in production, "
+                              "eg: https and TLS quality")
                         )
 
     parser.add_argument(
                         '--html-path', '-hp',
                         help=("Only works with Response tests activated"
-                              "Path where the html response pages will be dumped after by the SP")
+                              "Path where the html response pages will "
+                              "be dumped after by the SP")
                         )
 
     args = parser.parse_args()
@@ -179,7 +183,6 @@ if __name__ == '__main__':
         sys.exit(1)
 
     tests_done = []
-
     if args.idp_metadata:
         from spid_sp_test.idp.idp import SAML2_IDP_CONFIG
 
@@ -221,7 +224,8 @@ if __name__ == '__main__':
 
     # Responses
     if args.test_response:
-        html_path = f'{args.html_path}/' #'html-dumps_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
+        #'html-dumps_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
+        html_path = f'{args.html_path}/'
 
         data_tr = dict(
             metadata_etree = metadata_check.doc,
@@ -230,7 +234,7 @@ if __name__ == '__main__':
             template_path = args.template_path,
             xmlsec_binary = args.xmlsec_path,
             test_names = args.test_names[0] if args.test_names else [],
-            test_jsons = args.test_jsons,
+            test_jsons = args.test_jsons or [],
             attr_json = args.attr_json,
             production = args.production,
             html_path = html_path if args.html_path else None

@@ -13,7 +13,6 @@ from lxml import etree
 
 from saml2 import BINDING_HTTP_POST
 from saml2.server import Server
-# from saml2.s_utils import OtherError
 from saml2.sigver import CryptoBackendXMLSecurity
 # from saml2.sigver import CryptoBackendXmlSec1
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -629,7 +628,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
 
     def test_all(self):
-
         self.test_xsd_and_xmldsig()
         self.test_AuthnRequest()
         self.test_Subject()

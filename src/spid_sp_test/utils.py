@@ -12,8 +12,8 @@ from lxml import etree
 from . exceptions import *
 
 
-form_samlreq_regex = '[\s\n.]*name="SAMLRequest"'
-form_samlreq_value_regex = 'value="(?P<value>[a-zA-Z0-9+=]*)"[\s\n.]*'
+# form_samlreq_regex = ''
+form_samlreq_value_regex = 'name="SAMLRequest" value="(?P<value>[a-zA-Z0-9+=]*)"'
 form_relaystate_regexp = 'name="RelayState" value="(?P<value>[a-zA-Z0-9+=\/\_\.]*)"'
 
 
@@ -138,10 +138,6 @@ def parse_pem(cert):
 
 
 def samlreq_from_htmlform(html_content):
-    saml_request = re.search(form_samlreq_regex, html_content)
-    if not saml_request:
-        raise SAMLRequestNotFound()
-
     saml_req_value = re.search(form_samlreq_value_regex, html_content)
     if not saml_req_value:
         raise SAMLRequestValueNotFound()
@@ -165,8 +161,6 @@ def decode_authn_req_http_redirect(saml_req_str):
     msg = base64.b64decode(saml_req_str)
     inflated = zlib.decompress(msg, -15)
     return inflated.decode()
-    # dom = xml.dom.minidom.parseString(inflated.decode())
-    # return dom.toprettyxml()
 
 
 def get_key_pem_wrapped_unwrapped(cert):

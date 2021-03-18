@@ -109,6 +109,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.metadata_etree = kwargs.get('metadata_etree')
         self.authn_request_url = kwargs.get('authn_request_url')
 
+        # signing
         self.crypto_backend = CryptoBackendXmlSec1(
             xmlsec_binary=kwargs.get('xmlsec_binary') or get_xmlsec1_bin()
         )
@@ -116,11 +117,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         # tests
         self.tests = {}
-        if kwargs.get('test_jsons'):
-            for i in kwargs['test_jsons']:
-                with open(i[0], 'r') as json_data:
-                    self.tests.update(json.loads(json_data.read()))
-        else:
+        for i in kwargs.get('test_jsons', []):
+            with open(i[0], 'r') as json_data:
+                self.tests.update(json.loads(json_data.read()))
+        if not self.tests:
             self.tests.update(settings.RESPONSE_TESTS)
         self.test_names = kwargs.get('test_names') or self.tests.keys()
 
@@ -225,11 +225,13 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
 
     def load_test(self, test_name=None, attributes={}, response_attrs={}):
-        spid_response = SpidSpResponse(test_name,
-                              authnreq_attrs = self.authnreq_attrs,
-                              attributes = attributes,
-                              response_attrs = response_attrs or self.response_attrs,
-                              template_path = self.template_path)
+        spid_response = SpidSpResponse(
+                            test_name,
+                            authnreq_attrs = self.authnreq_attrs,
+                            attributes = attributes,
+                            response_attrs = response_attrs or self.response_attrs,
+                            template_path = self.template_path
+                        )
         conf = settings.RESPONSE_TESTS[test_name]
         if conf.get('response'):
             for k,v in conf['response'].items():
@@ -239,7 +241,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
 
     def check_response(self, res, msg:str, attendeds=[]):
-        status = res.status_code in attendeds
+        if res.status_code in attendeds:
+            status = True
+        else:
+            status = False
         self._assertTrue(status, msg)
         return status, f'[http status_code: {res.status_code}]'
 
@@ -291,14 +296,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 self.dump_html_response(f'{i}_{status}',
                                         res.content.decode())
 
-
             log_func_ = logger.info
             if status:
                 pass
-            elif status == False:
+            else:
                 log_func_ = logger.error
-            elif status == None:
-                log_func_ = logger.critical
 
             log_func_(f'{msg}: {status_msg}')
         self.is_ok(f'{self.__class__.__name__}')
