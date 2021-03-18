@@ -226,8 +226,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 break
 
 
-            pretty_xml = prettify_xml(result)
-            logger.debug(pretty_xml.decode())
+            # pretty_xml = prettify_xml(result)
+            # logger.debug(pretty_xml.decode())
+            logger.debug(result)
 
             res = self.send_response(result)
             status, status_msg = self.check_response(res, attendeds=response_obj.conf['status_codes'])

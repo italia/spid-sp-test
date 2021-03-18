@@ -46,12 +46,12 @@ Run `spid_sp_test -h` for inline documentation.
 
 Test metadata passing a file
 ````
-spid_sp_test -metadata_url file://metadata.xml
+spid_sp_test --metadata-url file://metadata.xml
 ````
 
 Test metadata from a URL
 ````
-spid_sp_test -metadata_url http://localhost:8000/spid/metadata
+spid_sp_test --metadata-url http://localhost:8000/spid/metadata
 ````
 
 Get fake IdP metadata and copy it to your SP metadatastore folder
@@ -61,17 +61,17 @@ spid_sp_test --idp-metadata > /path/to/spid-django/example/spid_config/metadata/
 
 A quite standard test
 ````
-spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8088 --extra
+spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8088 --extra
 ````
 
 Print only ERRORs
 ````
-spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR
+spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR
 ````
 
 JSON report (add `-o filename.json` to write to a file)
 ````
-spid_sp_test -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug CRITICAL -json
+spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug CRITICAL -json
 ````
 
 

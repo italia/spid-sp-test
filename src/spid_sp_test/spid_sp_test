@@ -33,12 +33,12 @@ def selective_run(obj, meth_list):
 if __name__ == '__main__':
     _desc = (f'{__file__} -h for help')
     _epilog = f"""examples:
-        {__file__} -metadata_url http://localhost:8000/spid/metadata --extra
-        {__file__} -metadata_url file://metadata.xml
-        {__file__} -metadata_url http://localhost:8000/spid/metadata -l test_Organization test_Signature
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --extra
+        {__file__} --metadata-url file://metadata.xml
+        {__file__} --metadata-url http://localhost:8000/spid/metadata -l test_Organization test_Signature
         {__file__} --idp-metadata
-        {__file__} -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=spid-idp-test
-        {__file__} -metadata_url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR -json -l xsd_check
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=spid-idp-test
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR -json -l xsd_check
 
 
     """
@@ -48,15 +48,18 @@ if __name__ == '__main__':
                         epilog = _epilog,
                         formatter_class = argparse.RawTextHelpFormatter
     )
-    parser.add_argument('-metadata_url', required=False, default=None,
+    parser.add_argument('--metadata-url', required=False, default=None,
                         help=("URL where SAML2 Metadata resides: "
-                              "it can be file://path or https://fqdn"))
+                              "it can be file://path or https://fqdn")
+                        )
     parser.add_argument('--idp-metadata',
                         action="store_true", default=False,
                         help="get example IdP metadata")
+
     parser.add_argument('-l','--list', nargs='*',
                         help='esecute only selected checks',
                         required=False)
+
     parser.add_argument('--extra',
                         action="store_true", default=False,
                         help="execute extra checks")
@@ -90,6 +93,7 @@ if __name__ == '__main__':
                              'WARNING', 'INFO', 'DEBUG'),
                     default='INFO',
                     help="Debug level, see python logging")
+
     parser.add_argument('-xp', '--xmlsec-path',
                         default = get_xmlsec1_bin(),
                         required=False,

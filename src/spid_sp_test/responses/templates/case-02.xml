@@ -1,0 +1,6 @@
+{% extends "base.xml" %}
+{% block response_signature %}
+{% endblock response_signature %}
+
+{% block assertion_signature %}
+{% endblock assertion_signature %}
