@@ -30,9 +30,9 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                  metadata_url,
                  xsds_files:list = None,
                  xsds_files_path:str = None,
-                 verify_ssl:bool = False):
+                 production:bool = False):
 
-        super(SpidSpMetadataCheck, self).__init__(verify_ssl=verify_ssl)
+        super(SpidSpMetadataCheck, self).__init__(verify_ssl=production)
         self.category = 'metadata_strict'
 
         self.logger = logger
@@ -44,6 +44,8 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.doc = etree.fromstring(self.metadata)
         # clean up namespace (otherwise xpath doesn't work ...)
         del_ns(self.doc)
+
+        self.production = production
 
 
     @staticmethod
@@ -93,10 +95,11 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             _msg = 'The entityID attribute must have a value - TR pag. 19'
             self.handle_result('error', _msg)
 
-        self._assertIsValidHttpsUrl(
-            self.doc.attrib.get('entityID'),
-            'The entityID attribute must be a valid HTTPS url'
-        )
+        if self.production:
+            self._assertIsValidHttpsUrl(
+                self.doc.attrib.get('entityID'),
+                'The entityID attribute must be a valid HTTPS url'
+            )
         return self.is_ok(f'{self.__class__.__name__}.test_EntityDescriptor')
 
 
@@ -280,12 +283,12 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         (('The %s attribute in SingleLogoutService element must be one of [%s] - AV n. 3') %  # noqa
                          (attr, ', '.join(constants.ALLOWED_BINDINGS)))  # noqa
                     )
-                if attr == 'Location':
+                if attr == 'Location' and self.production:
                     self._assertIsValidHttpsUrl(
                         a,
                         'The %s attribute '
                         'in SingleLogoutService element '
-                        'must be a valid URL - AV n. 1 and n. 3' % attr
+                        'must be a valid HTTPS URL - AV n. 1 and n. 3' % attr
                     )
         return self.is_ok(f'{self.__class__.__name__}.test_SingleLogoutService')
 
@@ -314,7 +317,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                                    (('The %s attribute must be one of [%s] - TR pag. 20') %
                                     (attr,
                                      ', '.join(constants.ALLOWED_BINDINGS))))
-                elif attr == 'Location':
+                elif attr == 'Location' and self.production:
                     self._assertIsValidHttpsUrl(a,
                                                 'The %s attribute must be a '
                                                 'valid HTTPS url - TR pag. 20 and AV n. 1' % attr)
@@ -425,7 +428,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         'The %s element must have a value  - TR pag. 20' % ename
                     )
 
-                    if ename == 'OrganizationURL':
+                    if ename == 'OrganizationURL' and self.production:
                         OrganizationURLvalue = element.text.strip()
                         if not (OrganizationURLvalue.startswith('http://') or OrganizationURLvalue.startswith('https://')):
                             OrganizationURLvalue = 'https://'+OrganizationURLvalue

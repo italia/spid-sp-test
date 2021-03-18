@@ -92,16 +92,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                  authn_request:dict = {},
                  xsds_files:list = None,
                  xsds_files_path:str = None,
-                 verify_ssl:bool = False):
+                 production:bool = False):
 
-        super(SpidSpAuthnReqCheck, self).__init__(verify_ssl=verify_ssl)
+        super(SpidSpAuthnReqCheck, self).__init__(verify_ssl=production)
         self.category = 'authnrequest_strict'
 
         self.logger = logger
         self.metadata = metadata
 
         self.authn_request = get_authn_request(authn_request_url,
-                                               verify_ssl=verify_ssl)
+                                               verify_ssl=production)
 
         try:
             self.authn_request_decoded = self.authn_request['SAMLRequest_xml']
@@ -125,7 +125,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self.IS_HTTP_REDIRECT = self.authn_request.get('Signature')
         # HTTP-REDIRECT params
         self.params = {'RelayState': self.relay_state}
-
+        self.production = production
 
     def idp(self):
         idp_config = copy.deepcopy(SAML2_IDP_CONFIG)
@@ -224,10 +224,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     value,
                     'The %s attribute must have a value - TR pag. 8 ' % attr
                 )
-                self._assertIsValidHttpsUrl(
-                    value,
-                    'The %s attribute must be a valid HTTPS url - TR pag. 8 ' % attr
-                )
+                if self.production:
+                    self._assertIsValidHttpsUrl(
+                        value,
+                        'The %s attribute must be a valid HTTPS url - TR pag. 8 ' % attr
+                    )
 
         self._assertTrue(
             ('IsPassive' not in req.attrib),
@@ -293,10 +294,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 )
 
                 if attr == 'AssertionConsumerServiceURL':
-                    self._assertIsValidHttpsUrl(
-                        value,
-                        'The %s attribute must be a valid HTTPS url - TR pag. 8 and pag. 16' % attr
-                    )
+                    if self.production:
+                        self._assertIsValidHttpsUrl(
+                            value,
+                            'The %s attribute must be a valid HTTPS url - TR pag. 8 and pag. 16' % attr
+                        )
 
                     self._assertTrue(value in availableassertionlocations,
                         'The %s attribute must be equal to an AssertionConsumerService Location - TR pag. 8 ' % attr
