@@ -44,6 +44,62 @@ Examples
 
 Run `spid_sp_test -h` for inline documentation.
 
+````
+optional arguments:
+  -h, --help            show this help message and exit
+  --metadata-url METADATA_URL
+                        URL where SAML2 Metadata resides: it can be file://path or https://fqdn
+  --idp-metadata        get example IdP metadata
+  -l [LIST [LIST ...]], --list [LIST [LIST ...]]
+                        esecute only selected checks
+  --extra               execute extra checks
+  --authn-url AUTHN_URL
+                        URL where the SP initializes the Authentication Request to this IDP,it can also be a file:///
+  -tr, --test-response  execute SAML2 responses
+  -tp TEMPLATE_PATH, --template-path TEMPLATE_PATH
+                        templates containing SAML2 xml templates, for responses
+  -tn [TEST_NAMES [TEST_NAMES ...]], --test-names [TEST_NAMES [TEST_NAMES ...]]
+                        response test to be executed, eg: 01 02 03
+  -tj [TEST_JSONS [TEST_JSONS ...]], --test-jsons [TEST_JSONS [TEST_JSONS ...]]
+                        custom test via json file, eg: tests/example.test-suite.json
+  -aj ATTR_JSON, --attr-json ATTR_JSON
+                        loads user attributes via json, eg: tests/example.attributes.json
+  -json                 json output
+  -o O                  json output to file
+  -d {CRITICAL,ERROR,WARNING,INFO,DEBUG}, --debug {CRITICAL,ERROR,WARNING,INFO,DEBUG}
+                        Debug level, see python logging
+  -xp XMLSEC_PATH, --xmlsec-path XMLSEC_PATH
+                        xmlsec1 executable path, eg: /usr/bin/xmlsec1
+
+examples:
+        src/spid_sp_test/spid_sp_test --metadata-url file://metadata.xml
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --extra
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata -l test_Organization test_Signature
+
+        # export idp metadata
+        src/spid_sp_test/spid_sp_test --idp-metadata
+
+        # test an authentication request made by a SP
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=spid-idp-test
+
+        # select which tests to execute
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR -json -l xsd_check
+
+        # execute Response tests
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra -debug ERROR -tr
+
+        # select which response test to execute
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tn 1 8 9 24 63
+
+        # run a test suite configured in a json file
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tj tests/example.test-suite.json
+
+        # select which user attribute to return in response via json file
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug DEBUG -aj tests/example.attributes.json
+
+````
+
+
 Test metadata passing a file
 ````
 spid_sp_test --metadata-url file://metadata.xml
