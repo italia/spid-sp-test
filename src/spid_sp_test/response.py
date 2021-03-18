@@ -1,8 +1,9 @@
 import base64
 import datetime
-import random
+import json
 import logging
 import os
+import random
 import string
 
 from copy import deepcopy
@@ -112,7 +113,16 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             xmlsec_binary=kwargs.get('xmlsec_binary') or get_xmlsec1_bin()
         )
         self.private_key_fpath = SAML2_IDP_CONFIG['key_file']
-        self.test_names = kwargs.get('test_names') or settings.RESPONSE_TESTS.keys()
+
+        self.tests = {}
+        if kwargs.get('test_jsons'):
+            for i in kwargs['test_jsons']:
+                with open(i[0], 'r') as json_data:
+                    self.tests.update(json.loads(json_data.read()))
+        else:
+            self.tests.update(settings.RESPONSE_TESTS)
+
+        self.test_names = kwargs.get('test_names') or self.tests.keys()
         self.kwargs = kwargs
 
     def do_authnrequest(self):

@@ -40,6 +40,15 @@ if __name__ == '__main__':
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=spid-idp-test
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR -json -l xsd_check
 
+        # execute Response tests
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra -debug ERROR -tr
+
+        # select which test to run
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tn 1 8 9 24 63
+
+        # run a test suite configured in a json file
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tj tests/example.test-suite.json
+
 
     """
 
@@ -82,13 +91,18 @@ if __name__ == '__main__':
                         required=False,
                         help="response test to be executed, eg: 01 02 03")
 
+    parser.add_argument('-tj', '--test-jsons',
+                        action='append', nargs='*',
+                        required=False,
+                        help="custom test via json file, eg: tests/example.test-suite.json")
+
     parser.add_argument('-json', action="store_true",
                         help="json output")
 
     parser.add_argument('-o', required=False,
                         help="json output to file")
 
-    parser.add_argument('-debug', required=False,
+    parser.add_argument('-d', '--debug', required=False,
                     choices=('CRITICAL', 'ERROR',
                              'WARNING', 'INFO', 'DEBUG'),
                     default='INFO',
@@ -155,6 +169,7 @@ if __name__ == '__main__':
             template_path = args.template_path,
             xmlsec_binary = args.xmlsec_path,
             test_names = args.test_names[0] if args.test_names else [],
+            test_jsons = args.test_jsons
         )
         response_check = SpidSpResponseCheck(**data_tr)
         selective_run(response_check, args.list)

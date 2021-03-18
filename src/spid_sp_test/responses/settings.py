@@ -324,7 +324,6 @@ RESPONSE_TESTS = {
             "AssertionID": None
         },
     },
-    # manca ID per firmare con xmlsec1
     "33": {
         "name": "33. Assertion - Attributo ID non specificato",
         "description": "Attributo ID dell'Assertion non specificato. Risultato atteso: KO",

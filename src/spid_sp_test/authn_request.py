@@ -21,8 +21,8 @@ from spid_sp_test import BASE_DIR, AbstractSpidCheck
 from spid_sp_test import constants
 from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
 from spid_sp_test.utils import (decode_samlreq,
-                                del_ns, 
-                                parse_pem, 
+                                del_ns,
+                                parse_pem,
                                 samlreq_from_htmlform,
                                 relaystate_from_htmlform,
                                 decode_authn_req_http_redirect)
@@ -40,7 +40,7 @@ def get_authn_request(authn_request_url, verify_ssl=False):
     binding = 'post' or 'redirect'
     if authn_request_url[0:7] == 'file://':
         authn_request = open(authn_request_url[7:], 'rb').read()
-        
+
         # stupid test ... good enough for now
         if authn_request[0] == b'<' and authn_request[-1] == b'>':
             binding = 'post'
@@ -50,23 +50,23 @@ def get_authn_request(authn_request_url, verify_ssl=False):
     else:
         requests_session = requests.Session()
         request = requests_session.get(
-                                       authn_request_url, 
+                                       authn_request_url,
                                        verify=verify_ssl,
                                        allow_redirects=False
         )
-    
+
     if binding == 'redirect':
         # HTTP-REDIRECT
         redirect = request.headers['Location']
         q_args = urllib.parse.splitquery(redirect)[1]
         authn_request = dict(urllib.parse.parse_qsl(q_args))
-        
+
         data['SAMLRequest'] = authn_request['SAMLRequest']
         data['SAMLRequest_xml'] = decode_authn_req_http_redirect(authn_request['SAMLRequest'])
         data['RelayState'] = authn_request['RelayState']
         data['SigAlg'] = authn_request['SigAlg']
         data['Signature'] = authn_request['Signature']
-        
+
     elif binding == 'post':
         # HTTP POST
         authn_request = request.content.decode()
@@ -76,7 +76,7 @@ def get_authn_request(authn_request_url, verify_ssl=False):
 
     else:
         raise SAMLRequestNotFound()
-    
+
     data['requests_session'] = requests_session
     return data
 
@@ -85,42 +85,42 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
     xsds_files = [
         'saml-schema-protocol-2.0.xsd',
     ]
-    
-    def __init__(self, 
+
+    def __init__(self,
                  metadata,
-                 authn_request_url:str = None, 
+                 authn_request_url:str = None,
                  authn_request:dict = {},
                  xsds_files:list = None,
                  xsds_files_path:str = None,
                  verify_ssl:bool = False):
-        
+
         super(SpidSpAuthnReqCheck, self).__init__(verify_ssl=verify_ssl)
         self.category = 'authnrequest_strict'
-        
+
         self.logger = logger
         self.metadata = metadata
-        
+
         self.authn_request = get_authn_request(authn_request_url,
                                                verify_ssl=verify_ssl)
-        
+
         try:
-            self.authn_request_decoded = self.authn_request['SAMLRequest_xml'] 
-            self.authn_request_encoded = self.authn_request['SAMLRequest'] 
+            self.authn_request_decoded = self.authn_request['SAMLRequest_xml']
+            self.authn_request_encoded = self.authn_request['SAMLRequest']
         except KeyError as e:
             raise SAMLRequestNotFound(self.authn_request)
-        
+
         self.relay_state = self.authn_request.get('RelayState')
 
         self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f'{BASE_DIR}/xsd'
-        
+
         self.md = etree.fromstring(self.metadata)
         del_ns(self.md)
-        
+
         self.doc = etree.fromstring(self.authn_request_decoded)
         # clean up namespace (otherwise xpath doesn't work ...)
         del_ns(self.doc)
-        
+
         # binding detection
         self.IS_HTTP_REDIRECT = self.authn_request.get('Signature')
         # HTTP-REDIRECT params
@@ -128,12 +128,12 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
 
     def idp(self):
-        idp_config = copy.deepcopy(SAML2_IDP_CONFIG)        
+        idp_config = copy.deepcopy(SAML2_IDP_CONFIG)
         idp_server = Server(idp_config)
         if self.metadata:
             idp_server.metadata.imp(
                 [
-                    {"class": "saml2.mdstore.InMemoryMetaData", 
+                    {"class": "saml2.mdstore.InMemoryMetaData",
                      "metadata": [(self.metadata,)]
                     }
                 ]
@@ -144,9 +144,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
     def test_xsd_and_xmldsig(self):
         '''Test if the XSD validates and if the signature is valid'''
 
-        msg = ('The AuthnRequest must validate against XSD ' +
+        msg = ('The AuthnRequest must validate against XSD '
                'and must have a valid signature')
 
+        _orig_pos = os.getcwd()
         os.chdir(self.xsds_files_path)
         authn_request = self.authn_request_decoded.decode()
         schema_file = open('saml-schema-protocol-2.0.xsd', 'rb')
@@ -155,23 +156,24 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             schema = xmlschema.XMLSchema(schema_file)
             if not schema.is_valid(authn_request):
                 schema.validate(authn_request)
-                self.handle_result('error', 
+                self.handle_result('error',
                                    ' '.join((msg, '-> FAILED!')))
                 raise Exception('Validation Error')
             logger.info(' '.join((msg, '-> OK')))
         except Exception as e:
-            self.handle_result('error', 
-                               '-> '.join((msg, f'{e}')))
-      
-        cert = self.md.xpath('//SPSSODescriptor/KeyDescriptor[@use="signing"]'
-                             '/KeyInfo/X509Data/X509Certificate/text()')[0]
-        
+            os.chdir(_orig_pos)
+            self.handle_result('error', '-> '.join((msg, f'{e}')))
+        os.chdir(_orig_pos)
+        cert = self.md.xpath(
+                '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
+                '/KeyInfo/X509Data/X509Certificate/text()')[0]
+
         # pyXMLSecurity allows to pass a certificate without store it on a file
         # backend = CryptoBackendXmlSec1(xmlsec_binary='/usr/bin/xmlsec1')
         backend = CryptoBackendXMLSecurity()
         is_valid = backend.validate_signature(self.authn_request_decoded,
                                               cert_file=cert,
-                                              cert_type='pem', 
+                                              cert_type='pem',
                                               node_name=constants.NODE_NAME,
                                               node_id=None)
         self._assertTrue(is_valid, 'AuthnRequest Signature validation failed')
@@ -625,7 +627,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
 
     def test_all(self):
-        
+
         self.test_xsd_and_xmldsig()
         self.test_AuthnRequest()
         self.test_Subject()

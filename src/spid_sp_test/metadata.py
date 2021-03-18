@@ -26,37 +26,38 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         'saml-schema-metadata-sp-spid.xsd',
     ]
 
-    def __init__(self, 
-                 metadata_url, 
+    def __init__(self,
+                 metadata_url,
                  xsds_files:list = None,
                  xsds_files_path:str = None,
                  verify_ssl:bool = False):
-        
+
         super(SpidSpMetadataCheck, self).__init__(verify_ssl=verify_ssl)
         self.category = 'metadata_strict'
-        
+
         self.logger = logger
         self.metadata_url = metadata_url
         self.metadata = self.__class__.get(metadata_url)
         self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f'{BASE_DIR}/xsd'
-        
+
         self.doc = etree.fromstring(self.metadata)
         # clean up namespace (otherwise xpath doesn't work ...)
         del_ns(self.doc)
-        
-        
+
+
     @staticmethod
     def get(metadata_url:str):
         if metadata_url[0:7] == 'file://':
             return open(metadata_url[7:], 'rb').read()
         else:
             return requests.get(metadata_url).content
-    
-    
+
+
     def xsd_check(self):
         _msg = f'Found metadata: {self.metadata}'
         self.handle_result('debug', _msg)
+        _orig_pos = os.getcwd()
         os.chdir(self.xsds_files_path)
         metadata = self.metadata.decode()
         for testf in self.xsds_files:
@@ -70,11 +71,12 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     raise Exception('Validation Error')
                 logger.info(' '.join((msg, '-> OK')))
             except Exception as e:
+                os.chdir(_orig_pos)
                 logger.error(f'{msg}: {e}')
                 self.handle_error(msg,
                                   description = 'xsd test failed',
                                   traceback = f'{e}')
-                
+        os.chdir(_orig_pos)
         return self.is_ok(f'{self.__class__.__name__}.xsd_check')
 
 
@@ -90,7 +92,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         elif not entity_desc[0].get('entityID'):
             _msg = 'The entityID attribute must have a value - TR pag. 19'
             self.handle_result('error', _msg)
-        
+
         self._assertIsValidHttpsUrl(
             self.doc.attrib.get('entityID'),
             'The entityID attribute must be a valid HTTPS url'
@@ -102,7 +104,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')
         self._assertTrue((len(spsso) == 1),
                          'Only one SPSSODescriptor element must be present')
-        
+
         for attr in ['protocolSupportEnumeration', 'AuthnRequestsSigned']:
             self._assertTrue((attr in spsso[0].attrib),
                              'The %s attribute must be present - TR pag. 20' % attr)
@@ -141,7 +143,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         msg = 'the metadata signature must be valid - TR pag. 19'
 
         try:
-            subprocess.run(cmd, shell=True, check=True, 
+            subprocess.run(cmd, shell=True, check=True,
                            stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE)
         except subprocess.CalledProcessError as err:
@@ -173,13 +175,13 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     )
                 )
                 lines.append(stdout)
-            _msg = '\n'.join(lines)        
+            _msg = '\n'.join(lines)
             self.handle_result('error', _msg)
             return
 
         xmlsec_cmd_string = ' '.join(xmlsec_cmd)
         _msg = f'{self.__class__.__name__}.test_xmldsig: OK'
-        self.handle_result('info', 
+        self.handle_result('info',
                            _msg, description=f"`{xmlsec_cmd_string}`")
         return is_valid
 
@@ -215,7 +217,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self._assertIn(alg, constants.ALLOWED_DGST_ALGS,
                        (('The digest algorithm must be one of [%s] - TR pag. 19') %
                         (', '.join(constants.ALLOWED_DGST_ALGS))))
-        
+
         return self.is_ok(f'{self.__class__.__name__}.test_Signature')
 
 
@@ -363,7 +365,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             sn = acs.xpath('./ServiceName')
             self._assertTrue((len(sn) > 0),
                              'The ServiceName element must be present')
-            for sns in sn:        
+            for sns in sn:
                 self._assertIsNotNone(sns.text,
                                     'The ServiceName element must have a value')
 
@@ -436,7 +438,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
     def test_all(self):
         self.xsd_check()
-        
+
         # loop for all the attrs that starts with test_ ... todo?
         self.test_EntityDescriptor()
         self.test_SPSSODescriptor()
@@ -447,4 +449,4 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.test_AssertionConsumerService()
         self.test_AttributeConsumingService()
         self.test_Organization()
-        
+
