@@ -15,7 +15,7 @@ example/metadata/*.md
 env/
 *.json
 *egg-info*
-
+*.log
 
 build/*
 dist/*

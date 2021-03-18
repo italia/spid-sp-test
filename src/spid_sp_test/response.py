@@ -237,11 +237,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         return spid_response
 
 
-    def check_response(self, res, attendeds=[]):
-        if res.status_code in attendeds:
-            return True, f'[http status_code: {res.status_code}]'
-        else:
-            return False, f'[ http status_code: {res.status_code}]'
+    def check_response(self, res, msg:str, attendeds=[]):
+        status = res.status_code in attendeds
+        self._assertTrue(status, msg)
+        return status, f'[http status_code: {res.status_code}]'
 
 
     def send_response(self, xmlstr):
@@ -261,7 +260,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         for i in self.test_names:
             self.do_authnrequest()
             response_obj = self.load_test(test_name=i)
-            msg = f'Response [{i}] "{response_obj.conf["description"]}"'
+            test_display_desc = response_obj.conf["description"]
+            msg = f'Response [{i}] "{test_display_desc}"'
             xmlstr = response_obj.render(user_attrs = self.user_attrs)
             try:
                 result = self.sign(xmlstr,
@@ -278,6 +278,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             res = self.send_response(result)
             status, status_msg = self.check_response(
                                 res,
+                                msg = test_display_desc,
                                 attendeds=response_obj.conf['status_codes']
                                 )
             log_func_ = logger.info
@@ -287,4 +288,6 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 log_func_ = logger.error
             elif status == None:
                 log_func_ = logger.critical
+
             log_func_(f'{msg}: {status_msg}')
+        self.is_ok(f'{self.__class__.__name__}')
