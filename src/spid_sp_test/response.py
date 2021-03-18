@@ -278,7 +278,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             res = self.send_response(result)
             status, status_msg = self.check_response(
                                 res,
-                                msg = test_display_desc,
+                                msg = f'Test [{i}] {test_display_desc}',
                                 attendeds=response_obj.conf['status_codes']
                                 )
             log_func_ = logger.info
