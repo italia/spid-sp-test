@@ -33,21 +33,30 @@ def selective_run(obj, meth_list):
 if __name__ == '__main__':
     _desc = (f'{__file__} -h for help')
     _epilog = f"""examples:
-        {__file__} --metadata-url http://localhost:8000/spid/metadata --extra
         {__file__} --metadata-url file://metadata.xml
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --extra
         {__file__} --metadata-url http://localhost:8000/spid/metadata -l test_Organization test_Signature
+
+        # export idp metadata
         {__file__} --idp-metadata
+
+        # test an authentication request made by a SP
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=spid-idp-test
+
+        # select which tests to execute
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR -json -l xsd_check
 
         # execute Response tests
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra -debug ERROR -tr
 
-        # select which test to run
+        # select which response test to execute
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tn 1 8 9 24 63
 
         # run a test suite configured in a json file
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tj tests/example.test-suite.json
+
+        # select which user attribute to return in response via json file
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug DEBUG -aj tests/example.attributes.json
 
 
     """
@@ -95,6 +104,10 @@ if __name__ == '__main__':
                         action='append', nargs='*',
                         required=False,
                         help="custom test via json file, eg: tests/example.test-suite.json")
+
+    parser.add_argument('-aj', '--attr-json',
+                        required=False,
+                        help="loads user attributes via json, eg: tests/example.attributes.json")
 
     parser.add_argument('-json', action="store_true",
                         help="json output")
@@ -169,7 +182,8 @@ if __name__ == '__main__':
             template_path = args.template_path,
             xmlsec_binary = args.xmlsec_path,
             test_names = args.test_names[0] if args.test_names else [],
-            test_jsons = args.test_jsons
+            test_jsons = args.test_jsons,
+            attr_json = args.attr_json
         )
         response_check = SpidSpResponseCheck(**data_tr)
         selective_run(response_check, args.list)

@@ -82,10 +82,10 @@ class SpidSpResponse(object):
         return Markup('\n'.join(attr_rendr_list))
 
 
-    def render(self, data:dict={}):
+    def render(self, user_attrs:dict = {}, data:dict={}):
         template = self.loader.get_template(self.template_name)
         data = data or self.response_attrs
-        data['Attributes'] = self.render_attributes()
+        data['Attributes'] = self.render_attributes(attributes = user_attrs)
         result = template.render(**data)
         logger.debug(f"Rendering response template {template}: {result}")
         return result
@@ -114,6 +114,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         )
         self.private_key_fpath = SAML2_IDP_CONFIG['key_file']
 
+        # tests
         self.tests = {}
         if kwargs.get('test_jsons'):
             for i in kwargs['test_jsons']:
@@ -121,8 +122,15 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                     self.tests.update(json.loads(json_data.read()))
         else:
             self.tests.update(settings.RESPONSE_TESTS)
-
         self.test_names = kwargs.get('test_names') or self.tests.keys()
+
+        # attributes
+        if kwargs.get('attr_json'):
+            with open(kwargs['attr_json'], 'r') as json_data:
+                self.user_attrs = json.loads(json_data.read())
+        else:
+            self.user_attrs = settings.ATTRIBUTES
+
         self.kwargs = kwargs
 
     def do_authnrequest(self):
@@ -254,7 +262,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             self.do_authnrequest()
             response_obj = self.load_test(test_name=i)
             msg = f'Response [{i}] "{response_obj.conf["description"]}"'
-            xmlstr = response_obj.render()
+            xmlstr = response_obj.render(user_attrs = self.user_attrs)
             try:
                 result = self.sign(xmlstr,
                                    key_file = response_obj.private_key)
