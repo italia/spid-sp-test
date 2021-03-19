@@ -174,3 +174,9 @@ def get_xmlsec1_bin():
         for i in ("/usr/local/bin/xmlsec1", "/usr/bin/xmlsec1"):
             if os.access(i, os.X_OK):
                 return i
+
+
+def absolute_links(html_content, base_url):
+    q = html.fromstring(html_content)
+    q.make_links_absolute(base_url = base_url)
+    return html.tostring(q)

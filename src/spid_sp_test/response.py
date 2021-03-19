@@ -4,6 +4,7 @@ import json
 import logging
 import random
 import string
+import urllib
 
 from copy import deepcopy
 from jinja2 import (Environment,
@@ -21,7 +22,7 @@ from spid_sp_test.responses import settings
 from spid_sp_test.utils import del_ns
 from tempfile import NamedTemporaryFile
 
-from . utils import get_xmlsec1_bin
+from . utils import get_xmlsec1_bin, absolute_links
 
 logger = logging.getLogger(__name__)
 
@@ -247,12 +248,19 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self._assertTrue(status, msg)
         return status, f'[http status_code: {res.status_code}]'
 
-    def dump_html_response(self, fname, content):
-        # prefix hostname
-        # re.findall(r'src ?= ?"[a-zA-Z0-9\-_\.\/\:\\]*"', a)
-        # re.findall(r'href ?= ?"[a-zA-Z0-9\-_\.\/\:\\]*"', a)
+    def dump_html_response(self, fname, description, result, content):
+        parse = urllib.parse.urlparse(self.authnreq_attrs['AssertionConsumerServiceURL'])
+        base_url = '://'.join((parse.scheme, parse.netloc))
+        try:
+            content = absolute_links(content, base_url)
+        except Exception as e :
+            logger.critical(f'Something went wrong making absolute links in html content: {e}')
 
+        content = content.decode() if isinstance(content, bytes) else content
+        head = (f"<!-- {description} -->\n\n"
+                f"<!-- {result} -->\n\n")
         with open(f'{self.html_path}/{fname}.html', 'w') as f:
+            f.write(head)
             f.write(content)
 
     def send_response(self, xmlstr):
@@ -294,13 +302,13 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             )
             if self.html_path:
                 self.dump_html_response(f'{i}_{status}',
+                                        response_obj.conf["description"],
+                                        result,
                                         res.content.decode())
 
             log_func_ = logger.info
-            if status:
-                pass
-            else:
+            if not status:
                 log_func_ = logger.error
-
             log_func_(f'{msg}: {status_msg}')
+
         self.is_ok(f'{self.__class__.__name__}')
