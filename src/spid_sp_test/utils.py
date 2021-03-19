@@ -8,7 +8,6 @@ import zlib
 from lxml import etree, html
 
 
-
 def del_ns(root):
     for elem in root.getiterator():
         if not hasattr(elem.tag, 'find'):
@@ -130,14 +129,15 @@ def parse_pem(cert):
 
 def samlreq_from_htmlform(html_content):
     tree = html.fromstring(html_content)
-    form = tree.xpath('//form')[0].attrib
-    inputs = tree.xpath('//form/input')
-    for i in inputs:
-        if i.attrib['name'] == 'SAMLRequest':
-            form['SAMLRequest'] = i.attrib['value']
-        elif i.attrib['name'] == 'RelayState':
-            form['RelayState'] = i.attrib['value']
-    return form
+    for elem in tree.xpath('//form'):
+        form = elem.attrib
+        inputs = elem.xpath('input')
+        for i in inputs:
+            if i.attrib['name'] == 'SAMLRequest':
+                form['SAMLRequest'] = i.attrib['value']
+            elif i.attrib['name'] == 'RelayState':
+                form['RelayState'] = i.attrib['value']
+        return form
 
 
 def decode_authn_req_http_redirect(saml_req_str):
