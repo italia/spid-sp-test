@@ -80,21 +80,21 @@ SIGNATURE_TMPL = """
 """
 
 # SIGNATURE_TMPL = """
-    # <ds:Signature>
-        # <ds:SignedInfo>
-            # <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
-            # <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
-            # <ds:Reference>
-                # <ds:Transforms>
-                    # <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
-                    # <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
-                # </ds:Transforms>
-                # <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
-                    # <ds:DigestValue />
-            # </ds:Reference>
-        # </ds:SignedInfo>
-        # <ds:SignatureValue />
-    # </ds:Signature>
+# <ds:Signature>
+# <ds:SignedInfo>
+# <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+# <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+# <ds:Reference>
+# <ds:Transforms>
+# <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+# <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+# </ds:Transforms>
+# <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+# <ds:DigestValue />
+# </ds:Reference>
+# </ds:SignedInfo>
+# <ds:SignatureValue />
+# </ds:Signature>
 # """
 
 RESPONSE_TESTS = {
@@ -267,11 +267,11 @@ RESPONSE_TESTS = {
     },
     # identico al 22
     # "25": {
-        # "name": "25. Response - Elemento StatusCode mancante",
-        # "description": "Elemento StatusCode mancante. Risultato atteso: KO",
-        # "status_codes": [403, 500],
-        # "path": "case-25.xml",
-        # "response": {},
+    # "name": "25. Response - Elemento StatusCode mancante",
+    # "description": "Elemento StatusCode mancante. Risultato atteso: KO",
+    # "status_codes": [403, 500],
+    # "path": "case-25.xml",
+    # "response": {},
     # },
     "26": {
         "name": "26. Response - Elemento StatusCode diverso da success (non valido)",
@@ -561,13 +561,13 @@ RESPONSE_TESTS = {
     },
     # identico al 29
     # "67": {
-        # "name": "67. Assertion - Elemento Issuer non specificato",
-        # "description": "Elemento Issuer dell'Assertion non specificato. Risultato atteso: KO",
-        # "status_codes": [403, 500],
-        # "path": "case-67.xml",
-        # "response": {},
-        #
-        #
+    # "name": "67. Assertion - Elemento Issuer non specificato",
+    # "description": "Elemento Issuer dell'Assertion non specificato. Risultato atteso: KO",
+    # "status_codes": [403, 500],
+    # "path": "case-67.xml",
+    # "response": {},
+    #
+    #
     # },
     "68": {
         "name": "68. Assertion - Elemento Issuer mancante",
@@ -683,11 +683,11 @@ RESPONSE_TESTS = {
     },
     # identico al 73
     # "84": {
-        # "name": "84. Assertion - Elemento AudienceRestriction di Condition mancante",
-        # "description": "Elemento AudienceRestriction di Condition dell'Assertion mancante. Risultato atteso: KO",
-        # "status_codes": [403, 500],
-        # "path": "case-84.xml",
-        # "response": {},
+    # "name": "84. Assertion - Elemento AudienceRestriction di Condition mancante",
+    # "description": "Elemento AudienceRestriction di Condition dell'Assertion mancante. Risultato atteso: KO",
+    # "status_codes": [403, 500],
+    # "path": "case-84.xml",
+    # "response": {},
     # },
     "85": {
         "name": "85. Assertion - Elemento Audience di AudienceRestriction di Condition non specificato",
@@ -733,11 +733,11 @@ RESPONSE_TESTS = {
     },
     # identico a 88
     # "91": {
-        # "name": "91. Assertion - Elemento AuthnContext di AuthStatement mancante",
-        # "description": "Elemento AuthnContext di AuthStatement dell'Assertion mancante. Risultato atteso: KO",
-        # "status_codes": [403, 500],
-        # "path": "case-91.xml",
-        # "response": {},
+    # "name": "91. Assertion - Elemento AuthnContext di AuthStatement mancante",
+    # "description": "Elemento AuthnContext di AuthStatement dell'Assertion mancante. Risultato atteso: KO",
+    # "status_codes": [403, 500],
+    # "path": "case-91.xml",
+    # "response": {},
     # },
     "92": {
         "name": "92. Assertion - Elemento AuthContextClassRef di AuthnContext di AuthStatement non specificato",

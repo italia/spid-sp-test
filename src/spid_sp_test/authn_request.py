@@ -1,40 +1,31 @@
+from . exceptions import SAMLRequestNotFound
+from spid_sp_test.utils import (del_ns,
+                                samlreq_from_htmlform,
+                                decode_authn_req_http_redirect)
+from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
+from spid_sp_test import constants
+from spid_sp_test import BASE_DIR, AbstractSpidCheck
 import base64
 import copy
-import datetime
 import logging
 import os
 import requests
 import xmlschema
 import sys
-import subprocess
 import urllib
 
 from lxml import etree
 
-from saml2 import BINDING_HTTP_POST
 from saml2.server import Server
 from saml2.sigver import CryptoBackendXMLSecurity
 # from saml2.sigver import CryptoBackendXmlSec1
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
-from spid_sp_test import BASE_DIR, AbstractSpidCheck
-from spid_sp_test import constants
-from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
-from spid_sp_test.utils import (decode_samlreq,
-                                del_ns,
-                                parse_pem,
-                                samlreq_from_htmlform,
-                                relaystate_from_htmlform,
-                                decode_authn_req_http_redirect)
-
-
-from . exceptions import SAMLRequestNotFound
 
 
 logger = logging.getLogger(__name__)
 
 
 def get_authn_request(authn_request_url, verify_ssl=False):
-    session = None
     data = {}
     binding = 'post' or 'redirect'
     if authn_request_url[0:7] == 'file://':
@@ -49,9 +40,9 @@ def get_authn_request(authn_request_url, verify_ssl=False):
     else:
         requests_session = requests.Session()
         request = requests_session.get(
-                                       authn_request_url,
-                                       verify=verify_ssl,
-                                       allow_redirects=False
+            authn_request_url,
+            verify=verify_ssl,
+            allow_redirects=False
         )
 
     if binding == 'redirect':
@@ -61,7 +52,8 @@ def get_authn_request(authn_request_url, verify_ssl=False):
         authn_request = dict(urllib.parse.parse_qsl(q_args))
 
         data['SAMLRequest'] = authn_request['SAMLRequest']
-        data['SAMLRequest_xml'] = decode_authn_req_http_redirect(authn_request['SAMLRequest'])
+        data['SAMLRequest_xml'] = decode_authn_req_http_redirect(
+            authn_request['SAMLRequest'])
         data['RelayState'] = authn_request['RelayState']
         data['SigAlg'] = authn_request['SigAlg']
         data['Signature'] = authn_request['Signature']
@@ -69,9 +61,13 @@ def get_authn_request(authn_request_url, verify_ssl=False):
     elif binding == 'post':
         # HTTP POST
         authn_request = request.content.decode()
-        data['SAMLRequest'] = samlreq_from_htmlform(authn_request)
-        data['SAMLRequest_xml'] = decode_samlreq(authn_request)
-        data['RelayState'] = relaystate_from_htmlform(authn_request)
+        form_dict = samlreq_from_htmlform(authn_request)
+        data['action'] = form_dict['action']
+        data['method'] = form_dict['method']
+        data['SAMLRequest'] = form_dict['SAMLRequest']
+        data['SAMLRequest_xml'] = base64.b64decode(
+            form_dict['SAMLRequest'].encode())
+        data['RelayState'] = form_dict['RelayState']
 
     else:
         raise SAMLRequestNotFound()
@@ -87,11 +83,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
     def __init__(self,
                  metadata,
-                 authn_request_url:str = None,
-                 authn_request:dict = {},
-                 xsds_files:list = None,
-                 xsds_files_path:str = None,
-                 production:bool = False):
+                 authn_request_url: str = None,
+                 authn_request: dict = {},
+                 xsds_files: list = None,
+                 xsds_files_path: str = None,
+                 production: bool = False):
 
         super(SpidSpAuthnReqCheck, self).__init__(verify_ssl=production)
         self.category = 'authnrequest_strict'
@@ -105,7 +101,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         try:
             self.authn_request_decoded = self.authn_request['SAMLRequest_xml']
             self.authn_request_encoded = self.authn_request['SAMLRequest']
-        except KeyError as e:
+        except KeyError:
             raise SAMLRequestNotFound(self.authn_request)
 
         self.relay_state = self.authn_request.get('RelayState')
@@ -134,11 +130,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 [
                     {"class": "saml2.mdstore.InMemoryMetaData",
                      "metadata": [(self.metadata,)]
-                    }
+                     }
                 ]
             )
         return idp_server
-
 
     def test_xsd_and_xmldsig(self):
         '''Test if the XSD validates and if the signature is valid'''
@@ -164,8 +159,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self.handle_result('error', '-> '.join((msg, f'{e}')))
         os.chdir(_orig_pos)
         cert = self.md.xpath(
-                '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
-                '/KeyInfo/X509Data/X509Certificate/text()')[0]
+            '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
+            '/KeyInfo/X509Data/X509Certificate/text()')[0]
 
         # pyXMLSecurity allows to pass a certificate without store it on a file
         # backend = CryptoBackendXmlSec1(xmlsec_binary='/usr/bin/xmlsec1')
@@ -177,7 +172,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                                               node_id=None)
         self._assertTrue(is_valid, 'AuthnRequest Signature validation failed')
         return self.is_ok(f'{self.__class__.__name__}.test_xsd_and_xmldsig')
-
 
     def test_AuthnRequest(self):
         '''Test the compliance of AuthnRequest element'''
@@ -268,8 +262,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 'The %s attribute must be >= 0 - TR pag. 8 and pag. 20' % attr
             )
             self._assertTrue(value in availableassertionindexes,
-                'The %s attribute must be equal to an AssertionConsumerService index - TR pag. 8 ' % attr
-            )
+                             'The %s attribute must be equal to an AssertionConsumerService index - TR pag. 8 ' % attr
+                             )
         else:
             availableassertionlocations = []
 
@@ -300,15 +294,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         )
 
                     self._assertTrue(value in availableassertionlocations,
-                        'The %s attribute must be equal to an AssertionConsumerService Location - TR pag. 8 ' % attr
-                    )
+                                     'The %s attribute must be equal to an AssertionConsumerService Location - TR pag. 8 ' % attr
+                                     )
 
                 if attr == 'ProtocolBinding':
                     exp = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
                     self._assertEqual(
                         value,
                         exp,
-                        'The %s attribute must be %s - TR pag. 8 ' % (attr, exp)
+                        'The %s attribute must be %s - TR pag. 8 ' % (
+                            attr, exp)
                     )
 
         attr = 'AttributeConsumingServiceIndex'
@@ -332,10 +327,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 'The %s attribute must be >= 0 - TR pag. 8 and pag. 20' % attr
             )
             self._assertTrue(value in availableattributeindexes,
-                'The %s attribute must be equal to an AttributeConsumingService index - TR pag. 8 ' % attr
-            )
+                             'The %s attribute must be equal to an AttributeConsumingService index - TR pag. 8 ' % attr
+                             )
         return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest')
-
 
     def test_Subject(self):
         '''Test the compliance of Subject element'''
@@ -380,7 +374,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     )
         return self.is_ok(f'{self.__class__.__name__}.test_Subject')
 
-
     def test_Issuer(self):
         '''Test the compliance of Issuer element'''
 
@@ -399,7 +392,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         entitydescriptor = self.md.xpath('//EntityDescriptor')
         entityid = entitydescriptor[0].get('entityID')
-        self._assertEqual(e.text, entityid, 'The Issuer\'s value must be equal to entityID - TR pag. 9')
+        self._assertEqual(
+            e.text, entityid, 'The Issuer\'s value must be equal to entityID - TR pag. 9')
 
         for attr in ['Format', 'NameQualifier']:
             self._assertTrue(
@@ -422,7 +416,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     'The %s attribute must be %s - TR pag. 9' % (attr, exp)
                 )
         return self.is_ok(f'{self.__class__.__name__}.test_Issuer')
-
 
     def test_NameIDPolicy(self):
         '''Test the compliance of NameIDPolicy element'''
@@ -462,7 +455,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             )
         return self.is_ok(f'{self.__class__.__name__}.test_NameIDPolicy')
 
-
     def test_Conditions(self):
         '''Test the compliance of Conditions element'''
         e = self.doc.xpath('//AuthnRequest/Conditions')
@@ -494,7 +486,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     'The %s attribute must have avalid UTC string - TR pag. 9' % attr
                 )
         return self.is_ok(f'{self.__class__.__name__}.test_Conditions')
-
 
     def test_RequestedAuthnContext(self):
         '''Test the compliance of RequestedAuthnContext element'''
@@ -548,7 +539,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         )
         return self.is_ok(f'{self.__class__.__name__}.test_RequestedAuthnContext')
 
-
     def test_Signature(self):
         '''Test the compliance of Signature element'''
 
@@ -588,20 +578,19 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             # dump_pem.dump_request_pem(cert, 'authn', 'signature', DATA_DIR)
         return self.is_ok(f'{self.__class__.__name__}.test_Signature')
 
-
     def test_RelayState(self):
         '''Test the compliance of RelayState parameter'''
 
         if ('RelayState' in self.params):
             relaystate = self.params.get('RelayState')
             self._assertTrue(
-                (relaystate.find('http') == -1 ),
+                (relaystate.find('http') == -1),
                 'RelayState must not be immediately intelligible - TR pag. 14 or pag. 15'
             )
         else:
-            self._assertTrue(False, 'RelayState is missing - TR pag. 14 or pag. 15')
+            self._assertTrue(
+                False, 'RelayState is missing - TR pag. 14 or pag. 15')
         return self.is_ok(f'{self.__class__.__name__}.test_RelayState')
-
 
     def test_Scoping(self):
         '''Test the compliance of Scoping element'''
@@ -614,7 +603,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         )
         return self.is_ok(f'{self.__class__.__name__}.test_Scoping')
 
-
     def test_RequesterID(self):
         '''Test the compliance of RequesterID element'''
 
@@ -625,7 +613,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             'The RequesterID  element must not be present - AV n.5'
         )
         return self.is_ok(f'{self.__class__.__name__}.test_RequesterID')
-
 
     def test_all(self):
         self.test_xsd_and_xmldsig()

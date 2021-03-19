@@ -1,22 +1,20 @@
 #!/usr/bin/env python3
 import argparse
-import datetime
 import json
 import logging
 import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
-from saml2.metadata import entity_descriptor
-from saml2.server import Server
-from spid_sp_test import BASE_DIR
-from spid_sp_test.metadata import SpidSpMetadataCheck
-from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
-from spid_sp_test.authn_request import SpidSpAuthnReqCheck
-from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
+from spid_sp_test.utils import get_xmlsec1_bin
 from spid_sp_test.response import SpidSpResponseCheck
-from spid_sp_test. utils import get_xmlsec1_bin
-
+from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
+from spid_sp_test.authn_request import SpidSpAuthnReqCheck
+from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
+from spid_sp_test.metadata import SpidSpMetadataCheck
+from spid_sp_test import BASE_DIR
+from saml2.server import Server
+from saml2.metadata import entity_descriptor
 
 logger = logging.getLogger(__name__)
 
@@ -64,119 +62,119 @@ if __name__ == '__main__':
     """
 
     parser = argparse.ArgumentParser(
-                        description = _desc,
-                        epilog = _epilog,
-                        formatter_class = argparse.RawTextHelpFormatter
+        description=_desc,
+        epilog=_epilog,
+        formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument(
-                        '--metadata-url', required=False, default=None,
-                        help=("URL where SAML2 Metadata resides: "
-                              "it can be file://path or https://fqdn")
-                        )
+        '--metadata-url', required=False, default=None,
+        help=("URL where SAML2 Metadata resides: "
+              "it can be file://path or https://fqdn")
+    )
 
     parser.add_argument(
-                        '--idp-metadata',
-                        action="store_true", default=False,
-                        help="get example IdP metadata"
-                        )
+        '--idp-metadata',
+        action="store_true", default=False,
+        help="get example IdP metadata"
+    )
 
     parser.add_argument(
-                        '-l','--list', nargs='*',
-                        help='esecute only selected checks',
-                        required=False
-                        )
+        '-l', '--list', nargs='*',
+        help='esecute only selected checks',
+        required=False
+    )
 
     parser.add_argument(
-                        '--extra',
-                        action="store_true", default=False,
-                        help="execute extra checks"
-                        )
+        '--extra',
+        action="store_true", default=False,
+        help="execute extra checks"
+    )
 
     parser.add_argument(
-                        '--authn-url', required=False, default=None,
-                        help=("URL where the SP initializes "
-                              "the Authentication Request to this IDP,"
-                              "it can also be a file:///")
-                        )
+        '--authn-url', required=False, default=None,
+        help=("URL where the SP initializes "
+              "the Authentication Request to this IDP,"
+              "it can also be a file:///")
+    )
 
     parser.add_argument(
-                        '-tr', '--test-response',
-                        action="store_true", default=False,
-                        help="execute SAML2 responses"
-                        )
+        '-tr', '--test-response',
+        action="store_true", default=False,
+        help="execute SAML2 responses"
+    )
 
     parser.add_argument(
-                        '-tp', '--template-path',
-                        default = f'{BASE_DIR}/responses/templates/',
-                        required=False,
-                        help=("templates containing SAML2 xml "
-                              "templates for response tests")
-                        )
+        '-tp', '--template-path',
+        default=f'{BASE_DIR}/responses/templates/',
+        required=False,
+        help=("templates containing SAML2 xml "
+              "templates for response tests")
+    )
 
     parser.add_argument(
-                        '-tn', '--test-names',
-                        action='append', nargs='*',
-                        required=False,
-                        help="response test to be executed, eg: 01 02 03"
-                        )
+        '-tn', '--test-names',
+        action='append', nargs='*',
+        required=False,
+        help="response test to be executed, eg: 01 02 03"
+    )
 
     parser.add_argument(
-                        '-tj', '--test-jsons',
-                        action='append', nargs='*',
-                        required=False,
-                        help=("custom test via json file, "
-                              "eg: tests/example.test-suite.json")
-                        )
+        '-tj', '--test-jsons',
+        action='append', nargs='*',
+        required=False,
+        help=("custom test via json file, "
+              "eg: tests/example.test-suite.json")
+    )
 
     parser.add_argument(
-                        '-aj', '--attr-json',
-                        required=False,
-                        help="loads user attributes via json, eg: tests/example.attributes.json"
-                        )
+        '-aj', '--attr-json',
+        required=False,
+        help="loads user attributes via json, eg: tests/example.attributes.json"
+    )
 
     parser.add_argument(
-                        '-report', action="store_true",
-                        help="json report in stdout"
-                        )
+        '-report', action="store_true",
+        help="json report in stdout"
+    )
 
     parser.add_argument(
-                        '-o', required=False,
-                        help="json report to file, -report is required"
-                        )
+        '-o', required=False,
+        help="json report to file, -report is required"
+    )
 
     parser.add_argument(
-                        '-d', '--debug', required=False,
-                        choices=('CRITICAL', 'ERROR',
-                                 'WARNING', 'INFO', 'DEBUG'),
-                        default='INFO',
-                        help="Debug level, see python logging"
-                        )
+        '-d', '--debug', required=False,
+        choices=('CRITICAL', 'ERROR',
+                 'WARNING', 'INFO', 'DEBUG'),
+        default='INFO',
+        help="Debug level, see python logging"
+    )
 
     parser.add_argument(
-                        '-xp', '--xmlsec-path',
-                        default = get_xmlsec1_bin(),
-                        required=False,
-                        help="xmlsec1 executable path, eg: /usr/bin/xmlsec1"
-                        )
+        '-xp', '--xmlsec-path',
+        default=get_xmlsec1_bin(),
+        required=False,
+        help="xmlsec1 executable path, eg: /usr/bin/xmlsec1"
+    )
 
     parser.add_argument(
-                        '--production', '-p',
+        '--production', '-p',
                         action="store_true",
                         default=False,
                         help=("execute tests for system in production, "
                               "eg: https and TLS quality")
-                        )
+    )
 
     parser.add_argument(
-                        '--html-path', '-hp',
-                        help=("Only works with Response tests activated"
-                              "Path where the html response pages will "
-                              "be dumped after by the SP")
-                        )
+        '--html-path', '-hp',
+        help=("Only works with Response tests activated"
+              "Path where the html response pages will "
+              "be dumped after by the SP")
+    )
 
     args = parser.parse_args()
 
-    logging.basicConfig(level = getattr(logging, args.debug))
+    logging.basicConfig(level=getattr(logging, args.debug))
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -192,8 +190,8 @@ if __name__ == '__main__':
         sys.exit(0)
 
     elif args.metadata_url:
-        data_md = dict(metadata_url = args.metadata_url,
-                       production = args.production)
+        data_md = dict(metadata_url=args.metadata_url,
+                       production=args.production)
         metadata_check = SpidSpMetadataCheck(**data_md)
         selective_run(metadata_check, args.list)
         tests_done.append(metadata_check)
@@ -209,9 +207,9 @@ if __name__ == '__main__':
     # authn request
     if args.authn_url:
         data_ac = dict(
-            metadata = metadata_check.metadata,
-            authn_request_url = args.authn_url,
-            production = args.production
+            metadata=metadata_check.metadata,
+            authn_request_url=args.authn_url,
+            production=args.production
         )
         authn_check = SpidSpAuthnReqCheck(**data_ac)
         selective_run(authn_check, args.list)
@@ -224,20 +222,20 @@ if __name__ == '__main__':
 
     # Responses
     if args.test_response:
-        #'html-dumps_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
+        # 'html-dumps_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}'
         html_path = f'{args.html_path}/'
 
         data_tr = dict(
-            metadata_etree = metadata_check.doc,
-            authn_request_url = args.authn_url,
-            relay_state = authn_check.relay_state,
-            template_path = args.template_path,
-            xmlsec_binary = args.xmlsec_path,
-            test_names = args.test_names[0] if args.test_names else [],
-            test_jsons = args.test_jsons or [],
-            attr_json = args.attr_json,
-            production = args.production,
-            html_path = html_path if args.html_path else None
+            metadata_etree=metadata_check.doc,
+            authn_request_url=args.authn_url,
+            relay_state=authn_check.relay_state,
+            template_path=args.template_path,
+            xmlsec_binary=args.xmlsec_path,
+            test_names=args.test_names[0] if args.test_names else [],
+            test_jsons=args.test_jsons or [],
+            attr_json=args.attr_json,
+            production=args.production,
+            html_path=html_path if args.html_path else None
         )
 
         if args.html_path:
@@ -247,12 +245,11 @@ if __name__ == '__main__':
         selective_run(response_check, args.list)
         tests_done.append(response_check)
 
-
     # OUTPUT - REPORT
     if args.o or args.report:
         data = {
-          "test": {
-            "sp": {}
+            "test": {
+                "sp": {}
             }
         }
 

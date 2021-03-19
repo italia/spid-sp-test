@@ -2,7 +2,6 @@ import base64
 import datetime
 import json
 import logging
-import os
 import random
 import string
 
@@ -19,7 +18,7 @@ from spid_sp_test import BASE_DIR, AbstractSpidCheck
 from spid_sp_test.authn_request import get_authn_request
 from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
 from spid_sp_test.responses import settings
-from spid_sp_test.utils import del_ns, prettify_xml
+from spid_sp_test.utils import del_ns
 from tempfile import NamedTemporaryFile
 
 from . utils import get_xmlsec1_bin
@@ -49,9 +48,9 @@ class SpidSpResponse(object):
 
         try:
             self.conf = deepcopy(
-                            settings.RESPONSE_TESTS[conf] or
-                            settings.RESPONSE_TESTS['1']
-                        )
+                settings.RESPONSE_TESTS[conf] or
+                settings.RESPONSE_TESTS['1']
+            )
         except KeyError:
             raise Exception(f'Test {conf} doesn\'t exists')
 
@@ -60,12 +59,12 @@ class SpidSpResponse(object):
         self.response_attrs = response_attrs
 
         self.loader = Environment(
-                    loader = FileSystemLoader(searchpath=template_path),
-                    autoescape = select_autoescape(['xml'])
+            loader=FileSystemLoader(searchpath=template_path),
+            autoescape=select_autoescape(['xml'])
         )
         self.template_name = self.conf.get('path', 'base.xml')
-        self.private_key = self.conf.get('sign_credentials', {}).get('privateKey')
-
+        self.private_key = self.conf.get(
+            'sign_credentials', {}).get('privateKey')
 
     def render_attributes(self, attributes={}):
         """
@@ -74,22 +73,20 @@ class SpidSpResponse(object):
         attr_rendr_list = []
         attrs = attributes or self.attributes or settings.ATTRIBUTES
 
-        for k,v in attrs.items():
+        for k, v in attrs.items():
             template = Template(settings.ATTRIBUTE_TMPL)
             attr_type = settings.ATTRIBUTES_TYPES.get(k, 'string')
             attr_rendr = template.render(name=k, value=v, type=attr_type)
             attr_rendr_list.append(attr_rendr)
         return Markup('\n'.join(attr_rendr_list))
 
-
-    def render(self, user_attrs:dict = {}, data:dict={}):
+    def render(self, user_attrs: dict = {}, data: dict = {}):
         template = self.loader.get_template(self.template_name)
         data = data or self.response_attrs
-        data['Attributes'] = self.render_attributes(attributes = user_attrs)
+        data['Attributes'] = self.render_attributes(attributes=user_attrs)
         result = template.render(**data)
         logger.debug(f"Rendering response template {template}: {result}")
         return result
-
 
     def __str__(self):
         return self.conf
@@ -97,7 +94,6 @@ class SpidSpResponse(object):
 
 class SpidSpResponseCheck(AbstractSpidCheck):
     template_path = f'{BASE_DIR}/responses/templates/'
-
 
     def __init__(self, *args, **kwargs):
         super(SpidSpResponseCheck, self).__init__(*args, **kwargs)
@@ -136,12 +132,15 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
     def do_authnrequest(self):
         self.authn_request_data = get_authn_request(self.authn_request_url)
-        self.authnreq_etree = etree.fromstring(self.authn_request_data['SAMLRequest_xml'])
+        self.authnreq_etree = etree.fromstring(
+            self.authn_request_data['SAMLRequest_xml'])
         del_ns(self.authnreq_etree)
 
         self.issuer = self.kwargs.get('issuer', SAML2_IDP_CONFIG["entityid"])
-        self.authnreq_attrs = self.authnreq_etree.xpath("/AuthnRequest")[0].attrib
-        self.authnreq_issuer = self.authnreq_etree.xpath("/AuthnRequest/Issuer")[0].attrib['NameQualifier']
+        self.authnreq_attrs = self.authnreq_etree.xpath(
+            "/AuthnRequest")[0].attrib
+        self.authnreq_issuer = self.authnreq_etree.xpath(
+            "/AuthnRequest/Issuer")[0].attrib['NameQualifier']
         now = datetime.datetime.utcnow()
         self.response_attrs = {
             'ResponseID': saml_rnd_id(),
@@ -167,9 +166,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         signature_node = Template(settings.SIGNATURE_TMPL)
         key_file = key_file or self.private_key_fpath
         com_list = [
-                        self.crypto_backend.xmlsec,
-                        '--sign',
-                        '--privkey-pem', key_file
+            self.crypto_backend.xmlsec,
+            '--sign',
+            '--privkey-pem', key_file
         ]
 
         asser_placeholder = '<!-- Assertion Signature here -->'
@@ -188,13 +187,14 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 ntf.write(xmlstr.encode())
                 ntf.seek(0)
                 _com_list = [
-                            '--id-attr:ID',
-                            'urn:oasis:names:tc:SAML:2.0:assertion:Assertion',
-                            # '--node-id',
-                            # f'{self.response_attrs["AssertionID"]}'
-                        ]
+                    '--id-attr:ID',
+                    'urn:oasis:names:tc:SAML:2.0:assertion:Assertion',
+                    # '--node-id',
+                    # f'{self.response_attrs["AssertionID"]}'
+                ]
                 _com = com_list + _com_list
-                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(_com, [ntf.name])
+                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(_com, [
+                                                                       ntf.name])
                 xmlstr = xmlstr.decode()
 
         sign_placeholder = '<!-- Response Signature here -->'
@@ -212,42 +212,40 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 ntf.write(xmlstr.encode())
                 ntf.seek(0)
                 _com_list = [
-                            '--id-attr:ID',
-                            'urn:oasis:names:tc:SAML:2.0:protocol:Response',
-                            # '--node-id',
-                            # f'{self.response_attrs["ResponseID"]}'
-                        ]
+                    '--id-attr:ID',
+                    'urn:oasis:names:tc:SAML:2.0:protocol:Response',
+                    # '--node-id',
+                    # f'{self.response_attrs["ResponseID"]}'
+                ]
                 _com = com_list + _com_list
-                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(_com, [ntf.name])
+                p_out, p_err, xmlstr = self.crypto_backend._run_xmlsec(_com, [
+                                                                       ntf.name])
                 xmlstr = xmlstr.decode()
 
         return xmlstr.decode() if isinstance(xmlstr, bytes) else xmlstr
 
-
     def load_test(self, test_name=None, attributes={}, response_attrs={}):
         spid_response = SpidSpResponse(
-                            test_name,
-                            authnreq_attrs = self.authnreq_attrs,
-                            attributes = attributes,
-                            response_attrs = response_attrs or self.response_attrs,
-                            template_path = self.template_path
-                        )
+            test_name,
+            authnreq_attrs=self.authnreq_attrs,
+            attributes=attributes,
+            response_attrs=response_attrs or self.response_attrs,
+            template_path=self.template_path
+        )
         conf = settings.RESPONSE_TESTS[test_name]
         if conf.get('response'):
-            for k,v in conf['response'].items():
+            for k, v in conf['response'].items():
                 logger.debug(f'Test {test_name}: overwriting {k} with {v}')
                 spid_response.response_attrs[k] = v
         return spid_response
 
-
-    def check_response(self, res, msg:str, attendeds=[]):
+    def check_response(self, res, msg: str, attendeds=[]):
         if res.status_code in attendeds:
             status = True
         else:
             status = False
         self._assertTrue(status, msg)
         return status, f'[http status_code: {res.status_code}]'
-
 
     def dump_html_response(self, fname, content):
         # prefix hostname
@@ -256,7 +254,6 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         with open(f'{self.html_path}/{fname}.html', 'w') as f:
             f.write(content)
-
 
     def send_response(self, xmlstr):
         data = {
@@ -270,17 +267,16 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.logger.debug(msg)
         return res
 
-
     def test_all(self):
         for i in self.test_names:
             self.do_authnrequest()
             response_obj = self.load_test(test_name=i)
             test_display_desc = response_obj.conf["description"]
             msg = f'Response [{i}] "{test_display_desc}"'
-            xmlstr = response_obj.render(user_attrs = self.user_attrs)
+            xmlstr = response_obj.render(user_attrs=self.user_attrs)
             try:
                 result = self.sign(xmlstr,
-                                   key_file = response_obj.private_key)
+                                   key_file=response_obj.private_key)
             except XmlsecError as e:
                 logger.error(
                     f'{msg}: Exception during xmlsec signature ({e})'
@@ -292,10 +288,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
             res = self.send_response(result)
             status, status_msg = self.check_response(
-                                res,
-                                msg = f'Test [{i}] {test_display_desc}',
-                                attendeds=response_obj.conf['status_codes']
-                                )
+                res,
+                msg=f'Test [{i}] {test_display_desc}',
+                attendeds=response_obj.conf['status_codes']
+            )
             if self.html_path:
                 self.dump_html_response(f'{i}_{status}',
                                         res.content.decode())

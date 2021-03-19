@@ -1,20 +1,12 @@
 import base64
 import lxml.objectify
 import os
-import xml.dom.minidom
 import re
 import subprocess
 import zlib
 
-from xml.parsers.expat import ExpatError
-from lxml import etree
+from lxml import etree, html
 
-from . exceptions import *
-
-
-# form_samlreq_regex = ''
-form_samlreq_value_regex = 'name="SAMLRequest" value="(?P<value>[a-zA-Z0-9+=]*)"'
-form_relaystate_regexp = 'name="RelayState" value="(?P<value>[a-zA-Z0-9+=\/\_\.]*)"'
 
 
 def del_ns(root):
@@ -109,7 +101,6 @@ def parse_pem(cert):
         print(err)
         return []
 
-
     #
     # validity
     #
@@ -138,23 +129,15 @@ def parse_pem(cert):
 
 
 def samlreq_from_htmlform(html_content):
-    saml_req_value = re.search(form_samlreq_value_regex, html_content)
-    if not saml_req_value:
-        raise SAMLRequestValueNotFound()
-
-    # base64 encoded
-    return saml_req_value.groups()[0]
-
-
-def relaystate_from_htmlform(html_content):
-    relay_state = re.search(form_relaystate_regexp, html_content)
-    if relay_state.groups():
-        return relay_state.groups()[0]
-
-
-def decode_samlreq(html_content):
-    base64_encoded = samlreq_from_htmlform(html_content)
-    return base64.b64decode(base64_encoded)
+    tree = html.fromstring(html_content)
+    form = tree.xpath('//form')[0].attrib
+    inputs = tree.xpath('//form/input')
+    for i in inputs:
+        if i.attrib['name'] == 'SAMLRequest':
+            form['SAMLRequest'] = i.attrib['value']
+        elif i.attrib['name'] == 'RelayState':
+            form['RelayState'] = i.attrib['value']
+    return form
 
 
 def decode_authn_req_http_redirect(saml_req_str):

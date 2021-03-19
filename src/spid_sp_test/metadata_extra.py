@@ -1,4 +1,4 @@
-import datetime 
+import datetime
 import os
 
 from spid_sp_test import constants
@@ -11,7 +11,7 @@ from . metadata import SpidSpMetadataCheck
 class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
     def __init__(self, *args, **kwargs):
-        
+
         super(SpidSpMetadataCheckExtra, self).__init__(*args, **kwargs)
         self.category = 'metadata_extra'
 
@@ -21,18 +21,18 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         sign = self.doc.xpath('//EntityDescriptor/Signature')
         for si in sign:
             certs = si.xpath('./KeyInfo/X509Data/X509Certificate')
-            
+
             for i in range(len(certs)):
                 cert = certs[i]
                 fname = dump_metadata_pem(cert, 'sp', 'signature', '/tmp')
-                
+
                 r = parse_pem(fname)
                 self._assertFalse(
                     r[0].lower().startswith('sha1'),
                     ((f'The certificate #{i} must not use '
                       f'weak signature algorithm: {r[0].lower()}'))
                 )
-        
+
                 exp = ['rsaEncryption', 'id-ecPublicKey']
                 self._assertIn(
                     r[2],
@@ -40,27 +40,27 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     ((f'The key type of certificate #{i} must be one of [%s] - TR pag. 19') %
                      (', '.join(exp)))
                 )
-        
+
                 if r[2] == 'rsaEncryption':
                     exp = constants.MINIMUM_CERTIFICATE_LENGHT
                 elif r[2] == 'id-ecPublicKey':
                     exp = 256
                 else:
                     pass
-                
+
                 self._assertTrue(
                     (int(r[1]) >= exp),
-                    ((f'The key length of certificate #{i} must be >= %d. Instead it is '+ r[1]) %
+                    ((f'The key length of certificate #{i} must be >= %d. Instead it is ' + r[1]) %
                      (exp))
                 )
-        
+
                 self._assertTrue(
-                    (datetime.datetime.strptime(r[3], "%b %d %H:%M:%S %Y") >= datetime.datetime.now()),
+                    (datetime.datetime.strptime(
+                        r[3], "%b %d %H:%M:%S %Y") >= datetime.datetime.now()),
                     ((f'The certificate #{i} is expired. It was valid till '+r[3]))
                 )
                 os.remove(fname)
         return self.is_ok(f'{self.__class__.__name__}.test_Signature_extra')
-
 
     def test_SPSSODescriptor_extra(self):
         spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')
@@ -90,7 +90,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     a,
                     'The %s attribute must have a value' % attr
                 )
-                
+
                 if a:
                     self._assertEqual(
                         a.lower(),
@@ -98,7 +98,6 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                         'The %s attribute must be true' % attr
                     )
         return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor_extra')
-
 
     def test_AttributeConsumingService_extra(self):
         acss = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
@@ -118,11 +117,10 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     )
         return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService_extra')
 
-    
     def test_Organization_extra(self):
         orgs = self.doc.xpath('//EntityDescriptor/Organization')
         self._assertTrue((len(orgs) == 1), 'An Organization must be present')
-        
+
         if orgs:
             org = orgs[0]
             for elem in ['Name', 'URL', 'DisplayName']:
@@ -137,7 +135,6 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     'An IT localised Organization%s must be present' % elem
                 )
             return self.is_ok(f'{self.__class__.__name__}.test_Organization')
-
 
     def test_all(self):
 

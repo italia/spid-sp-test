@@ -1,4 +1,6 @@
-import datetime
+from spid_sp_test.utils import del_ns
+from spid_sp_test import constants
+from spid_sp_test import BASE_DIR, AbstractSpidCheck
 import logging
 import os
 import requests
@@ -10,9 +12,6 @@ from lxml import etree
 from tempfile import NamedTemporaryFile
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
-from spid_sp_test import BASE_DIR, AbstractSpidCheck
-from spid_sp_test import constants
-from spid_sp_test.utils import del_ns
 
 
 logger = logging.getLogger(__name__)
@@ -28,9 +27,9 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
     def __init__(self,
                  metadata_url,
-                 xsds_files:list = None,
-                 xsds_files_path:str = None,
-                 production:bool = False):
+                 xsds_files: list = None,
+                 xsds_files_path: str = None,
+                 production: bool = False):
 
         super(SpidSpMetadataCheck, self).__init__(verify_ssl=production)
         self.category = 'metadata_strict'
@@ -47,14 +46,12 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
         self.production = production
 
-
     @staticmethod
-    def get(metadata_url:str):
+    def get(metadata_url: str):
         if metadata_url[0:7] == 'file://':
             return open(metadata_url[7:], 'rb').read()
         else:
             return requests.get(metadata_url).content
-
 
     def xsd_check(self):
         _msg = f'Found metadata: {self.metadata}'
@@ -76,11 +73,10 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 os.chdir(_orig_pos)
                 logger.error(f'{msg}: {e}')
                 self.handle_error(msg,
-                                  description = 'xsd test failed',
-                                  traceback = f'{e}')
+                                  description='xsd test failed',
+                                  traceback=f'{e}')
         os.chdir(_orig_pos)
         return self.is_ok(f'{self.__class__.__name__}.xsd_check')
-
 
     def test_EntityDescriptor(self):
         entity_desc = self.doc.xpath('//EntityDescriptor')
@@ -101,7 +97,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 'The entityID attribute must be a valid HTTPS url'
             )
         return self.is_ok(f'{self.__class__.__name__}.test_EntityDescriptor')
-
 
     def test_SPSSODescriptor(self):
         spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')
@@ -126,7 +121,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 )
 
         return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor')
-
 
     def test_xmldsig(self):
         '''Verify the SP metadata signature'''
@@ -188,7 +182,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                            _msg, description=f"`{xmlsec_cmd_string}`")
         return is_valid
 
-
     def test_Signature(self):
         '''Test the compliance of Signature element'''
         sign = self.doc.xpath('//EntityDescriptor/Signature')
@@ -223,7 +216,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
         return self.is_ok(f'{self.__class__.__name__}.test_Signature')
 
-
     def test_KeyDescriptor(self):
         '''Test the compliance of KeyDescriptor element(s)'''
         kds = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
@@ -248,8 +240,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                                      'must be present - TR pag. 19')
 
         return self.is_ok(f'{self.__class__.__name__}.test_KeyDescriptor')
-
-
 
     def test_SingleLogoutService(self):
         '''Test the compliance of SingleLogoutService element(s)'''
@@ -291,7 +281,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         'must be a valid HTTPS URL - AV n. 1 and n. 3' % attr
                     )
         return self.is_ok(f'{self.__class__.__name__}.test_SingleLogoutService')
-
 
     def test_AssertionConsumerService(self):
         '''Test the compliance of AssertionConsumerService element(s)'''
@@ -340,7 +329,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                          'with index = 0 - TR pag. 20')
         return self.is_ok(f'{self.__class__.__name__}.test_AssertionConsumerService')
 
-
     def test_AttributeConsumingService(self):
         '''Test the compliance of AttributeConsumingService element(s)'''
         acss = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
@@ -370,7 +358,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                              'The ServiceName element must be present')
             for sns in sn:
                 self._assertIsNotNone(sns.text,
-                                    'The ServiceName element must have a value')
+                                      'The ServiceName element must have a value')
 
             ras = acs.xpath('./RequestedAttribute')
             self._assertGreaterEqual(
@@ -398,7 +386,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 'AttributeConsumigService must not contain duplicated RequestedAttribute - TR pag. 20'
             )
         return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService')
-
 
     def test_Organization(self):
         '''Test the compliance of Organization element'''
@@ -438,7 +425,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         )
         return self.is_ok(f'{self.__class__.__name__}.test_Organization')
 
-
     def test_all(self):
         self.xsd_check()
 
@@ -452,4 +438,3 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.test_AssertionConsumerService()
         self.test_AttributeConsumingService()
         self.test_Organization()
-
