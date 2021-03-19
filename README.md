@@ -143,5 +143,10 @@ References
 ----------
 
 TLS/SSL tests
+
 - [https://github.com/nabla-c0d3/sslyze](https://github.com/nabla-c0d3/sslyze)
+    ````
+    pip install --upgrade sslyze
+    sslyze www.that-sp.org --json_out ssl.log
+    ````
 - [https://testssl.sh/](https://testssl.sh/)
