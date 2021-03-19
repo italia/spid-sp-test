@@ -38,7 +38,7 @@ def get_authn_request(authn_request_url, verify_ssl=False):
     data = {}
     binding = 'post' or 'redirect'
     if authn_request_url[0:7] == 'file://':
-        authn_request = open(authn_request_url[7:], 'rb').read()
+        authn_request = open(authn_request_url[7:], 'rb').read().strip()
 
         # stupid test ... good enough for now
         if authn_request[0] == b'<' and authn_request[-1] == b'>':

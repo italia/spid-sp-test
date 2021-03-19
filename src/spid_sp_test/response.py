@@ -250,6 +250,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
 
     def dump_html_response(self, fname, content):
+        # prefix hostname
+        # re.findall(r'src ?= ?"[a-zA-Z0-9\-_\.\/\:\\]*"', a)
+        # re.findall(r'href ?= ?"[a-zA-Z0-9\-_\.\/\:\\]*"', a)
+
         with open(f'{self.html_path}/{fname}.html', 'w') as f:
             f.write(content)
 
