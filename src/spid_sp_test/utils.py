@@ -3,6 +3,7 @@ import lxml.objectify
 import os
 import re
 import subprocess
+import urllib
 import zlib
 
 from lxml import etree, html
@@ -176,7 +177,22 @@ def get_xmlsec1_bin():
                 return i
 
 
-def absolute_links(html_content, base_url):
+def html_absolute_paths(html_content, url):
+    parse = urllib.parse.urlparse(url)
+    base_url = '://'.join((parse.scheme, parse.netloc))
     q = html.fromstring(html_content)
     q.make_links_absolute(base_url = base_url)
+
+    for tag in ('link', 'img'):
+        for i in q.xpath(f'//{tag}'):
+            attr = i.attrib
+            if attr.get('href'):
+                first_char = attr['href'][0]
+                if first_char == '/':
+                    attr['href'] = f"{base_url}{attr['href']}"
+                elif attr['href'][:4] == 'http':
+                    continue
+                elif first_char != '/':
+                    attr['href'] = f"{url}/{attr['href']}"
+
     return html.tostring(q)

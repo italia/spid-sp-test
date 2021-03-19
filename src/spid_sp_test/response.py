@@ -4,7 +4,6 @@ import json
 import logging
 import random
 import string
-import urllib
 
 from copy import deepcopy
 from jinja2 import (Environment,
@@ -22,7 +21,7 @@ from spid_sp_test.responses import settings
 from spid_sp_test.utils import del_ns
 from tempfile import NamedTemporaryFile
 
-from . utils import get_xmlsec1_bin, absolute_links
+from . utils import get_xmlsec1_bin, html_absolute_paths
 
 logger = logging.getLogger(__name__)
 
@@ -249,10 +248,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         return status, f'[http status_code: {res.status_code}]'
 
     def dump_html_response(self, fname, description, result, content):
-        parse = urllib.parse.urlparse(self.authnreq_attrs['AssertionConsumerServiceURL'])
-        base_url = '://'.join((parse.scheme, parse.netloc))
+        url = self.authnreq_attrs['AssertionConsumerServiceURL']
         try:
-            content = absolute_links(content, base_url)
+            content = html_absolute_paths(content, url)
         except Exception as e :
             logger.critical(f'Something went wrong making absolute links in html content: {e}')
 
