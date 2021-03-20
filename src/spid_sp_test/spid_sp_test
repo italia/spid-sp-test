@@ -172,6 +172,13 @@ if __name__ == '__main__':
               "be dumped after by the SP")
     )
 
+    parser.add_argument(
+        '--exit-zero', '-ez',
+        action="store_true",
+        default=False,
+        help=("exit with 0 even if tests fails")
+    )
+
     args = parser.parse_args()
 
     logging.basicConfig(level=getattr(logging, args.debug))
