@@ -182,7 +182,7 @@ if __name__ == '__main__':
 
     tests_done = []
     if args.idp_metadata:
-        from spid_sp_test.idp.idp import SAML2_IDP_CONFIG
+        from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
 
         idp_server = Server(SAML2_IDP_CONFIG)
         idp_metadata = entity_descriptor(idp_server.config)

@@ -62,6 +62,8 @@ def get_authn_request(authn_request_url, verify_ssl=False):
         # HTTP POST
         authn_request = request.content.decode()
         form_dict = samlreq_from_htmlform(authn_request)
+        if not form_dict:
+            raise SAMLRequestNotFound(f'{authn_request}')
         data['action'] = form_dict['action']
         data['method'] = form_dict['method']
         data['SAMLRequest'] = form_dict['SAMLRequest']
