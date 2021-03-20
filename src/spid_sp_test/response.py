@@ -244,8 +244,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             status = True
         else:
             status = False
-        self._assertTrue(status, msg)
-        return status, f'[http status_code: {res.status_code}]'
+        status_code = f'[http status_code: {res.status_code}]'
+        self._assertTrue(status, f'{msg}: : {status_code}')
+        return status, status_code
 
     def dump_html_response(self, fname, description, result, content):
         url = self.authnreq_attrs['AssertionConsumerServiceURL']
@@ -303,10 +304,5 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                                         response_obj.conf["description"],
                                         result,
                                         res.content.decode())
-
-            log_func_ = logger.info
-            if not status:
-                log_func_ = logger.error
-            log_func_(f'{msg}: {status_msg}')
 
         self.is_ok(f'{self.__class__.__name__}')
