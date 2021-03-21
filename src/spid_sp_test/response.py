@@ -235,7 +235,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         conf = settings.RESPONSE_TESTS[test_name]
         if conf.get('response'):
             for k, v in conf['response'].items():
-                logger.debug(f'Test {test_name}: overwriting {k} with {v}')
+                logger.debug(
+                    f'Test {test_name}: overwriting {k} with {v}'
+                )
                 spid_response.response_attrs[k] = v
         return spid_response
 
@@ -253,7 +255,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         try:
             content = html_absolute_paths(content, url)
         except Exception as e :
-            logger.critical(f'Something went wrong making absolute links in html content: {e}')
+            logger.critical(
+                f'Something went wrong making absolute links in html content: {e}'
+            )
 
         content = content.decode() if isinstance(content, bytes) else content
         head = (f"<!-- {description} -->\n\n"
