@@ -1,6 +1,6 @@
 spid-sp-test
 ------------
-spid-sp-test is a SAML2 SPID Service Provider validation tool that can be run from the command line.
+spid-sp-test is a SAML2 SPID Service Provider validation tool that can be executed from the command line.
 This tool was born by separating the test library already present in [spid-saml-check](https://github.com/italia/spid-saml-check).
 
 
@@ -13,23 +13,13 @@ spid-sp-test is:
 - extremely easy to setup
 - able to test a SAML2 SPID Metadata file
 - able to test a SAML2 SPID AuthnRequest
+- able to test ACS behaviour, how a SP reply to a SAML2 Response
+- able to dump the response sent to an ACS and the HTML of the SP's response
+- able to handle Attributes to send in Responses or test configurations of the Responses via json configuration files
 - integrable in CI
 - able to export a detailed report in json format, in stdout or in a file.
 
 ![example](gallery/example2.gif)
-
-
-Roadmap
--------
-
-- Next releases: a hundred of SAML2 SPID fake Responses ... For security assessment!
-
-How to handle Http Response checks?
-
-1. python `requests` and SAML2 needs to use a POST method to a ACS service. Then `requests` checks http status page in the HTTP response page, then saves HTML to a browsable folder for any further human analisys
-2. selenium HQ -> very huge to be loaded in a CI!
-
-it is possible to think of getting screenshots using selenium HQ but the use of selenium should be completely optional for the needs of CI.
 
 Setup
 -----
@@ -39,12 +29,40 @@ apt install libxml2-dev libxmlsec1-dev libxmlsec1-openssl
 pip install spid-sp-test --upgrade --no-cache
 ````
 
+Overview
+--------
+
+spid-sp-test can test a SP metadata file, you just have to give the Metadata URL, if http/http or file, eg: `file://path/to/metadata.xml`.
+At the same way it can test an Authentication Request.
+
+In a different manner spid-sp-test can send a huge numer of fake SAML Response, for each of them it needs to tigger a real Authentication Request to the target SP.
+
+If you want to test also the Response, you must give the spid-sp-test fake idp metadata file to the target SP.
+Get fake IdP metadata and copy it to your SP metadatastore folder
+````
+spid_sp_test --idp-metadata > /path/to/spid-django/example/spid_config/metadata/spid-sp-test.xml
+````
+
+To get spid-sp-test in a CI you have to:
+
+- configure an example project to your application
+- use the spid-sp-test fake idp metadata, configure it in your application and execute the example project, with its development server in background
+- launch the spid-sp-test commands
+
+An example of CI [is here](https://github.com/italia/spid-django/blob/6baa2fe54a78c06193ffc5cd3f5c29a43b499232/.github/workflows/python-app.yml#L64)
+
+
 Examples
 --------
 
 Run `spid_sp_test -h` for inline documentation.
 
 ````
+usage: spid_sp_test [-h] [--metadata-url METADATA_URL] [--idp-metadata] [-l [LIST [LIST ...]]] [--extra] [--authn-url AUTHN_URL] [-tr] [-tp TEMPLATE_PATH] [-tn [TEST_NAMES [TEST_NAMES ...]]]
+                    [-tj [TEST_JSONS [TEST_JSONS ...]]] [-aj ATTR_JSON] [-report] [-o O] [-d {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-xp XMLSEC_PATH] [--production] [--html-path HTML_PATH] [--exit-zero]
+
+src/spid_sp_test/spid_sp_test -h for help
+
 optional arguments:
   -h, --help            show this help message and exit
   --metadata-url METADATA_URL
@@ -57,19 +75,23 @@ optional arguments:
                         URL where the SP initializes the Authentication Request to this IDP,it can also be a file:///
   -tr, --test-response  execute SAML2 responses
   -tp TEMPLATE_PATH, --template-path TEMPLATE_PATH
-                        templates containing SAML2 xml templates, for responses
+                        templates containing SAML2 xml templates for response tests
   -tn [TEST_NAMES [TEST_NAMES ...]], --test-names [TEST_NAMES [TEST_NAMES ...]]
                         response test to be executed, eg: 01 02 03
   -tj [TEST_JSONS [TEST_JSONS ...]], --test-jsons [TEST_JSONS [TEST_JSONS ...]]
                         custom test via json file, eg: tests/example.test-suite.json
   -aj ATTR_JSON, --attr-json ATTR_JSON
                         loads user attributes via json, eg: tests/example.attributes.json
-  -json                 json output
-  -o O                  json output to file
+  -report               json report in stdout
+  -o O                  json report to file, -report is required
   -d {CRITICAL,ERROR,WARNING,INFO,DEBUG}, --debug {CRITICAL,ERROR,WARNING,INFO,DEBUG}
                         Debug level, see python logging
   -xp XMLSEC_PATH, --xmlsec-path XMLSEC_PATH
                         xmlsec1 executable path, eg: /usr/bin/xmlsec1
+  --production, -p      execute tests for system in production, eg: https and TLS quality
+  --html-path HTML_PATH, -hp HTML_PATH
+                        Only works with Response tests activated. Path where the html response pages will be dumped after by the SP
+  --exit-zero, -ez      exit with 0 even if tests fails
 
 examples:
         src/spid_sp_test/spid_sp_test --metadata-url file://metadata.xml
@@ -97,6 +119,9 @@ examples:
         # select which user attribute to return in response via json file
         src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug DEBUG -aj tests/example.attributes.json
 
+        # dump SP response as html page
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug ERROR -tr --html-path dumps
+
 ````
 
 
@@ -110,10 +135,7 @@ Test metadata from a URL
 spid_sp_test --metadata-url http://localhost:8000/spid/metadata
 ````
 
-Get fake IdP metadata and copy it to your SP metadatastore folder
-````
-spid_sp_test --idp-metadata > /path/to/spid-django/example/spid_config/metadata/spid-sp-test.xml
-````
+
 
 A quite standard test
 ````
