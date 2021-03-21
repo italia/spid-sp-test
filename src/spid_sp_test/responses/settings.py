@@ -47,7 +47,7 @@ DEFAULT_RESPONSE = {
     "NotBefore": "",                 # 2021-03-04T15:48:46Z -> IssueInstant
     "AuthnIstant": "",               # 2021-03-04T15:48:46Z ~ IssueInstant
     "SessionIndex": "",              # _ffa3114b-f589-417b-8602-4b0275f6bafc
-    "AuthnContextClassRef": "",      # https://www.spid.gov.it/SpidL1
+    "AuthnContextClassRef": "https://www.spid.gov.it/SpidL1",
     "Attributes": ATTRIBUTES
 }
 

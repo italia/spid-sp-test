@@ -155,7 +155,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'SessionIndex': saml_rnd_id(),
             'Issuer': self.issuer,
             'Audience': self.authnreq_issuer,
-            'IssueInstantMillis': now.strftime('%Y-%m-%d %H:%M%S') + ':20.621Z'
+            'AuthnContextClassRef': settings.DEFAULT_RESPONSE['AuthnContextClassRef'],
+            'IssueInstantMillis': now.strftime('%Y-%m-%dT%H:%M:%S.%f')
         }
         self.relay_state = self.kwargs.get('relay_state')
 

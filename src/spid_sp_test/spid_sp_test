@@ -272,6 +272,11 @@ if __name__ == '__main__':
                 f.write(output)
 
     # check exit status
-    for i in tests_done:
-        if i.errors and not args.exit_zero:
-            sys.exit(1)
+    tests = sum([len(i.results) for i in tests_done])
+    tests_errors = sum([len(i.errors) for i in tests_done])
+    print(f'Spid QA: executed {tests} tests, {tests_errors} failed.')
+    if tests_errors and not args.exit_zero:
+        sys.exit(1)
+
+
+
