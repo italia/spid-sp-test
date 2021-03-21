@@ -152,6 +152,29 @@ JSON report (add `-o filename.json` to write to a file)
 spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug CRITICAL -json
 ````
 
+Extending tests
+---------------
+
+spid-sp-test offers the possibility to extend and configure the tests to be performed. The user can:
+
+- customize the test suite to run by configuring a json file similar to
+  `tests/example.test-suite.json` and passing this as an argument with
+  `--test-jsons` option. More than one json file can be entered by separating it by a space
+
+- customize the attributes to be returned by configuring these in a json file similar to
+  `example/example.attributes.json` and passing this with the `--attr-json` option
+
+- customize xml templates to be used in tests, indicating them in each
+  test entry in the configuration file configured via `--test-jsons`
+  and also the templates directory with the option `--template-path`.
+  The templates are Jinja2 powered, so it's possible to
+  extend `src/spid_sp_test/responses/templates/base.xml` with our preferred values
+
+Looking at `src/spid_sp_test/responses/settings.py` or `tests/example.test-suite.json`
+we found that every test have a `response` attribute. Each element configured in would overload the
+value that will be rendered in the template. Each template can load these variable from its template context or
+use which ones was statically defined in it.
+
 
 Authors
 -------
