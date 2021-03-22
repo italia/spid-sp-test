@@ -181,7 +181,7 @@ RESPONSE_TESTS = {
     "14": {
         "name": "14. Response - IssueInstant precedente Request",
         "description": "Attributo IssueInstant precedente a IssueInstant della request. Risultato atteso: KO",
-        "status_codes": [400, 400, 403, 500],
+        "status_codes": [400, 403, 500],
         "path": "base.xml",
         "response": {
             "IssueInstant": "2018-01-01T00:00:00Z",
