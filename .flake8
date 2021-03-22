@@ -1,0 +1,5 @@
+[flake8]
+#ignore = D203,E121,E124,E126,E203,E231,E261,E251,E701,F403,F405
+exclude = .git,__pycache__,docs/source/conf.py,old,build,dist,*/migrations/*,tests.py,*/tests/*,*/settings.py
+max-line-length=180
+max-complexity = 25

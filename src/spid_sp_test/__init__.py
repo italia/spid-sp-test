@@ -78,7 +78,7 @@ class AbstractSpidCheck(object):
             self.handle_result('info', f"{error_message} : OK")
 
     def _assertIsNotNone(self, check, error_message):
-        if check == True:
+        if check is True:
             self.handle_error(error_message)
 
     def _assertIn(self, first, second, error_message):

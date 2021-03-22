@@ -181,7 +181,7 @@ def html_absolute_paths(html_content, url):
     parse = urllib.parse.urlparse(url)
     base_url = '://'.join((parse.scheme, parse.netloc))
     q = html.fromstring(html_content)
-    q.make_links_absolute(base_url = base_url)
+    q.make_links_absolute(base_url=base_url)
 
     for tag in ('link', 'img'):
         for i in q.xpath(f'//{tag}'):

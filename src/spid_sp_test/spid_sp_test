@@ -6,15 +6,16 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
-from spid_sp_test.utils import get_xmlsec1_bin
-from spid_sp_test.response import SpidSpResponseCheck
-from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
-from spid_sp_test.authn_request import SpidSpAuthnReqCheck
-from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
-from spid_sp_test.metadata import SpidSpMetadataCheck
-from spid_sp_test import BASE_DIR
-from saml2.server import Server
 from saml2.metadata import entity_descriptor
+from saml2.server import Server
+from spid_sp_test import BASE_DIR
+from spid_sp_test.metadata import SpidSpMetadataCheck
+from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
+from spid_sp_test.authn_request import SpidSpAuthnReqCheck
+from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
+from spid_sp_test.response import SpidSpResponseCheck
+from spid_sp_test.utils import get_xmlsec1_bin
+
 
 logger = logging.getLogger(__name__)
 
@@ -277,6 +278,3 @@ if __name__ == '__main__':
     print(f'Spid QA: executed {tests} tests, {tests_errors} failed.')
     if tests_errors and not args.exit_zero:
         sys.exit(1)
-
-
-

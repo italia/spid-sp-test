@@ -1,10 +1,3 @@
-from . exceptions import SAMLRequestNotFound
-from spid_sp_test.utils import (del_ns,
-                                samlreq_from_htmlform,
-                                decode_authn_req_http_redirect)
-from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
-from spid_sp_test import constants
-from spid_sp_test import BASE_DIR, AbstractSpidCheck
 import base64
 import copy
 import logging
@@ -15,11 +8,19 @@ import sys
 import urllib
 
 from lxml import etree
+from spid_sp_test.utils import (del_ns,
+                                samlreq_from_htmlform,
+                                decode_authn_req_http_redirect)
+from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
+from spid_sp_test import constants
+from spid_sp_test import BASE_DIR, AbstractSpidCheck
 
 from saml2.server import Server
 from saml2.sigver import CryptoBackendXMLSecurity
 # from saml2.sigver import CryptoBackendXmlSec1
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
+
+from . exceptions import SAMLRequestNotFound
 
 
 logger = logging.getLogger(__name__)
@@ -183,7 +184,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             'One AuthnRequest element must be present'
         )
         req = req[0]
-        for attr in ['ID', 'Version', 'IssueInstant', 'Destination']:
+        for attr in ('ID', 'Version', 'IssueInstant', 'Destination'):
             self._assertTrue(
                 (attr in req.attrib),
                 'The %s attribute must be present - TR pag. 8 ' % attr
@@ -263,9 +264,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 0,
                 'The %s attribute must be >= 0 - TR pag. 8 and pag. 20' % attr
             )
-            self._assertTrue(value in availableassertionindexes,
-                             'The %s attribute must be equal to an AssertionConsumerService index - TR pag. 8 ' % attr
-                             )
+            self._assertTrue(
+                value in availableassertionindexes,
+                f'The {attr} attribute must be equal to an AssertionConsumerService index - TR pag. 8 '
+            )
         else:
             availableassertionlocations = []
 
@@ -278,34 +280,34 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             for attr in ['AssertionConsumerServiceURL', 'ProtocolBinding']:
                 self._assertTrue(
                     (attr in req.attrib),
-                    'The %s attribute must be present - TR pag. 8 ' % attr
+                    f'The {attr} attribute must be present - TR pag. 8 '
                 )
 
                 value = req.get(attr)
 
                 self._assertIsNotNone(
                     value,
-                    'The %s attribute must have a value - TR pag. 8 ' % attr
+                    f'The {attr} attribute must have a value - TR pag. 8 '
                 )
 
                 if attr == 'AssertionConsumerServiceURL':
                     if self.production:
                         self._assertIsValidHttpsUrl(
                             value,
-                            'The %s attribute must be a valid HTTPS url - TR pag. 8 and pag. 16' % attr
+                            f'The {attr} attribute must be a valid HTTPS url - TR pag. 8 and pag. 16'
                         )
 
-                    self._assertTrue(value in availableassertionlocations,
-                                     'The %s attribute must be equal to an AssertionConsumerService Location - TR pag. 8 ' % attr
-                                     )
+                    self._assertTrue(
+                        value in availableassertionlocations,
+                        f'The {attr} attribute must be equal to an AssertionConsumerService Location - TR pag. 8 '
+                    )
 
                 if attr == 'ProtocolBinding':
                     exp = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
                     self._assertEqual(
                         value,
                         exp,
-                        'The %s attribute must be %s - TR pag. 8 ' % (
-                            attr, exp)
+                        f'The {attr} attribute must be {exp} - TR pag. 8 '
                     )
 
         attr = 'AttributeConsumingServiceIndex'
@@ -321,16 +323,17 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             value = req.get(attr)
             self._assertIsNotNone(
                 value,
-                'The %s attribute must have a value - TR pag. 8' % attr
+                f'The {attr} attribute must have a value - TR pag. 8'
             )
             self._assertGreaterEqual(
                 int(value),
                 0,
-                'The %s attribute must be >= 0 - TR pag. 8 and pag. 20' % attr
+                f'The {attr} attribute must be >= 0 - TR pag. 8 and pag. 20'
             )
-            self._assertTrue(value in availableattributeindexes,
-                             'The %s attribute must be equal to an AttributeConsumingService index - TR pag. 8 ' % attr
-                             )
+            self._assertTrue(
+                value in availableattributeindexes,
+                f'The {attr} attribute must be equal to an AttributeConsumingService index - TR pag. 8 '
+            )
         return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest')
 
     def test_Subject(self):
@@ -356,14 +359,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             for attr in ['Format', 'NameQualifier']:
                 self._assertTrue(
                     (attr in name_id.attrib),
-                    'The %s attribute must be present - TR pag. 9' % attr
+                    f'The {attr} attribute must be present - TR pag. 9'
                 )
 
                 value = name_id.get(attr)
 
                 self._assertIsNotNone(
                     value,
-                    'The %s attribute must have a value - TR pag. 9' % attr
+                    f'The {attr} attribute must have a value - TR pag. 9'
                 )
 
                 if attr == 'Format':
@@ -372,7 +375,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     self._assertEqual(
                         value,
                         exp,
-                        'The % attribute must be %s - TR pag. 9' % (attr, exp)
+                        f'The {attr} attribute must be {exp} - TR pag. 9'
                     )
         return self.is_ok(f'{self.__class__.__name__}.test_Subject')
 
@@ -400,14 +403,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         for attr in ['Format', 'NameQualifier']:
             self._assertTrue(
                 (attr in e.attrib),
-                'The %s attribute must be present - TR pag. 9' % attr
+                f'The {attr} attribute must be present - TR pag. 9'
             )
 
             value = e.get(attr)
 
             self._assertIsNotNone(
                 value,
-                'The %s attribute must have a value - TR pag. 9' % attr
+                f'The {attr} attribute must have a value - TR pag. 9'
             )
 
             if attr == 'Format':
@@ -415,7 +418,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertEqual(
                     value,
                     exp,
-                    'The %s attribute must be %s - TR pag. 9' % (attr, exp)
+                    f'The {attr} attribute must be {exp} - TR pag. 9'
                 )
         return self.is_ok(f'{self.__class__.__name__}.test_Issuer')
 
@@ -438,14 +441,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         attr = 'Format'
         self._assertTrue(
             (attr in e.attrib),
-            'The %s attribute must be present - TR pag. 9' % attr
+            f'The {attr} attribute must be present - TR pag. 9'
         )
 
         value = e.get(attr)
 
         self._assertIsNotNone(
             value,
-            'The %s attribute must have a value - TR pag. 9' % attr
+            f'The {attr} attribute must have a value - TR pag. 9'
         )
 
         if attr == 'Format':
@@ -453,7 +456,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertEqual(
                 value,
                 exp,
-                'The %s attribute must be %s - TR pag. 9' % (attr, exp)
+                f'The {attr} attribute must be {exp} - TR pag. 9'
             )
         return self.is_ok(f'{self.__class__.__name__}.test_NameIDPolicy')
 
@@ -473,7 +476,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             for attr in ['NotBefore', 'NotOnOrAfter']:
                 self._assertTrue(
                     (attr in e.attrib),
-                    'The %s attribute must be present - TR pag. 9' % attr
+                    f'The {attr} attribute must be present - TR pag. 9'
                 )
 
                 value = e.get(attr)
@@ -484,8 +487,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 )
 
                 self._assertTrue(
-                    bool(common.regex.UTC_STRING.search(value)),
-                    'The %s attribute must have avalid UTC string - TR pag. 9' % attr
+                    bool(constants.regex.UTC_STRING.search(value)),
+                    f'The {attr} attribute must have avalid UTC string - TR pag. 9'
                 )
         return self.is_ok(f'{self.__class__.__name__}.test_Conditions')
 
@@ -498,19 +501,18 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             1,
             'Only one RequestedAuthnContext element must be present - TR pag. 9'
         )
-
         e = e[0]
 
         attr = 'Comparison'
         self._assertTrue(
             (attr in e.attrib),
-            'The %s attribute must be present - TR pag. 10' % attr
+            f'The {attr} attribute must be present - TR pag. 10'
         )
 
         value = e.get(attr)
         self._assertIsNotNone(
             value,
-            'The %s attribute must have a value - TR pag. 10' % attr
+            f'The {attr} attribute must have a value - TR pag. 10'
         )
 
         allowed = ['exact', 'minimum', 'better', 'maximum']
