@@ -27,7 +27,9 @@ logger = logging.getLogger(__name__)
 
 
 def stupid_rnd_string(N=32):
-    return ''.join(random.choice(string.ascii_lowercase) for _ in range(N))
+    return ''.join(
+        random.choice(string.ascii_lowercase) for _ in range(N)
+    )
 
 
 def saml_rnd_id():

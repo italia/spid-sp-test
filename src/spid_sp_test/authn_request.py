@@ -28,15 +28,21 @@ logger = logging.getLogger(__name__)
 
 def get_authn_request(authn_request_url, verify_ssl=False):
     data = {}
+    request = None
     binding = 'post' or 'redirect'
-    if authn_request_url[0:7] == 'file://':
-        authn_request = open(authn_request_url[7:], 'rb').read().strip()
+    authn_request_str = None
+    requests_session = None
 
+    if authn_request_url[0:7] == 'file://':
+        authn_request = open(authn_request_url[7:], 'rb').read().strip().strip(b'\n')
         # stupid test ... good enough for now
-        if authn_request[0] == b'<' and authn_request[-1] == b'>':
+        authn_request_str = authn_request.decode()
+        if authn_request_str[0] == '<' and authn_request_str[-1] == '>':
             binding = 'post'
-        else:
+        elif '?' in authn_request_str and '&' in authn_request_str:
             binding = 'redirect'
+        else:
+            raise Exception(f"Can't detect authn request from f{authn_request_url}")
 
     else:
         requests_session = requests.Session()
@@ -45,26 +51,30 @@ def get_authn_request(authn_request_url, verify_ssl=False):
             verify=verify_ssl,
             allow_redirects=False
         )
+        if request.headers.get('Location'):
+            binding = 'redirect'
+        else:
+            binding = 'post'
 
     if binding == 'redirect':
         # HTTP-REDIRECT
-        redirect = request.headers['Location']
+        redirect = request.headers['Location'] if request else authn_request_str
         q_args = urllib.parse.splitquery(redirect)[1]
         authn_request = dict(urllib.parse.parse_qsl(q_args))
 
         data['SAMLRequest'] = authn_request['SAMLRequest']
         data['SAMLRequest_xml'] = decode_authn_req_http_redirect(
-            authn_request['SAMLRequest'])
-        data['RelayState'] = authn_request['RelayState']
+            authn_request['SAMLRequest']).encode()
+        data['RelayState'] = authn_request.get('RelayState')
         data['SigAlg'] = authn_request['SigAlg']
         data['Signature'] = authn_request['Signature']
 
     elif binding == 'post':
         # HTTP POST
-        authn_request = request.content.decode()
-        form_dict = samlreq_from_htmlform(authn_request)
+        authn_request_str = request.content.decode() if request else authn_request_str
+        form_dict = samlreq_from_htmlform(authn_request_str)
         if not form_dict:
-            raise SAMLRequestNotFound(f'{authn_request}')
+            raise SAMLRequestNotFound(f'{authn_request_str}')
         data['action'] = form_dict['action']
         data['method'] = form_dict['method']
         data['SAMLRequest'] = form_dict['SAMLRequest']
@@ -75,7 +85,8 @@ def get_authn_request(authn_request_url, verify_ssl=False):
     else:
         raise SAMLRequestNotFound()
 
-    data['requests_session'] = requests_session
+    if requests_session:
+        data['requests_session'] = requests_session
     return data
 
 
