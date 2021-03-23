@@ -43,7 +43,6 @@ def get_authn_request(authn_request_url, verify_ssl=False):
             binding = 'redirect'
         else:
             raise Exception(f"Can't detect authn request from f{authn_request_url}")
-
     else:
         requests_session = requests.Session()
         request = requests_session.get(
@@ -73,15 +72,20 @@ def get_authn_request(authn_request_url, verify_ssl=False):
         # HTTP POST
         authn_request_str = request.content.decode() if request else authn_request_str
         form_dict = samlreq_from_htmlform(authn_request_str)
-        if not form_dict:
+        if form_dict:
+            data['action'] = form_dict['action']
+            data['method'] = form_dict['method']
+            data['SAMLRequest'] = form_dict['SAMLRequest']
+            data['SAMLRequest_xml'] = base64.b64decode(
+                form_dict['SAMLRequest'].encode())
+            data['RelayState'] = form_dict['RelayState']
+        elif ':AuthnRequest ' in authn_request_str:
+            data = {'SAMLRequest_xml': authn_request_str.encode(),
+                    'SAMLRequest': base64.b64encode(authn_request),
+                    'RelayState' : '/'
+            }
+        else:
             raise SAMLRequestNotFound(f'{authn_request_str}')
-        data['action'] = form_dict['action']
-        data['method'] = form_dict['method']
-        data['SAMLRequest'] = form_dict['SAMLRequest']
-        data['SAMLRequest_xml'] = base64.b64decode(
-            form_dict['SAMLRequest'].encode())
-        data['RelayState'] = form_dict['RelayState']
-
     else:
         raise SAMLRequestNotFound()
 
@@ -595,7 +599,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
     def test_RelayState(self):
         '''Test the compliance of RelayState parameter'''
-
         if ('RelayState' in self.params):
             relaystate = self.params.get('RelayState')
             self._assertTrue(

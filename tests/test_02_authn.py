@@ -8,8 +8,13 @@ def run_cmd(mfname) -> int:
     return os.system(cmd)
 
 
-def test_django_post():
+def test_django_post_html():
     es = run_cmd(f'spid_django_post.html')
+    assert es == 0
+
+
+def test_django_post():
+    es = run_cmd(f'spid_django.xml')
     assert es == 0
 
 
