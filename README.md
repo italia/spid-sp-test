@@ -9,15 +9,20 @@ Features
 
 spid-sp-test is:
 
+- able to test a SAML2 SPID Metadata file or http url
+- able to test a SAML2 SPID AuthnRequest file or or http url
+- able to test ACS behaviour, how a SP replies to a SAML2 Response
+- able to dump the responses sent to an ACS and the HTML of the SP's response
+- able to handle Attributes to send in Responses or test configurations of the Responses via json configuration files
+- able to configure response template with Jinja2
+- able to get new test-suite via multiple json files
+- fully integrable in CI
+- able to export a detailed report in json format, in stdout or in a file
+
+Generally it's:
+
 - extremely faster in execution time than spid-saml-check
 - extremely easy to setup
-- able to test a SAML2 SPID Metadata file
-- able to test a SAML2 SPID AuthnRequest
-- able to test ACS behaviour, how a SP reply to a SAML2 Response
-- able to dump the response sent to an ACS and the HTML of the SP's response
-- able to handle Attributes to send in Responses or test configurations of the Responses via json configuration files
-- integrable in CI
-- able to export a detailed report in json format, in stdout or in a file.
 
 ![example](gallery/example2.gif)
 
@@ -35,10 +40,11 @@ Overview
 spid-sp-test can test a SP metadata file, you just have to give the Metadata URL, if http/http or file, eg: `file://path/to/metadata.xml`.
 At the same way it can test an Authentication Request.
 
-In a different manner spid-sp-test can send a huge numer of fake SAML Response, for each of them it needs to tigger a real Authentication Request to the target SP.
+In a different manner spid-sp-test can send a huge numer of fake SAML Response, for each of them it needs to trigger a real Authentication Request to the target SP.
 
-If you want to test also the Response, you must give the spid-sp-test fake idp metadata file to the target SP.
-Get fake IdP metadata and copy it to your SP metadatastore folder
+If you want to test also the Response, you must give the spid-sp-test fake idp metadata xml file to the target SP.
+Get fake IdP metadata (`--idp-metadata`) and copy it to your SP metadatastore folder.
+
 ````
 spid_sp_test --idp-metadata > /path/to/spid-django/example/spid_config/metadata/spid-sp-test.xml
 ````
@@ -58,7 +64,7 @@ Examples
 Run `spid_sp_test -h` for inline documentation.
 
 ````
-usage: spid_sp_test [-h] [--metadata-url METADATA_URL] [--idp-metadata] [-l [LIST [LIST ...]]] [--extra] [--authn-url AUTHN_URL] [-tr] [-tp TEMPLATE_PATH] [-tn [TEST_NAMES [TEST_NAMES ...]]]
+usage: spid_sp_test [-h] [--metadata-url METADATA_URL] [--idp-metadata] [-l [LIST [LIST ...]]] [--extra] [--authn-url AUTHN_URL] [-tr] [-nsr] [-tp TEMPLATE_PATH] [-tn [TEST_NAMES [TEST_NAMES ...]]]
                     [-tj [TEST_JSONS [TEST_JSONS ...]]] [-aj ATTR_JSON] [-report] [-o O] [-d {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-xp XMLSEC_PATH] [--production] [--html-path HTML_PATH] [--exit-zero]
 
 src/spid_sp_test/spid_sp_test -h for help
@@ -74,6 +80,8 @@ optional arguments:
   --authn-url AUTHN_URL
                         URL where the SP initializes the Authentication Request to this IDP,it can also be a file:///
   -tr, --test-response  execute SAML2 responses
+  -nsr, --no-send-response
+                        print SAML2 Response without sending back to SP. It only works with '-tr'
   -tp TEMPLATE_PATH, --template-path TEMPLATE_PATH
                         templates containing SAML2 xml templates for response tests
   -tn [TEST_NAMES [TEST_NAMES ...]], --test-names [TEST_NAMES [TEST_NAMES ...]]
@@ -154,6 +162,13 @@ Given a metadata file and a authn file (see `tests/metadata` and `tests/authn` f
 
 ````
 spid_sp_test --metadata-url file://tests/metadata/spid-django-other.xml --authn-url file://tests/authn/spid_django_post.html --extra --debug ERROR -tr -nsr
+````
+
+Get the response (test 1) that would have to be sent to a SP with a custom set of attributes, without sending it for real. It will just print it to stdout
+
+````
+spid_sp_test --metadata-url file://tests/metadata/spid-django-other.xml --authn-url file://tests/authn/spid_django_post.html --extra --debug ERROR -tr -nsr -tn 1 -aj tests/example.attributes.json
+
 ````
 
 
@@ -357,7 +372,7 @@ SWyL+3IsBJSz1rpOKZ8n2Lbo3L6z9zwexIsMklsVFq1VcNbEbtelwMAiVLRELbj8
 Extending tests
 ---------------
 
-spid-sp-test offers the possibility to extend and configure the tests to be performed. The user can:
+spid-sp-test offers the possibility to extend and configure new response tests to be performed. The user can:
 
 - customize the test suite to run by configuring a json file similar to
   `tests/example.test-suite.json` and passing this as an argument with
@@ -377,11 +392,12 @@ we found that every test have a `response` attribute. Each element configured in
 value that will be rendered in the template. Each template can load these variable from its template context or
 use which ones was statically defined in it.
 
+Finally you have batteries included and some options as well, at your taste.
 
 Unit tests
 ----------
 
-for developers
+That's for developers.
 
 ````
 pip install requirements-dev.txt
