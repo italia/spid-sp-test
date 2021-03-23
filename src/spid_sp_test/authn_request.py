@@ -27,6 +27,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_authn_request(authn_request_url, verify_ssl=False):
+    """
+        Detects the auth request url, if http/xml file or html file
+    """
     data = {}
     request = None
     binding = 'post' or 'redirect'
