@@ -150,6 +150,13 @@ JSON report (add `-o filename.json` to write to a file)
 spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug CRITICAL -json
 ````
 
+Given a metadata file and a authn file (see `tests/metadata` and `tests/authn` for example) export all the test response without sending them to SP:
+
+````
+spid_sp_test --metadata-url file://tests/metadata/spid-django-other.xml --authn-url file://tests/authn/spid_django_post.html --extra --debug ERROR -tr -nsr
+````
+
+
 Test Responses and html dumps
 -----------------------------
 
@@ -369,6 +376,17 @@ Looking at `src/spid_sp_test/responses/settings.py` or `tests/example.test-suite
 we found that every test have a `response` attribute. Each element configured in would overload the
 value that will be rendered in the template. Each template can load these variable from its template context or
 use which ones was statically defined in it.
+
+
+Unit tests
+----------
+
+for developers
+
+````
+pip install requirements-dev.txt
+pytest --cov=src/spid_sp_test tests/test_*
+````
 
 
 Authors

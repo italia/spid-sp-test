@@ -20,3 +20,5 @@ env/
 build/*
 dist/*
 dumps/*
+
+.coverage

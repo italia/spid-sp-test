@@ -130,6 +130,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             self.user_attrs = settings.ATTRIBUTES
 
         self.html_path = kwargs.get('html_path')
+        self.no_send_response = kwargs.get('no_send_response')
         self.kwargs = kwargs
 
     def do_authnrequest(self):
@@ -300,16 +301,19 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
             logger.debug(result)
 
-            res = self.send_response(result)
-            status, status_msg = self.check_response(
-                res,
-                msg=f'Test [{i}] {test_display_desc}',
-                attendeds=response_obj.conf['status_codes']
-            )
-            if self.html_path:
-                self.dump_html_response(f'{i}_{status}',
-                                        response_obj.conf["description"],
-                                        result,
-                                        res.content.decode())
+            if not self.no_send_response:
+                res = self.send_response(result)
+                status, status_msg = self.check_response(
+                    res,
+                    msg=f'Test [{i}] {test_display_desc}',
+                    attendeds=response_obj.conf['status_codes']
+                )
+                if self.html_path:
+                    self.dump_html_response(f'{i}_{status}',
+                                            response_obj.conf["description"],
+                                            result,
+                                            res.content.decode())
+            else:
+                print(f'<!-- {test_display_desc} -->\n{result}')
 
         self.is_ok(f'{self.__class__.__name__}')

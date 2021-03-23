@@ -105,6 +105,13 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
+        '-nsr', '--no-send-response',
+        action="store_true", default=False,
+        help = ("print SAML2 Response without sending back to SP. "
+                "It only works with '-tr'")
+    )
+
+    parser.add_argument(
         '-tp', '--template-path',
         default=f'{BASE_DIR}/responses/templates/',
         required=False,
@@ -243,7 +250,8 @@ if __name__ == '__main__':
             test_jsons=args.test_jsons or [],
             attr_json=args.attr_json,
             production=args.production,
-            html_path=html_path if args.html_path else None
+            html_path=html_path if args.html_path else None,
+            no_send_response = args.no_send_response
         )
 
         if args.html_path:
@@ -275,6 +283,9 @@ if __name__ == '__main__':
     # check exit status
     tests = sum([len(i.results) for i in tests_done])
     tests_errors = sum([len(i.errors) for i in tests_done])
-    print(f'Spid QA: executed {tests} tests, {tests_errors} failed.')
+
+    if not args.no_send_response:
+        print(f'Spid QA: executed {tests} tests, {tests_errors} failed.')
+
     if tests_errors and not args.exit_zero:
         sys.exit(1)
