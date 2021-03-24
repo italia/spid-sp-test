@@ -47,19 +47,19 @@ if __name__ == '__main__':
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR -json -l xsd_check
 
         # execute Response tests
-        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra -debug ERROR -tr
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra -debug ERROR -tr
 
         # select which response test to execute
-        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tn 1 8 9 24 63
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug INFO -tr -tn 1 8 9 24 63
 
         # run a test suite configured in a json file
-        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tj tests/example.test-suite.json
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug INFO -tr -tj tests/example.test-suite.json
 
         # select which user attribute to return in response via json file
-        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug DEBUG -aj tests/example.attributes.json
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug DEBUG -aj tests/example.attributes.json
 
         # dump SP response as html page
-        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug ERROR -tr --html-path dumps
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug ERROR -tr --html-path dumps
     """
 
     parser = argparse.ArgumentParser(

@@ -121,19 +121,19 @@ examples:
         src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug ERROR -json -l xsd_check
 
         # execute Response tests
-        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug ERROR -tr
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug ERROR -tr
 
         # select which response test to execute
-        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tn 1 8 9 24 63
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug INFO -tr -tn 1 8 9 24 63
 
         # run a test suite configured in a json file
-        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug INFO -tr -tj tests/example.test-suite.json
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug INFO -tr -tj tests/example.test-suite.json
 
         # select which user attribute to return in response via json file
-        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug DEBUG -aj tests/example.attributes.json
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug DEBUG -aj tests/example.attributes.json
 
         # dump SP response as html page
-        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:54321 --extra --debug ERROR -tr --html-path dumps
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug ERROR -tr --html-path dumps
 
 ````
 
@@ -194,7 +194,7 @@ Here an example of **1_True.html**, where `1` is the test name and `True` is the
 
 <!-- <?xml version="1.0"?>
 <samlp:Response xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Destination="http://localhost:8000/spid/acs/" ID="_mwmzlidj-fppt-jryt-kvfx-ulaxcbnzhhtk" InResponseTo="id-LeCCYOOGkYFrysiKZ" IssueInstant="2021-03-21T18:12:43Z" Version="2.0">
-    <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">http://localhost:54321</saml:Issuer>
+    <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">http://localhost:8080</saml:Issuer>
 
 
     <ds:Signature>
@@ -246,11 +246,11 @@ SWyL+3IsBJSz1rpOKZ8n2Lbo3L6z9zwexIsMklsVFq1VcNbEbtelwMAiVLRELbj8
 /dM70O4D51WtO1fTr5T5CA==</ds:SignatureValue>
     </ds:Signature>
 
-        <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">http://localhost:54321</saml:Issuer>
+        <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">http://localhost:8080</saml:Issuer>
 
         <saml:Subject>
 
-            <saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" NameQualifier="http://localhost:54321">
+            <saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" NameQualifier="http://localhost:8080">
                     that-transient-opaque-value
             </saml:NameID>
 
