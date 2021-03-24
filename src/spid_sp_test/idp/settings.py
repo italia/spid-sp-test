@@ -4,19 +4,21 @@ from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT
 
 
 BASE_DIR = Path(__file__).resolve().parent
-BASE = "http://localhost:54321"
+BASE = "http://localhost:8080"
 
 SAML2_IDP_CONFIG = {
-    "entityid": "http://localhost:54321",
-    "name": "Test IdP",
+    "entityid": BASE,
+    "name": "SPID Test IdP",
     "service": {
         "idp": {
             "endpoints": {
                 "single_sign_on_service": [
-                    (f"{BASE}/sso", BINDING_HTTP_POST),
-                    (f"{BASE}/redirect", BINDING_HTTP_REDIRECT)],
+                    (f"{BASE}/samlsso", BINDING_HTTP_POST),
+                    (f"{BASE}/samlsso", BINDING_HTTP_REDIRECT)],
                 "single_logout_service": [
-                    (f"{BASE}/slop", BINDING_HTTP_POST)]
+                    (f"{BASE}/samlsso", BINDING_HTTP_POST),
+                    (f"{BASE}/samlsso", BINDING_HTTP_REDIRECT)
+                    ]
             },
         },
     },
