@@ -14,7 +14,7 @@ from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
 from spid_sp_test.authn_request import SpidSpAuthnReqCheck
 from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
 from spid_sp_test.response import SpidSpResponseCheck
-from spid_sp_test.utils import get_xmlsec1_bin
+from spid_sp_test.utils import get_xmlsec1_bin, report_to_html
 
 
 logger = logging.getLogger(__name__)
@@ -147,7 +147,15 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '-o', required=False,
-        help="json report to file, -report is required"
+        help="report to file, -report is required"
+    )
+
+    parser.add_argument(
+        '-rf', '--report_format',
+        required=False,
+        default='json',
+        choices=['json', 'html'],
+        help="Report format, json or pdf"
     )
 
     parser.add_argument(
@@ -273,12 +281,17 @@ if __name__ == '__main__':
             data['test']['sp'][i.category] = i.report_to_dict()[i.category]
 
         output = json.dumps(data, indent=2)
-        if args.report:
-            print(output)
-
         if args.o:
+            if args.report_format == 'json':
+                pass
+            elif args.report_format == 'html':
+                output = report_to_html(data)
+
             with open(args.o, 'w') as f:
                 f.write(output)
+
+        if args.report and not args.o:
+            print(output)
 
     # check exit status
     tests = sum([len(i.results) for i in tests_done])
