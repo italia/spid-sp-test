@@ -1,8 +1,5 @@
 name: Publish Python distribution to PyPI and TestPyPI
 on:
-  push:
-    tags:
-      - '*'
   release:
     types:
       - created
