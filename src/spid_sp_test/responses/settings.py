@@ -19,6 +19,7 @@ ATTRIBUTES = {
     "dateOfBirth": "2000-01-01",
     "gender": "M",
     "companyName": "Agenzia per l'Italia Digitale",
+    "companyFiscalNumber": "TINIT-MHASDV02A31H671H",
     "registeredOffice": "Via Listz 21 00144 Roma",
     "fiscalNumber": "TINIT-GDASDV00A01H501J",
     "ivaCode": "VATIT-97735020584",
@@ -33,7 +34,7 @@ ATTRIBUTES = {
     "domicilePostalCode": "00144",
     "domicileMunicipality": "Roma",
     "domicileProvince": "RM",
-    "domicileNation": "IT"
+    "domicileNation": "IT",
 }
 
 

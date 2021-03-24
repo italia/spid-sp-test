@@ -3,7 +3,9 @@ import datetime
 import json
 import logging
 import random
+import sys
 import string
+
 
 from copy import deepcopy
 from jinja2 import (Environment,
@@ -106,6 +108,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         self.metadata_etree = kwargs.get('metadata_etree')
         self.authn_request_url = kwargs.get('authn_request_url')
+        self.authn_request_data = {}
 
         # signing
         self.crypto_backend = CryptoBackendXmlSec1(
@@ -300,6 +303,12 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 break
 
             logger.debug(result)
+
+            if not self.no_send_response and not self.authn_request_data.get('requests_session'):
+                logger.critical('Responsens will be not sent. '
+                                'You MUST adopt a http authn url to send '
+                                'responses interactively.')
+                sys.exit(1)
 
             if not self.no_send_response:
                 res = self.send_response(result)
