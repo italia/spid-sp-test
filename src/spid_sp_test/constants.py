@@ -94,6 +94,7 @@ SPID_ATTRIBUTES = [
     'placeOfBirth',
     'registeredOffice',
     'spidCode',
+    'companyFiscalNumber',
 ]
 
 SPID_LEVELS = [
