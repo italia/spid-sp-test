@@ -178,6 +178,22 @@ spid_sp_test --metadata-url file://tests/metadata/spid-django-other.xml --authn-
 
 ````
 
+Examples with Docker
+--------------------
+
+Before starting you have to obtain the `italia/spid-sp-test` image. You can pull it from Docker Hub
+  
+    $ docker pull italia/spid-sp-test:0.5.6
+
+or build locally
+
+    $ docker build --tag italia/spid-sp-test:0.5.6 .
+
+The container working directory is set to `/spid` therefore, local files should be mounted relatively to `/spid` path.
+
+    $ docker run -ti --rm \
+        -v "$(pwd)/tests/metadata:/spid/mymetadata:ro" \
+        italia/spid-sp-test:0.5.6 --metadata-url file://mymetadata/spid-django-other.xml
 
 Test Responses and html dumps
 -----------------------------
