@@ -6,6 +6,8 @@ import requests
 import xmlschema
 import sys
 import urllib
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from lxml import etree
 from spid_sp_test.utils import (del_ns,
@@ -53,7 +55,7 @@ def get_authn_request(authn_request_url, verify_ssl=False):
             verify=verify_ssl,
             allow_redirects=False
         )
-        if request.status_code != 200:
+        if request.status_code not in (200, 302):
             raise Exception(('Authn Request page returns a HTML error '
                              f'code: {request.status_code}'))
         elif request.headers.get('Location'):
@@ -184,7 +186,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         os.chdir(_orig_pos)
         cert = self.md.xpath(
             '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
-            '/KeyInfo/X509Data/X509Certificate/text()')[0]
+            '/KeyInfo/X509Data/X509Certificate/text()')
+
+        if not cert:
+            self.handle_result('error', '-> '.join((msg, 'AuthnRequest Signature validation failed')))
+            return self.is_ok(f'{self.__class__.__name__}.test_xsd_and_xmldsig')
+        else:
+            cert = cert[0]
 
         # pyXMLSecurity allows to pass a certificate without store it on a file
         # backend = CryptoBackendXmlSec1(xmlsec_binary='/usr/bin/xmlsec1')

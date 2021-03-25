@@ -7,6 +7,8 @@ import requests
 import xmlschema
 import sys
 import subprocess
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from lxml import etree
 from tempfile import NamedTemporaryFile
@@ -36,7 +38,8 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
         self.logger = logger
         self.metadata_url = metadata_url
-        self.metadata = self.__class__.get(metadata_url)
+        self.production = production
+        self.metadata = self.get(metadata_url)
         self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f'{BASE_DIR}/xsd'
 
@@ -44,14 +47,13 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         # clean up namespace (otherwise xpath doesn't work ...)
         del_ns(self.doc)
 
-        self.production = production
 
-    @staticmethod
-    def get(metadata_url: str):
+    def get(self, metadata_url: str):
         if metadata_url[0:7] == 'file://':
             return open(metadata_url[7:], 'rb').read()
         else:
-            return requests.get(metadata_url).content
+            return requests.get(metadata_url,
+                                verify=self.production).content
 
     def xsd_check(self):
         _msg = f'Found metadata: {self.metadata}'
@@ -60,14 +62,14 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         os.chdir(self.xsds_files_path)
         metadata = self.metadata.decode()
         for testf in self.xsds_files:
-            schema_file = open(testf, 'rb')
-            msg = f'Test {self.metadata_url} with {schema_file.name}'
             try:
+                schema_file = open(testf, 'rb')
+                msg = f'Test {self.metadata_url} with {schema_file.name}'
                 schema = xmlschema.XMLSchema(schema_file)
                 if not schema.is_valid(metadata):
                     schema.validate(metadata)
                     self.handle_result('error', ' '.join((msg)))
-                    raise Exception('Validation Error')
+                    # raise Exception('Validation Error')
                 logger.info(' '.join((msg, '-> OK')))
             except Exception as e:
                 os.chdir(_orig_pos)
@@ -113,7 +115,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 'The %s attribute must have a value - TR pag. 20' % attr
             )
 
-            if attr == 'AuthnRequestsSigned':
+            if attr == 'AuthnRequestsSigned' and a:
                 self._assertEqual(
                     a.lower(),
                     'true',
@@ -185,34 +187,44 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
     def test_Signature(self):
         '''Test the compliance of Signature element'''
         sign = self.doc.xpath('//EntityDescriptor/Signature')
-        self._assertTrue((len(sign) == 1),
+        self._assertTrue((len(sign) > 0),
                          'The Signature element must be present - TR pag. 19')
 
-        method = sign[0].xpath('./SignedInfo/SignatureMethod')
-        self._assertTrue((len(method) == 1),
-                         'The SignatureMethod element must be present - TR pag. 19')
+        if not sign:
+            self.handle_result('error', 'The SignatureMethod element must be present - TR pag. 19')
+            self.handle_result('error', 'The Algorithm attribute must be present in SignatureMethod element - TR pag. 19')
+            self.handle_result('error', (('The signature algorithm must be one of [%s] - TR pag. 19') %
+                                         (', '.join(constants.ALLOWED_XMLDSIG_ALGS))))
+            self.handle_result('error', ('The Algorithm attribute must be present '
+                                         'in DigestMethod element - TR pag. 19'))
+            self.handle_result('error', (('The digest algorithm must be one of [%s] - TR pag. 19') %
+                                         (', '.join(constants.ALLOWED_DGST_ALGS))))
+        else:
+            method = sign[0].xpath('./SignedInfo/SignatureMethod')
+            self._assertTrue((len(method) > 0),
+                             'The SignatureMethod element must be present - TR pag. 19')
 
-        self._assertTrue(('Algorithm' in method[0].attrib),
-                         'The Algorithm attribute must be present '
-                         'in SignatureMethod element - TR pag. 19')
+            self._assertTrue(('Algorithm' in method[0].attrib),
+                             'The Algorithm attribute must be present '
+                             'in SignatureMethod element - TR pag. 19')
 
-        alg = method[0].get('Algorithm')
-        self._assertIn(alg, constants.ALLOWED_XMLDSIG_ALGS,
-                       (('The signature algorithm must be one of [%s] - TR pag. 19') %
-                        (', '.join(constants.ALLOWED_XMLDSIG_ALGS))))
+            alg = method[0].get('Algorithm')
+            self._assertIn(alg, constants.ALLOWED_XMLDSIG_ALGS,
+                           (('The signature algorithm must be one of [%s] - TR pag. 19') %
+                            (', '.join(constants.ALLOWED_XMLDSIG_ALGS))))
 
-        method = sign[0].xpath('./SignedInfo/Reference/DigestMethod')
-        self._assertTrue((len(method) == 1),
-                         'The DigestMethod element must be present - TR pag. 19')
+            method = sign[0].xpath('./SignedInfo/Reference/DigestMethod')
+            self._assertTrue((len(method) == 1),
+                             'The DigestMethod element must be present - TR pag. 19')
 
-        self._assertTrue(('Algorithm' in method[0].attrib),
-                         'The Algorithm attribute must be present '
-                         'in DigestMethod element - TR pag. 19')
+            self._assertTrue(('Algorithm' in method[0].attrib),
+                             'The Algorithm attribute must be present '
+                             'in DigestMethod element - TR pag. 19')
 
-        alg = method[0].get('Algorithm')
-        self._assertIn(alg, constants.ALLOWED_DGST_ALGS,
-                       (('The digest algorithm must be one of [%s] - TR pag. 19') %
-                        (', '.join(constants.ALLOWED_DGST_ALGS))))
+            alg = method[0].get('Algorithm')
+            self._assertIn(alg, constants.ALLOWED_DGST_ALGS,
+                           (('The digest algorithm must be one of [%s] - TR pag. 19') %
+                            (', '.join(constants.ALLOWED_DGST_ALGS))))
 
         return self.is_ok(f'{self.__class__.__name__}.test_Signature')
 
