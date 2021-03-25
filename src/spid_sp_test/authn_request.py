@@ -53,7 +53,10 @@ def get_authn_request(authn_request_url, verify_ssl=False):
             verify=verify_ssl,
             allow_redirects=False
         )
-        if request.headers.get('Location'):
+        if request.status_code != 200:
+            raise Exception(('Authn Request page returns a HTML error '
+                             f'code: {request.status_code}'))
+        elif request.headers.get('Location'):
             binding = 'redirect'
         else:
             binding = 'post'

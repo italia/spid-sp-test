@@ -1,0 +1,191 @@
+<!-- Extends default Bootstrap Italia template -->
+{% extends 'bootstrap-italia-base.html' %}
+
+{% block page_title %}
+    SPID Quality Assessment
+{% endblock page_title %}
+
+{% block header_slim_org_name %}
+    SPID Quality Assessment
+{% endblock header_slim_org_name %}
+
+{% block header_slim_mobile_org_name %}
+    SPID Quality Assessment
+{% endblock header_slim_mobile_org_name %}
+
+{% block header_center_org_name %}
+    SPID Quality Assessment
+{% endblock header_center_org_name %}
+
+{% block header_center_org_subname %}
+    SPID Quality Assessment
+{% endblock header_center_org_subname %}
+
+
+{% block header_center_search %}{% endblock header_center_search %}
+{% block header_slim_right_zone %}{% endblock header_slim_right_zone %}
+{% block main_menu %}{% endblock main_menu %}
+
+
+{% block header_mobile_slim_menu %}
+{% endblock header_mobile_slim_menu %}
+
+{% block header_center_social %}
+{% endblock header_center_social %}
+
+{% block centered_container %}
+<div class="mb-2">
+    <h2>Report</h2>
+
+    <p class="text-justify">
+        <b>{{ display_name }}</b>
+        <br>
+        Risultati dei test condotti con <i>spid-sp-test</i>.
+    </p>
+
+    {% if sp_display_description %}
+    <p class="text-justify pt-3">
+        <b>Display description"</b>
+    </p>
+    {% endif %}
+</div>
+
+
+<!--
+    <h3>
+        Data consent
+    </h3>
+-->
+
+    {% for test_category, test_dict in report_data.items() %}
+        <div class="mb-4 pt-3">
+        {% for test_class, tests in test_dict.items() %}
+            <p><b>{{ test_category | title | replace("_", " ") }}</b> <span class="text-secondary">[{{ test_class }}]<span></p>
+
+            <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Result</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                {% for test in tests %}
+
+                    <tr>
+                      <th scope="row">{{ loop.index }}</th>
+                      {% if test.result == "success" %}
+                        <td style="background-color: #f2ffe6; border: 1px solid green;">{{ test.result }}</td>
+                      {% else %}
+                        <td style="background-color: #ffebe6; border: 1px solid red;">{{ test.result }}</td>
+                      {% endif %}
+                      <td>{{ test.test }}</td>
+                      <td>{{ test.value }}</td>
+                    </tr>
+
+                {% endfor %}
+
+                  </tbody>
+                </table>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+<!--
+                for test_case in o[h1_title][h2_title][h3_title].keys():
+                    res.append('<h4>%s</h4>' % test_case)
+                    for t in o[h1_title][h2_title][h3_title][test_case]:  # noqa
+                        res.append('<p><strong>Description:</strong> %s</p>' % t['test'])  # noqa
+                        if t['result'] == 'success':
+                            res.append('<div style="background-color: #f2ffe6; padding: 5px; border: 1px solid green; margin: 5px">')  # noqa
+                            res.append('<h5 style="color: green">%s</h5>' % t['result'])  # noqa
+                        else:
+                            res.append('<div style="background-color: #ffebe6; padding: 5px; border: 1px solid red; margin: 5px">')  # noqa
+                            res.append('<h5 style="color: red">%s</h5>' % t['result'])  # noqa
+                        # res.append('<p>Test: %s</p>' % t['test'].replace('\n', '<br/>'))  # noqa
+                        res.append('<p>Obtained value: %s</p>' % t['value'])
+                        res.append('</div>')
+-->
+
+
+
+
+{% endblock centered_container %}
+
+{% block footer_top_section %}
+{% endblock footer_top_section %}
+
+{% block footer_menu_section %}
+{% endblock footer_menu_section %}
+
+
+ <!-- Footer bottom section with contacts -->
+                    {% block footer_contacts_section %}
+                    <section class="py-4 border-white border-top">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 pb-2">
+                                <h4><a href="#" title="Questa Piattaforma di test">
+                                        Piattaforma di test
+                                </a></h4>
+
+                                <div class="link-list-wrapper">
+                                    <ul class="footer-list link-list clearfix">
+                                        <li>
+                                            <a class="list-item" href="https://github.com/italia/spid-sp-test">
+                                                spid-sp-test
+                                            </a>
+                                        </li>
+                                        <li><a class="list-item" href="https://github.com/italia/spid-saml-check" title="spid-saml-check">
+                                            spid-saml-check
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 pb-2">
+                                <h4><a href="#" title="Vai alla pagina: Lorem Ipsum">SPID</a></h4>
+                                <div class="link-list-wrapper">
+                                    <ul class="footer-list link-list clearfix">
+                                        <li>
+                                            <a class="list-item" href="https://www.spid.gov.it/">Maggiori informazioni</a>
+                                        </li>
+                                        <li>
+                                            <a class="list-item" href="https://www.spid.gov.it/richiedi-spid">Non hai SPID?</a>
+                                        </li>
+                                        <li>
+                                            <a class="list-item" href="https://www.spid.gov.it/serve-aiuto">Serve aiuto?</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 pb-2">
+                                <div class="pb-2">
+                                    <h4><a href="#" title="Vai alla pagina: Seguici su">Seguici su</a></h4>
+                                    <div class="link-list-wrapper">
+                                        <ul class="footer-list link-list clearfix">
+                                            <li>
+                                                <a class="list-item" href="https://developers.italia.it/it/spid/">Developers Italia</a>
+                                            </li>
+                                            <li>
+                                                <a class="list-item" href="https://github.com/italia">GitHub Italia</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    </div>
+                                <div class="pb-2">
+
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    {% endblock footer_contacts_section %}
+
+
+
+                    {% block footer_bottom_content %}
+                    <h3 class="sr-only">Sezione Link Utili</h3>
+                    <ul class="it-footer-small-prints-list list-inline mb-0 d-flex flex-column flex-md-row">
+                    </ul>
+                    {% endblock footer_bottom_content %}

@@ -13,6 +13,7 @@ from spid_sp_test.metadata import SpidSpMetadataCheck
 from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
 from spid_sp_test.authn_request import SpidSpAuthnReqCheck
 from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
+from spid_sp_test.html_report import render_html_report
 from spid_sp_test.response import SpidSpResponseCheck
 from spid_sp_test.utils import get_xmlsec1_bin, report_to_html
 
@@ -283,12 +284,12 @@ if __name__ == '__main__':
         output = json.dumps(data, indent=2)
         if args.o:
             if args.report_format == 'json':
-                pass
+                with open(args.o, 'w') as f:
+                    f.write(output)
             elif args.report_format == 'html':
-                output = report_to_html(data)
-
-            with open(args.o, 'w') as f:
-                f.write(output)
+                render_html_report(data['test']['sp'],
+                                   output_folder = args.o,
+                                   display_name = args.metadata_url)
 
         if args.report and not args.o:
             print(output)
