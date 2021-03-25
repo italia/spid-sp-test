@@ -158,10 +158,12 @@ Print only ERRORs
 spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug ERROR
 ````
 
-JSON report (add `-o filename.json` to write to a file)
+JSON report, add `-o filename.json` to write to a file, `-rf html -o html_report/` to export to a HTML page
 ````
 spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug CRITICAL -json
 ````
+
+
 
 Given a metadata file and a authn file (see `tests/metadata` and `tests/authn` for example) export all the test response without sending them to SP:
 

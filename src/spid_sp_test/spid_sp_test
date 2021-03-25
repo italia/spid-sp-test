@@ -61,6 +61,10 @@ if __name__ == '__main__':
 
         # dump SP response as html page
         {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug ERROR -tr --html-path dumps
+
+        # html report
+        {__file__} --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug INFO --test-response -rf html -o html_report/
+
     """
 
     parser = argparse.ArgumentParser(
