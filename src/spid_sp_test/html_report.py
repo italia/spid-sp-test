@@ -2,6 +2,8 @@ import os
 import logging
 import shutil
 
+from . import BASE_DIR
+
 logger = logging.getLogger(__name__)
 
 
@@ -12,7 +14,7 @@ from jinja2 import (Environment,
 
 def render_html_report(data:dict,
                        display_name:str,
-                       template_search_path:str='src/spid_sp_test/html',
+                       template_search_path:str=f'{BASE_DIR}/html',
                        output_folder:str = './html_report'):
     loader = Environment(
                 loader=FileSystemLoader(searchpath = template_search_path),
