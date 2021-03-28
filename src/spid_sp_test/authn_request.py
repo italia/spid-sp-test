@@ -72,9 +72,10 @@ def get_authn_request(authn_request_url, verify_ssl=False):
         authn_request = dict(urllib.parse.parse_qsl(q_args))
 
         if not authn_request.get('SAMLRequest'):
-            logger.warning('HTTP-REDIRECT without any SAMLRequest in.'
-                           'Is this SP behind a Proxy or is there any '
-                           f'DiscoveryService enabled? {authn_request}')
+            logger.critical('\nHTTP-REDIRECT without any SAMLRequest in. '
+                            'Is this SP behind a Proxy or is there any '
+                            f'DiscoveryService enabled? {authn_request}')
+            sys.exit(1)
 
         data['SAMLRequest_redirect'] = redirect
         data['SAMLRequest'] = authn_request['SAMLRequest']
