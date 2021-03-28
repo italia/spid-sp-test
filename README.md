@@ -163,8 +163,6 @@ JSON report, add `-o filename.json` to write to a file, `-rf html -o html_report
 spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug CRITICAL -json
 ````
 
-
-
 Given a metadata file and a authn file (see `tests/metadata` and `tests/authn` for example) export all the test response without sending them to SP:
 
 ````
@@ -176,6 +174,14 @@ Get the response (test 1) that would have to be sent to a SP with a custom set o
 ````
 spid_sp_test --metadata-url file://tests/metadata/spid-django-other.xml --authn-url file://tests/authn/spid_django_post.html --extra --debug ERROR -tr -nsr -tn 1 -aj tests/example.attributes.json
 
+````
+
+Common usages
+-------------
+
+Test a Shibboleth SP with a SAMLDS (DiscoveryService). In this example `target` points to the target service and entityID is the selected IdP.
+````
+python3 src/spid_sp_test/spid_sp_test --metadata-url https://sp.testunical.it/pymetadata_signed.xml --authn-url "https://sp.testunical.it/Shibboleth.sso/Login?target=https://sp.testunical.it/secure/index.php&entityID=http://localhost:8080" --debug ERROR --extra -tr
 ````
 
 
