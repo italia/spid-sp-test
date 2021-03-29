@@ -30,7 +30,7 @@ from . exceptions import SAMLRequestNotFound
 logger = logging.getLogger(__name__)
 
 
-def get_authn_request(authn_request_url, verify_ssl=False):
+def get_authn_request(authn_request_url, verify_ssl=False, session=None):
     """
         Detects the auth request url, if http/xml file or html file
     """
@@ -38,7 +38,7 @@ def get_authn_request(authn_request_url, verify_ssl=False):
     request = None
     binding = 'post' or 'redirect'
     authn_request_str = None
-    requests_session = None
+    requests_session = session
 
     if authn_request_url[0:7] == 'file://':
         authn_request = open(authn_request_url[7:], 'rb').read().strip().strip(b'\n')
@@ -53,13 +53,13 @@ def get_authn_request(authn_request_url, verify_ssl=False):
                 f"Can't detect authn request from f{authn_request_url}"
             )
     else:
-        requests_session = requests.Session()
+        requests_session = session or requests.Session()
         request = requests_session.get(
             authn_request_url,
             verify=verify_ssl,
             allow_redirects=False
         )
-        if request.status_code not in (200, 302):
+        if request.status_code not in (200, 302, 303):
             raise SAMLRequestNotFound(('Authn Request page returns a HTML error '
                                        f'code: {request.status_code}'))
         elif request.headers.get('Location'):
@@ -73,14 +73,17 @@ def get_authn_request(authn_request_url, verify_ssl=False):
         q_args = urllib.parse.splitquery(redirect)[1]
         authn_request = dict(urllib.parse.parse_qsl(q_args))
 
+        # DETECT DISCO/PROXY/GATEWAYs ....
         if not authn_request.get('SAMLRequest'):
             _msg = ('\nHTTP-REDIRECT without any SAMLRequest in. '
                     'Is this SP behind a Proxy or is there any '
                     f'DiscoveryService enabled? {authn_request}')
             logger.critical(_msg)
             # try to follow it, if there's some proxy/gateway middleware in between
-            if request.status_code == 302 and request.next.url:
-                return get_authn_request(request.next.url, verify_ssl)
+            if request.status_code >= 302 and request.next.url:
+                return get_authn_request(request.next.url,
+                                         verify_ssl,
+                                         session = requests_session)
             # otherwise ... black hole!
             else:
                 raise SAMLRequestNotFound(_msg)
@@ -96,28 +99,43 @@ def get_authn_request(authn_request_url, verify_ssl=False):
     elif binding == 'post':
         # HTTP POST
         authn_request_str = request.content.decode() if request else authn_request_str
-        form_dict = samlreq_from_htmlform(authn_request_str)
 
+        # detect disco
+        if 'entityid' in authn_request_str:
+            return get_authn_request(
+                "https://172.17.0.1:10000/Saml2/disco?entityID=http://localhost:8080",
+                verify_ssl,
+                session = requests_session
+            )
+
+        form_dict = samlreq_from_htmlform(authn_request_str)
         # if action url doesn't point to the fake idp ... that's behind a proxy/gateway!
-        if not form_dict.get('action'):
-            logger.critical(f'HTTP-POST without any valid action url: {form_dict}')
+
+        if not form_dict or not form_dict.get('action'):
+            logger.critical(
+                f'Request return status_code {request.status_code}, '
+                f'HTTP-POST without any valid action url: {form_dict}'
+            )
             raise SAMLRequestNotFound()
-        elif form_dict['action'] != SAML2_IDP_CONFIG['entityid']:
+        # DETECT DISCO/PROXY/GATEWAYs ....
+        elif form_dict['action'] != SAML2_IDP_CONFIG['service']['idp']['endpoints']['single_sign_on_service'][0][0]:
             # try to follow it, if there's some proxy/gateway middleware in between
-            request = requests_session.post(
-                form_dict['action'],
-                data = form_dict,
+            _data = dict(
+                data = dict(form_dict),
                 verify=verify_ssl,
                 allow_redirects=False
             )
+            logger.debug(f'PROXY/GATEWAY detected: {_data}')
+            request = requests_session.post(form_dict['action'], **_data)
 
             # TODO: code repeated here ...
             # try to follow it, if there's some proxy/gateway middleware in between
-            if request.status_code == 302 and request.next.url:
+            if request.status_code >= 302 and request.next.url:
                 return get_authn_request(request.next.url, verify_ssl)
             else:
                 # TODO: code repeated here ...
                 authn_request_str = request.content.decode() if request else authn_request_str
+
                 form_dict = samlreq_from_htmlform(authn_request_str)
 
                 # all the previous approach MUST be refactored
