@@ -20,7 +20,7 @@ from spid_sp_test import BASE_DIR, AbstractSpidCheck
 
 from saml2.server import Server
 from saml2.sigver import CryptoBackendXMLSecurity
-from saml2.sigver import CryptoBackendXmlSec1
+# from saml2.sigver import CryptoBackendXmlSec1
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from tempfile import NamedTemporaryFile
 
@@ -98,9 +98,9 @@ def get_authn_request(authn_request_url, verify_ssl=False):
             data['RelayState'] = form_dict['RelayState']
         elif ':AuthnRequest ' in authn_request_str:
             data = {'SAMLRequest_xml': authn_request_str.encode(),
-                    'SAMLRequest': base64.b64encode(authn_request),
+                    'SAMLRequest' : base64.b64encode(authn_request),
                     'RelayState' : '/'
-            }
+                    }
         else:
             raise SAMLRequestNotFound(f'{authn_request_str}')
     else:
