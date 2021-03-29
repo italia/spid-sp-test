@@ -52,8 +52,16 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         if metadata_url[0:7] == 'file://':
             return open(metadata_url[7:], 'rb').read()
         else:
-            return requests.get(metadata_url,
-                                verify=self.production).content
+            request =  requests.get(metadata_url,
+                                    allow_redirects = True,
+                                    verify=self.production)
+            if request.status_code != 200:
+                raise Exception(
+                    f'Metadata not found: server response with code {request.status_code}'
+                )
+            else:
+                return request.content
+
 
     def xsd_check(self):
         _msg = f'Found metadata: {self.metadata}'

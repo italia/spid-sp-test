@@ -79,6 +79,7 @@ ALLOWED_DGST_ALGS = [
 SPID_ATTRIBUTES = [
     'address',
     'companyName',
+    'companyFiscalNumber',
     'countyOfBirth',
     'dateOfBirth',
     'digitalAddress',
@@ -94,7 +95,11 @@ SPID_ATTRIBUTES = [
     'placeOfBirth',
     'registeredOffice',
     'spidCode',
-    'companyFiscalNumber',
+    'domicileStreetAddress',
+    'domicilePostalCode',
+    'domicileMunicipality',
+    'domicileProvince',
+    'domicileNation'
 ]
 
 SPID_LEVELS = [

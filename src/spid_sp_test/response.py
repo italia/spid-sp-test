@@ -107,8 +107,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                                         self.template_path)
 
         self.metadata_etree = kwargs.get('metadata_etree')
-        self.acs_url = self.metadata_etree.xpath('//SPSSODescriptor/AssertionConsumerService[@index=0]'
-                       )[0].attrib['Location']
+        self.acs_url = self.metadata_etree.xpath(
+            '//SPSSODescriptor/AssertionConsumerService[@index=0]'
+        )[0].attrib['Location']
 
         self.authn_request_url = kwargs.get('authn_request_url')
         self.authn_request_data = {}
