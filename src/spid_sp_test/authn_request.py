@@ -49,7 +49,9 @@ def get_authn_request(authn_request_url, verify_ssl=False):
         elif '?' in authn_request_str and '&' in authn_request_str:
             binding = 'redirect'
         else:
-            raise Exception(f"Can't detect authn request from f{authn_request_url}")
+            raise SAMLRequestNotFound(
+                f"Can't detect authn request from f{authn_request_url}"
+            )
     else:
         requests_session = requests.Session()
         request = requests_session.get(
@@ -58,8 +60,8 @@ def get_authn_request(authn_request_url, verify_ssl=False):
             allow_redirects=False
         )
         if request.status_code not in (200, 302):
-            raise Exception(('Authn Request page returns a HTML error '
-                             f'code: {request.status_code}'))
+            raise SAMLRequestNotFound(('Authn Request page returns a HTML error '
+                                       f'code: {request.status_code}'))
         elif request.headers.get('Location'):
             binding = 'redirect'
         else:
@@ -72,10 +74,16 @@ def get_authn_request(authn_request_url, verify_ssl=False):
         authn_request = dict(urllib.parse.parse_qsl(q_args))
 
         if not authn_request.get('SAMLRequest'):
-            logger.critical('\nHTTP-REDIRECT without any SAMLRequest in. '
-                            'Is this SP behind a Proxy or is there any '
-                            f'DiscoveryService enabled? {authn_request}')
-            sys.exit(1)
+            _msg = ('\nHTTP-REDIRECT without any SAMLRequest in. '
+                    'Is this SP behind a Proxy or is there any '
+                    f'DiscoveryService enabled? {authn_request}')
+            logger.critical(_msg)
+            # try to follow it, if there's some proxy/gateway middleware in between
+            if request.status_code == 302 and request.next.url:
+                return get_authn_request(request.next.url, verify_ssl)
+            # otherwise ... black hole!
+            else:
+                raise SAMLRequestNotFound(_msg)
 
         data['SAMLRequest_redirect'] = redirect
         data['SAMLRequest'] = authn_request['SAMLRequest']
@@ -89,6 +97,33 @@ def get_authn_request(authn_request_url, verify_ssl=False):
         # HTTP POST
         authn_request_str = request.content.decode() if request else authn_request_str
         form_dict = samlreq_from_htmlform(authn_request_str)
+
+        # if action url doesn't point to the fake idp ... that's behind a proxy/gateway!
+        if not form_dict.get('action'):
+            logger.critical(f'HTTP-POST without any valid action url: {form_dict}')
+            raise SAMLRequestNotFound()
+        elif form_dict['action'] != SAML2_IDP_CONFIG['entityid']:
+            # try to follow it, if there's some proxy/gateway middleware in between
+            request = requests_session.post(
+                form_dict['action'],
+                data = form_dict,
+                verify=verify_ssl,
+                allow_redirects=False
+            )
+
+            # TODO: code repeated here ...
+            # try to follow it, if there's some proxy/gateway middleware in between
+            if request.status_code == 302 and request.next.url:
+                return get_authn_request(request.next.url, verify_ssl)
+            else:
+                # TODO: code repeated here ...
+                authn_request_str = request.content.decode() if request else authn_request_str
+                form_dict = samlreq_from_htmlform(authn_request_str)
+
+                # all the previous approach MUST be refactored
+                # this must call itself (get_authn_request) and give the answers by itself
+                # a while/loop can be involved in this
+
         if form_dict:
             data['action'] = form_dict['action']
             data['method'] = form_dict['method']
@@ -130,8 +165,12 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self.logger = logger
         self.metadata = metadata
 
-        self.authn_request = get_authn_request(authn_request_url,
-                                               verify_ssl=production)
+        try:
+            self.authn_request = get_authn_request(authn_request_url,
+                                                   verify_ssl=production)
+        except SAMLRequestNotFound as e:
+            # TODO: move sys.exit from here to a higher level
+            sys.exit(1)
 
         try:
             self.authn_request_decoded = self.authn_request['SAMLRequest_xml']
