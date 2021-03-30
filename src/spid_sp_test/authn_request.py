@@ -209,6 +209,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         if self.IS_HTTP_REDIRECT:
             with NamedTemporaryFile(suffix='.xml') as cert_file:
+                if cert[-1] != '\n':
+                    cert += '\n'
                 cert_file.write(
                     f'-----BEGIN CERTIFICATE-----\n{cert}-----END CERTIFICATE-----'.encode()
                 )
