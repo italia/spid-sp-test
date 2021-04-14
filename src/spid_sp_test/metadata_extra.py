@@ -1,6 +1,7 @@
 import datetime
 import os
 
+from lxml import etree
 from spid_sp_test import constants
 from spid_sp_test.dump_pem import dump_metadata_pem
 from spid_sp_test.utils import parse_pem
@@ -20,7 +21,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
         sign = self.doc.xpath('//EntityDescriptor/Signature')
 
-        desc = [ent.attrib for ent in sign if sign]
+        desc = [etree.tostring(ent).decode() for ent in sign if sign]
         error_kwargs = dict(description = desc) if desc else {}
 
         for si in sign:
@@ -75,7 +76,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
     def test_SPSSODescriptor_extra(self):
         spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')
 
-        desc = [ent.attrib for ent in spsso if spsso]
+        desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
         error_kwargs = dict(description = desc) if desc else {}
 
         for attr in ['protocolSupportEnumeration', 'WantAssertionsSigned']:
@@ -123,7 +124,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         acss = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
                               '/AssertionConsumerService')
 
-        desc = [ent.attrib for ent in acss if acss]
+        desc = [etree.tostring(ent).decode() for ent in acss if acss]
         error_kwargs = dict(description = desc) if desc else {}
 
         for acs in acss:
@@ -148,7 +149,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         orgs = self.doc.xpath('//EntityDescriptor/Organization')
         self._assertTrue((len(orgs) == 1), 'An Organization must be present')
 
-        desc = [ent.attrib for ent in orgs if orgs]
+        desc = [etree.tostring(ent).decode() for ent in orgs if orgs]
         error_kwargs = dict(description = desc) if desc else {}
 
         if orgs:

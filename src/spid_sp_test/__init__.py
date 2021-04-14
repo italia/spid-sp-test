@@ -50,7 +50,7 @@ class AbstractSpidCheck(object):
                     "value": value
                 }
             )
-        else:
+        elif level in ('error', 'critical'):
             self.handle_error(title,
                               description,
                               traceback)

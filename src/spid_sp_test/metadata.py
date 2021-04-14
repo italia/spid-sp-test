@@ -117,8 +117,10 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')
         desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
         error_kwargs = dict(description = desc) if desc else {}
+
         self._assertTrue((len(spsso) == 1),
-                         'Only one SPSSODescriptor element must be present')
+                         'Only one SPSSODescriptor element must be present',
+                         **error_kwargs)
 
         for attr in ['protocolSupportEnumeration', 'AuthnRequestsSigned']:
             self._assertTrue((attr in spsso[0].attrib),
@@ -462,12 +464,12 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     'must be present - TR pag. 20 and AV n. 6',
                     **error_kwargs)
 
-                self._assertIn(ra.get('Name'), constants.SPID_ATTRIBUTES,
-                               (('The Name attribute '
-                                 'in RequestedAttribute element '
-                                 'must be one of [%s] - TR pag. 20 and AV n.6') %
-                                (', '.join(constants.SPID_ATTRIBUTES))),
-                                **error_kwargs)
+                self._assertIn(
+                    ra.get('Name'),
+                    constants.SPID_ATTRIBUTES,
+                    'The Name attribute in RequestedAttribute element must be valid',
+                    description = f"one of [{', '.join(constants.SPID_ATTRIBUTES)}] - TR pag. 20 and AV n.6"
+                )
 
             al = acs.xpath('RequestedAttribute/@Name')
             self._assertEqual(

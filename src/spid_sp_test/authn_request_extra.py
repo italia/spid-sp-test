@@ -1,4 +1,5 @@
-from .authn_request import SpidSpAuthnReqCheck
+from lxml import etree
+from . authn_request import SpidSpAuthnReqCheck
 
 
 class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
@@ -16,8 +17,12 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
 
 
         req = self.doc.xpath('/AuthnRequest')
-        rac = req.xpath('./RequestedAuthnContext')
-        acr = rac.xpath('./AuthnContextClassRef')
+        rac = None
+        acr = None
+        if req:
+            rac = req[0].xpath('./RequestedAuthnContext')
+        if rac:
+            acr = rac[0].xpath('./AuthnContextClassRef')
 
         if req and rac and acr:
             req = req[0]
@@ -29,18 +34,18 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
                 self._assertTrue(
                     ('ForceAuthn' in req.attrib),
                     'The ForceAuthn attribute must be present '
-                    'because of minimum/SpidL1'
+                    'because of minimum/SpidL1',
+                    description = req.attrib
                 )
                 self._assertEqual(
                     req.get('ForceAuthn').lower(),
                     'true',
                     'The ForceAuthn attribute must be True '
-                    'because of minimum/SpidL1'
+                    'because of minimum/SpidL1',
+                    description = req.attrib
                 )
         else:
-            self.handle_error('AuthnRequest or RequestAuthnContext or AytnContextClassRef missing',
-                              description=[etree.tostring(ent).decode()
-                              for ent in (req, rac, acr)])
+            self.handle_error('AuthnRequest or RequestAuthnContext or AytnContextClassRef missing',)
 
         return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest_extra')
 
