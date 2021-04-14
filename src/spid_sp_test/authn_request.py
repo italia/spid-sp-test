@@ -237,7 +237,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 pubkey_file = NamedTemporaryFile(suffix='.crt')
                 x509_cert = subprocess.getoutput(
                     f'openssl x509 -in {cert_file.name} -noout -pubkey'
-                    )
+                )
                 pubkey_file.write(x509_cert.encode())
                 pubkey_file.seek(0)
 
@@ -763,7 +763,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertIn(alg, constants.ALLOWED_DGST_ALGS,
                            (('The digest algorithm must be one of [%s] - TR pag. 10') %
                             (', '.join(constants.ALLOWED_DGST_ALGS))),
-                            **error_kwargs)
+                           **error_kwargs)
 
             # save the grubbed certificate for future alanysis
             # cert = sign[0].xpath('./KeyInfo/X509Data/X509Certificate')[0]

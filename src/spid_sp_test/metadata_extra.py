@@ -36,7 +36,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     r[0].lower().startswith('sha1'),
                     ((f'The certificate #{i} must not use '
                       f'weak signature algorithm: {r[0].lower()}')),
-                      **error_kwargs
+                    **error_kwargs
                 )
 
                 exp = ['rsaEncryption', 'id-ecPublicKey']
@@ -45,7 +45,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     exp,
                     ((f'The key type of certificate #{i} must be one of [%s] - TR pag. 19') %
                      (', '.join(exp))),
-                     **error_kwargs
+                    **error_kwargs
                 )
 
                 if r[2] == 'rsaEncryption':
@@ -58,7 +58,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 self._assertTrue(
                     (int(r[1]) >= exp),
                     f'The key length of certificate #{i} must be >= {exp}. Instead it is {r[1]}',
-                     **error_kwargs
+                    **error_kwargs
                 )
 
                 self._assertTrue(
@@ -139,7 +139,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                           'in RequestedAttribute element '
                           'must be one of [%s]') %
                          (', '.join(constants.ALLOWED_FORMATS))),
-                         **error_kwargs
+                        **error_kwargs
                     )
         return self.is_ok(
             f'{self.__class__.__name__}.test_AttributeConsumingService_extra'

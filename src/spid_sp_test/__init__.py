@@ -46,7 +46,7 @@ class AbstractSpidCheck(object):
             self.results.append(
                 {
                     "result": "success",
-                    "test":  title,
+                    "test": title,
                     "value": value
                 }
             )
@@ -63,7 +63,7 @@ class AbstractSpidCheck(object):
         value = f'{description}' if not traceback else f'{description}: {traceback }'
         data = {
             "result": "failure",
-            "test":  error_message,
+            "test": error_message,
             "value": value
         }
         self.errors.append(data)

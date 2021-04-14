@@ -47,21 +47,19 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         # clean up namespace (otherwise xpath doesn't work ...)
         del_ns(self.doc)
 
-
     def get(self, metadata_url: str):
         if metadata_url[0:7] == 'file://':
             return open(metadata_url[7:], 'rb').read()
         else:
-            request =  requests.get(metadata_url,
-                                    allow_redirects = True,
-                                    verify=self.production)
+            request = requests.get(metadata_url,
+                                   allow_redirects = True,
+                                   verify=self.production)
             if request.status_code != 200:
                 raise Exception(
                     f'Metadata not found: server response with code {request.status_code}'
                 )
             else:
                 return request.content
-
 
     def xsd_check(self):
         _msg = f'Found metadata'
@@ -252,7 +250,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             self._assertIn(alg, constants.ALLOWED_XMLDSIG_ALGS,
                            (('The signature algorithm must be one of [%s] - TR pag. 19') %
                             (', '.join(constants.ALLOWED_XMLDSIG_ALGS))),
-                            **error_kwargs)
+                           **error_kwargs)
 
             method = sign[0].xpath('./SignedInfo/Reference/DigestMethod')
             self._assertTrue((len(method) == 1),
@@ -268,7 +266,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             self._assertIn(alg, constants.ALLOWED_DGST_ALGS,
                            (('The digest algorithm must be one of [%s] - TR pag. 19') %
                             (', '.join(constants.ALLOWED_DGST_ALGS))),
-                            **error_kwargs)
+                           **error_kwargs)
 
         return self.is_ok(f'{self.__class__.__name__}.test_Signature')
 
@@ -378,7 +376,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     self._assertIn(
                         a, constants.ALLOWED_BINDINGS,
                         (('The %s attribute must be one of [%s] - TR pag. 20') %
-                        (attr, ', '.join(constants.ALLOWED_BINDINGS))),
+                         (attr, ', '.join(constants.ALLOWED_BINDINGS))),
                         **error_kwargs
                     )
                 elif attr == 'Location' and self.production:
@@ -528,7 +526,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                             **error_kwargs
                         )
         return self.is_ok(f'{self.__class__.__name__}.test_Organization')
-
 
     def test_all(self):
         self.xsd_check()

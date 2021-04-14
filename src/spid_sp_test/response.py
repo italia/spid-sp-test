@@ -157,7 +157,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'AuthnRequestID': self.authnreq_attrs['ID'],
             'IssueInstant': self.authnreq_attrs['IssueInstant'],
             'NotOnOrAfter': (now + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%SZ'),
-            'AssertionConsumerURL':  self.authnreq_attrs.get('AssertionConsumerURL', self.acs_url),
+            'AssertionConsumerURL': self.authnreq_attrs.get('AssertionConsumerURL', self.acs_url),
             'NameIDNameQualifier': settings.DEFAULT_RESPONSE['NameIDNameQualifier'],
             'NameID': 'that-transient-opaque-value',
             'AssertionID': saml_rnd_id(),

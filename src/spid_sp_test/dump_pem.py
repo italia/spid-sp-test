@@ -26,7 +26,7 @@ def _dump_pem(xml_elem, data_dir, context, use):
 
     b64 = re.sub(r'[\s]', '', xml_elem.text)
     pem.append('-----BEGIN CERTIFICATE-----')
-    [pem.append(b64[i:i+n]) for i in range(0, len(b64), n)]
+    [pem.append(b64[i:i + n]) for i in range(0, len(b64), n)]
     pem.append('-----END CERTIFICATE-----')
 
     x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_ASN1,

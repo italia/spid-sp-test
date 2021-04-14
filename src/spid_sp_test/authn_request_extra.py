@@ -15,7 +15,6 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
         # ForceAuthn must be true if 'Comparison' is 'minimum' and
         # SPID level is L1
 
-
         req = self.doc.xpath('/AuthnRequest')
         rac = None
         acr = None

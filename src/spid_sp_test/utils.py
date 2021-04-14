@@ -15,7 +15,7 @@ def del_ns(root):
             continue
         i = elem.tag.find('}')
         if i >= 0:
-            elem.tag = elem.tag[i+1:]
+            elem.tag = elem.tag[i + 1:]
     lxml.objectify.deannotate(root, cleanup_namespaces=True)
 
 
