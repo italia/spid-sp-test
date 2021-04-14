@@ -17,7 +17,11 @@
 
 import re
 
-_UTC_STRING = r'^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d{3})?Z$'  # noqa
+# iso8601 fully compliant regex
+_UTC_STRING = r'^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$'  # noqa
+# old simple version
+# _UTC_STRING = r'^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d{3})?Z$'
+
 UTC_STRING = re.compile(_UTC_STRING)
 
 _SPID_LEVEL_23 = (r'(https:\/\/www\.spid\.gov\.it\/)SpidL[2-3]')  # noqa
