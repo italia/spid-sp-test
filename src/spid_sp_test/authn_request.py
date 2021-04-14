@@ -199,9 +199,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
             '/KeyInfo/X509Data/X509Certificate/text()')
 
+        desc = cert
+        error_kwargs = dict(description = desc) if desc else {}
+
         if not cert:
             self.handle_result('error', '-> '.join(
-                (msg, 'AuthnRequest Signature validation failed'))
+                (msg, 'AuthnRequest Signature validation failed'),
+                **error_kwargs)
             )
             return self.is_ok(f'{self.__class__.__name__}.test_xsd_and_xmldsig')
         else:
@@ -243,8 +247,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 ver_cmd = (f'openssl dgst -{dgst} '
                            f'-verify {pubkey_file.name} '
                            f'-signature {signature} {payload_file.name}')
-                exit_status = subprocess.getoutput(ver_cmd)
-                if 'Verified OK' in exit_status:
+                exit_msg = subprocess.getoutput(ver_cmd)
+                error_kwargs['description'] = exit_msg
+                if 'Verified OK' in exit_msg:
                     is_valid = True
                 else:
                     is_valid = False
@@ -257,7 +262,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                                                   cert_type='pem',
                                                   node_name=constants.NODE_NAME,
                                                   node_id=None)
-        self._assertTrue(is_valid, 'AuthnRequest Signature validation failed')
+        self._assertTrue(is_valid,
+                         'AuthnRequest Signature validation failed',
+                         **error_kwargs)
         return self.is_ok(f'{self.__class__.__name__}.test_xsd_and_xmldsig')
 
     def test_AuthnRequest(self):
@@ -315,18 +322,19 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             'The IsPassive attribute must not be present - TR pag. 9 '
         )
 
-        level = req.xpath('//RequestedAuthnContext'
-                          '/AuthnContextClassRef')[0].text
-        if bool(constants.SPID_LEVEL_23.search(level)):
-            self._assertTrue(
-                ('ForceAuthn' in req.attrib),
-                'The ForceAuthn attribute must be present if SPID level > 1 - TR pag. 8 '
-            )
-            value = req.get('ForceAuthn')
-            self._assertTrue(
-                (value.lower() in constants.BOOLEAN_TRUE),
-                'The ForceAuthn attribute must be true or 1 - TR pag. 8 '
-            )
+        acr = req.xpath('//RequestedAuthnContext/AuthnContextClassRef')
+        if acr:
+            level = acr[0].text
+            if bool(constants.SPID_LEVEL_23.search(level)):
+                self._assertTrue(
+                    ('ForceAuthn' in req.attrib),
+                    'The ForceAuthn attribute must be present if SPID level > 1 - TR pag. 8 '
+                )
+                value = req.get('ForceAuthn')
+                self._assertTrue(
+                    (value.lower() in constants.BOOLEAN_TRUE),
+                    'The ForceAuthn attribute must be true or 1 - TR pag. 8 '
+                )
 
         attr = 'AssertionConsumerServiceIndex'
         if attr in req.attrib:
@@ -585,46 +593,47 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             1,
             'Only one RequestedAuthnContext element must be present - TR pag. 9'
         )
-        e = e[0]
+        if e:
+            e = e[0]
 
-        attr = 'Comparison'
-        self._assertTrue(
-            (attr in e.attrib),
-            f'The {attr} attribute must be present - TR pag. 10'
-        )
+            attr = 'Comparison'
+            self._assertTrue(
+                (attr in e.attrib),
+                f'The {attr} attribute must be present - TR pag. 10'
+            )
 
-        value = e.get(attr)
-        self._assertIsNotNone(
-            value,
-            f'The {attr} attribute must have a value - TR pag. 10'
-        )
+            value = e.get(attr)
+            self._assertIsNotNone(
+                value,
+                f'The {attr} attribute must have a value - TR pag. 10'
+            )
 
-        allowed = ['exact', 'minimum', 'better', 'maximum']
-        self._assertIn(
-            value,
-            allowed,
-            (('The %s attribute must be one of [%s] - TR pag. 10') %
-             (attr, ', '.join(allowed)))
-        )
+            allowed = ['exact', 'minimum', 'better', 'maximum']
+            self._assertIn(
+                value,
+                allowed,
+                (('The %s attribute must be one of [%s] - TR pag. 10') %
+                 (attr, ', '.join(allowed)))
+            )
 
-        acr = e.xpath('./AuthnContextClassRef')
-        self._assertEqual(
-            len(acr),
-            1,
-            'Only one AuthnContexClassRef element must be present - TR pag. 9'
-        )
+            acr = e.xpath('./AuthnContextClassRef')
+            self._assertEqual(
+                len(acr),
+                1,
+                'Only one AuthnContexClassRef element must be present - TR pag. 9'
+            )
 
-        acr = acr[0]
+            acr = acr[0]
 
-        self._assertIsNotNone(
-            acr.text,
-            'The AuthnContexClassRef element must have a value - TR pag. 9'
-        )
+            self._assertIsNotNone(
+                acr.text,
+                'The AuthnContexClassRef element must have a value - TR pag. 9'
+            )
 
-        self._assertTrue(
-            bool(constants.SPID_LEVEL_ALL.search(acr.text)),
-            'The AuthnContextClassRef element must have a valid SPID level - TR pag. 9 and AV n.5'
-        )
+            self._assertTrue(
+                bool(constants.SPID_LEVEL_ALL.search(acr.text)),
+                'The AuthnContextClassRef element must have a valid SPID level - TR pag. 9 and AV n.5'
+            )
         return self.is_ok(f'{self.__class__.__name__}.test_RequestedAuthnContext')
 
     def test_Signature(self):

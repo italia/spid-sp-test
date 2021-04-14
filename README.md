@@ -179,7 +179,9 @@ spid_sp_test --metadata-url file://tests/metadata/spid-django-other.xml --authn-
 Common usages
 -------------
 
-Test a Shibboleth SP with a SAMLDS (DiscoveryService). In this example `target` points to the target service and entityID is the selected IdP.
+Test a **Shibboleth SP with a SAMLDS (DiscoveryService)**. In this example `target` points to the target service and entityID is the selected IdP.
+This example works also a Shibboleth IdP-SP proxy/gateway.
+
 ````
 python3 src/spid_sp_test/spid_sp_test --metadata-url https://sp.testunical.it/pymetadata_signed.xml --authn-url "https://sp.testunical.it/Shibboleth.sso/Login?target=https://sp.testunical.it/secure/index.php&entityID=http://localhost:8080" --debug ERROR --extra -tr
 ````
