@@ -1,4 +1,3 @@
-from lxml import etree
 from . authn_request import SpidSpAuthnReqCheck
 
 
