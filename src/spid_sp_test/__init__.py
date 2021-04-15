@@ -28,7 +28,7 @@ class AbstractSpidCheck(object):
 
     def is_ok(self, msg):
         if not self.error_counter:
-            self.handle_result('info', f"{msg} : OK")
+            self.handle_result('info', f"{msg}")
             return True
         else:
             self.error_counter = 0
@@ -40,20 +40,28 @@ class AbstractSpidCheck(object):
                       traceback: str = None):
         msg = f'{title} [{description}]' if description else f'{title}'
         getattr(self.logger, level, 'debug')(msg)
+        value = f'{description}' if not traceback else f'{description}: {traceback }'
         if level not in ('error', 'debug', 'critical', 'warning'):
             # here report as json
-            value = f'{description}' if not traceback else f'{description}: {traceback }'
             self.results.append(
                 {
                     "result": "success",
                     "test": title,
-                    "value": value
+                    # "value": value
                 }
             )
         elif level in ('error', 'critical'):
             self.handle_error(title,
                               description,
                               traceback)
+        elif level == 'warning':
+            self.results.append(
+                {
+                    "result": "warning",
+                    "test": title,
+                    "value": value,
+                }
+            )
 
     def handle_error(self, error_message, description='',
                      traceback: str = None):
@@ -69,68 +77,64 @@ class AbstractSpidCheck(object):
         self.errors.append(data)
         self.results.append(data)
 
-    def _assertTrue(self, check, error_message,
-                    description='', traceback: str = None):
-        if not check:
+    def _assert(self, check:bool, error_message:str,
+                description='', traceback: str = None,
+                level: str = 'info'):
+        if not check and level == 'info':
             self.handle_error(error_message, description, traceback)
         else:
-            self.handle_result('info', f"{error_message} : OK")
+            self.handle_result(level, f"{error_message}", description, traceback)
+
+    def _assertTrue(self, check, error_message,
+                    description='', traceback: str = None,
+                    level: str = 'info'):
+        self._assert(check, error_message, description, traceback, level)
 
     def _assertFalse(self, check, error_message,
-                     description='', traceback: str = None):
-        if check:
-            self.handle_error(error_message, description, traceback)
-        else:
-            self.handle_result('info', f"{error_message} : OK")
+                     description='', traceback: str = None,
+                     level: str = 'info'):
+        self._assert(not check, error_message, description, traceback, level)
 
     def _assertIsNotNone(self, check, error_message,
-                         description='', traceback: str = None):
-        if check is True:
-            self.handle_error(error_message, description, traceback)
-        else:
-            self.handle_result('info', f"{error_message} : OK")
+                         description='', traceback: str = None,
+                         level: str = 'info'):
+        self._assert(check, error_message, description, traceback, level)
 
     def _assertIn(self, first, second, error_message,
-                  description='', traceback: str = None):
-        if first not in second:
-            self.handle_error(error_message, description, traceback)
-        else:
-            self.handle_result('info', f"{error_message} : OK")
+                  description='', traceback: str = None,
+                  level: str = 'info'):
+        self._assert((first in second),
+                     error_message, description, traceback, level)
 
     def _assertGreaterEqual(self, first, second, error_message,
-                            description='', traceback: str = None):
-        if not first >= second:
-            self.handle_error(error_message, description, traceback)
-        else:
-            self.handle_result('info', f"{error_message} : OK")
+                            description='', traceback: str = None,
+                            level: str = 'info'):
+        self._assert((first >=second),
+                     error_message, description, traceback, level)
 
     def _assertGreater(self, first, second, error_message,
-                       description='', traceback: str = None):
-        if not first > second:
-            self.handle_error(error_message, description, traceback)
-        else:
-            self.handle_result('info', f"{error_message} : OK")
+                       description='', traceback: str = None,
+                       level: str = 'info'):
+        self._assert((first > second),
+                     error_message, description, traceback, level)
 
     def _assertEqual(self, first, second, error_message,
-                     description='', traceback: str = None):
-        if not first == second:
-            self.handle_error(error_message, description, traceback)
-        else:
-            self.handle_result('info', f"{error_message} : OK")
+                     description='', traceback: str = None,
+                     level: str = 'info'):
+        self._assert((first == second),
+                     error_message, description, traceback, level)
 
     def _assertIsValidHttpsUrl(self, check, error_message,
-                               description='', traceback: str = None):
-        if not re.match('https://', check if check else ''):
-            self.handle_error(error_message, description, traceback)
-        else:
-            self.handle_result('info', f"{error_message} : OK")
+                               description='', traceback: str = None,
+                               level: str = 'info'):
+        self._assert(re.match('https://', check if check else ''),
+                     description, traceback, level)
 
     def _assertIsValidHttpUrl(self, check, error_message,
-                              description='', traceback: str = None):
-        if not re.match('https?://', check if check else ''):
-            self.handle_error(error_message, description, traceback)
-        else:
-            self.handle_result('info', f"{error_message} : OK")
+                              description='', traceback: str = None,
+                              level: str = 'info'):
+        self._assert(re.match('https?://', check if check else ''),
+                     description, traceback, level)
 
     # maybe useful .. one day ?!
         # idp_server = self.idp()

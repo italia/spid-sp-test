@@ -109,6 +109,12 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 self.doc.attrib.get('entityID'),
                 'The entityID attribute must be a valid HTTPS url'
             )
+
+        self._assertTrue((self.doc.attrib.get('entityID') == self.metadata_url),
+                         f'The EntityID must be equal to {self.metadata_url}',
+                         description=f"{self.doc.attrib.get('entityID')}",
+                         level='warning')
+
         return self.is_ok(f'{self.__class__.__name__}.test_EntityDescriptor')
 
     def test_SPSSODescriptor(self):
@@ -248,9 +254,9 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
             alg = method[0].get('Algorithm')
             self._assertIn(alg, constants.ALLOWED_XMLDSIG_ALGS,
-                           (('The signature algorithm must be one of [%s] - TR pag. 19') %
-                            (', '.join(constants.ALLOWED_XMLDSIG_ALGS))),
-                           **error_kwargs)
+                           'The signature algorithm must be valid - TR pag. 19',
+                           description = f"One of {(', '.join(constants.ALLOWED_XMLDSIG_ALGS))}"
+            )
 
             method = sign[0].xpath('./SignedInfo/Reference/DigestMethod')
             self._assertTrue((len(method) == 1),
@@ -264,9 +270,10 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
             alg = method[0].get('Algorithm')
             self._assertIn(alg, constants.ALLOWED_DGST_ALGS,
-                           (('The digest algorithm must be one of [%s] - TR pag. 19') %
-                            (', '.join(constants.ALLOWED_DGST_ALGS))),
-                           **error_kwargs)
+                           'The digest algorithm must be valid - TR pag. 19',
+                           description = f"One of {(', '.join(constants.ALLOWED_DGST_ALGS))}",
+            )
+
 
         return self.is_ok(f'{self.__class__.__name__}.test_Signature')
 

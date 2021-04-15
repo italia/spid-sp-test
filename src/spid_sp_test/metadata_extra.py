@@ -31,41 +31,41 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 cert = certs[i]
                 fname = dump_metadata_pem(cert, 'sp', 'signature', '/tmp')
 
-                r = parse_pem(fname)
+                sign_cert = parse_pem(fname)
                 self._assertFalse(
-                    r[0].lower().startswith('sha1'),
+                    sign_cert[0].lower().startswith('sha1'),
                     ((f'The certificate #{i} must not use '
-                      f'weak signature algorithm: {r[0].lower()}')),
+                      f'weak signature algorithm: {sign_cert[0].lower()}')),
                     **error_kwargs
                 )
 
                 exp = ['rsaEncryption', 'id-ecPublicKey']
                 self._assertIn(
-                    r[2],
+                    sign_cert[2],
                     exp,
                     ((f'The key type of certificate #{i} must be one of [%s] - TR pag. 19') %
                      (', '.join(exp))),
                     **error_kwargs
                 )
 
-                if r[2] == 'rsaEncryption':
+                if sign_cert[2] == 'rsaEncryption':
                     exp = constants.MINIMUM_CERTIFICATE_LENGHT
-                elif r[2] == 'id-ecPublicKey':
+                elif sign_cert[2] == 'id-ecPublicKey':
                     exp = 256
                 else:
                     pass
 
                 self._assertTrue(
-                    (int(r[1]) >= exp),
-                    f'The key length of certificate #{i} must be >= {exp}. Instead it is {r[1]}',
+                    (int(sign_cert[1]) >= exp),
+                    f'The key length of certificate #{i} must be >= {exp}. Instead it is {sign_cert[1]}',
                     **error_kwargs
                 )
 
                 self._assertTrue(
                     (datetime.datetime.strptime(
-                        r[3], "%b %d %H:%M:%S %Y") >= datetime.datetime.now()
+                        sign_cert[3], "%b %d %H:%M:%S %Y") >= datetime.datetime.now()
                     ),
-                    f'The certificate #{i} is expired. It was valid till {r[3]}',
+                    f'The certificate #{i} is expired. It was valid till {sign_cert[3]}',
                     **error_kwargs
                 )
                 os.remove(fname)
