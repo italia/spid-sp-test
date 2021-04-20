@@ -23,3 +23,5 @@ dumps/*
 
 .coverage
 *html_report/*
+*html/*
+*.pdf

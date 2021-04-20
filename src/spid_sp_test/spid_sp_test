@@ -15,7 +15,7 @@ from spid_sp_test.authn_request import SpidSpAuthnReqCheck
 from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
 from spid_sp_test.html_report import render_html_report
 from spid_sp_test.response import SpidSpResponseCheck
-from spid_sp_test.utils import get_xmlsec1_bin, report_to_html
+from spid_sp_test.utils import get_xmlsec1_bin
 
 
 logger = logging.getLogger(__name__)

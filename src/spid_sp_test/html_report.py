@@ -14,7 +14,7 @@ from jinja2 import (Environment,
 
 def render_html_report(data:dict,
                        display_name:str,
-                       template_search_path:str=f'{BASE_DIR}/html',
+                       template_search_path:str = f'{BASE_DIR}/html',
                        output_folder:str = './html_report'):
     loader = Environment(
                 loader=FileSystemLoader(searchpath = template_search_path),
@@ -30,7 +30,6 @@ def render_html_report(data:dict,
                         f'{output_folder}/static')
     except FileExistsError as e:
         logger.warning(e)
-
 
     f = open(page_fname, 'w')
     f.write(template.render(report_data = data,

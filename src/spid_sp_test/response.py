@@ -107,6 +107,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                                         self.template_path)
 
         self.metadata_etree = kwargs.get('metadata_etree')
+        self.acs_url = self.metadata_etree.xpath(
+            '//SPSSODescriptor/AssertionConsumerService[@index=0]'
+        )[0].attrib['Location']
+
         self.authn_request_url = kwargs.get('authn_request_url')
         self.authn_request_data = {}
 
@@ -153,7 +157,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'AuthnRequestID': self.authnreq_attrs['ID'],
             'IssueInstant': self.authnreq_attrs['IssueInstant'],
             'NotOnOrAfter': (now + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%SZ'),
-            'AssertionConsumerURL':  self.authnreq_attrs['AssertionConsumerServiceURL'],
+            'AssertionConsumerURL': self.authnreq_attrs.get('AssertionConsumerURL', self.acs_url),
             'NameIDNameQualifier': settings.DEFAULT_RESPONSE['NameIDNameQualifier'],
             'NameID': 'that-transient-opaque-value',
             'AssertionID': saml_rnd_id(),
@@ -278,7 +282,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             "RelayState": self.authn_request_data.get('RelayState', '/'),
             "SAMLResponse": base64.b64encode(xmlstr.encode())
         }
-        url = self.authnreq_attrs['AssertionConsumerServiceURL']
+        url = self.authnreq_attrs.get('AssertionConsumerURL', self.acs_url)
         ua = self.authn_request_data['requests_session']
         res = ua.post(url, data=data, allow_redirects=True)
         msg = f'Response http status code [{res.status_code}]: {res.content.decode()}'
