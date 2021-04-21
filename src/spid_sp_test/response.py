@@ -289,7 +289,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.logger.debug(msg)
         return res
 
-    def test_all(self):
+    def test_profile_spid_sp(self):
         for i in self.test_names:
             self.do_authnrequest()
             response_obj = self.load_test(test_name=i)

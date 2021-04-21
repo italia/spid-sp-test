@@ -170,7 +170,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 f'{self.__class__.__name__}.test_Organization'
             )
 
-    def test_all(self):
+    def test_profile_spid_sp(self):
         self.test_Signature_extra()
         self.test_AttributeConsumingService_extra()
         self.test_SPSSODescriptor_extra()

@@ -20,12 +20,6 @@ logger = logging.getLogger(__name__)
 
 
 class SpidSpMetadataCheck(AbstractSpidCheck):
-    xsds_files = [
-        'saml-schema-metadata-2.0.xsd',
-        'saml-schema-metadata-sp-spid-av29.xsd',
-        # 'saml-schema-metadata-sp-spid-av29_old.xsd',
-        'saml-schema-metadata-sp-spid.xsd',
-    ]
 
     def __init__(self,
                  metadata_url,
@@ -40,7 +34,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.metadata_url = metadata_url
         self.production = production
         self.metadata = self.get(metadata_url)
-        self.xsds_files = xsds_files or self.xsds_files
+        # self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f'{BASE_DIR}/xsd'
 
         self.doc = etree.fromstring(self.metadata)
@@ -61,7 +55,8 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             else:
                 return request.content
 
-    def xsd_check(self):
+    def xsd_check(self,
+                  xsds_files:list = ['saml-schema-metadata-2.0.xsd']):
         _msg = f'Found metadata'
         self.handle_result('debug',
                            _msg,
@@ -69,7 +64,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         _orig_pos = os.getcwd()
         os.chdir(self.xsds_files_path)
         metadata = self.metadata.decode()
-        for testf in self.xsds_files:
+        for testf in xsds_files:
             try:
                 schema_file = open(testf, 'rb')
                 msg = f'Test {self.metadata_url} with {schema_file.name}'
@@ -125,6 +120,12 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self._assertTrue((len(spsso) == 1),
                          'Only one SPSSODescriptor element must be present',
                          **error_kwargs)
+        return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor')
+
+    def test_SPSSODescriptor_SPID(self):
+        spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor')
+        desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
+        error_kwargs = dict(description = desc) if desc else {}
 
         for attr in ['protocolSupportEnumeration', 'AuthnRequestsSigned']:
             self._assertTrue((attr in spsso[0].attrib),
@@ -144,7 +145,8 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     f'The {attr} attribute must be true - TR pag. 20',
                     **error_kwargs)
 
-        return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor')
+        return self.is_ok(
+            f'{self.__class__.__name__}.test_SPSSODescriptor_SPID')
 
     def test_xmldsig(self):
         '''Verify the SP metadata signature'''
@@ -396,9 +398,15 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 else:
                     pass
 
+        return self.is_ok(f'{self.__class__.__name__}.test_AssertionConsumerService')
+
+    def test_AssertionConsumerService_SPID(self):
         acss = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
                               '/AssertionConsumerService'
                               '[@isDefault="true"]')
+        desc = [etree.tostring(ent).decode() for ent in acss if acss]
+        error_kwargs = dict(description = desc) if desc else {}
+
         self._assertTrue((len(acss) == 1),
                          'Only one default AssertionConsumerService '
                          'must be present - TR pag. 20',
@@ -412,7 +420,8 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                          'Must be present the default AssertionConsumerService '
                          'with index = 0 - TR pag. 20',
                          **error_kwargs)
-        return self.is_ok(f'{self.__class__.__name__}.test_AssertionConsumerService')
+        return self.is_ok(
+            f'{self.__class__.__name__}.test_AssertionConsumerService__SPID')
 
     def test_AttributeConsumingService(self):
         '''Test the compliance of AttributeConsumingService element(s)'''
@@ -428,7 +437,15 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             'One or more AttributeConsumingService elements must be present - TR pag. 20',
             **error_kwargs
         )
+        return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService')
 
+
+    def test_AttributeConsumingService_SPID(self):
+        acss = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
+                              '/AttributeConsumingService')
+
+        desc = [etree.tostring(ent).decode() for ent in acss if acss]
+        error_kwargs = dict(description = desc) if desc else {}
         for acs in acss:
             self._assertTrue(
                 ('index' in acs.attrib),
@@ -472,7 +489,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 self._assertIn(
                     ra.get('Name'),
                     constants.SPID_ATTRIBUTES,
-                    'The Name attribute in RequestedAttribute element must be valid',
+                    f'{ra.attrib}: The "Name" attribute in RequestedAttribute element must be valid',
                     description = f"one of [{', '.join(constants.SPID_ATTRIBUTES)}] - TR pag. 20 and AV n.6"
                 )
 
@@ -483,7 +500,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 'AttributeConsumigService must not contain duplicated RequestedAttribute - TR pag. 20',
                 **error_kwargs
             )
-        return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService')
+        return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService_SPID')
 
     def test_Organization(self):
         '''Test the compliance of Organization element'''
@@ -534,11 +551,12 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         )
         return self.is_ok(f'{self.__class__.__name__}.test_Organization')
 
-    def test_all(self):
+    def test_profile_saml2core(self):
         self.xsd_check()
 
         # loop for all the attrs that starts with test_ ... todo?
         self.test_EntityDescriptor()
+
         self.test_SPSSODescriptor()
         self.test_xmldsig()
         self.test_Signature()
@@ -547,3 +565,39 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.test_AssertionConsumerService()
         self.test_AttributeConsumingService()
         self.test_Organization()
+
+    def test_profile_spid_sp(self):
+        self.test_profile_saml2core()
+
+        self.xsd_check(
+            xsds_files = ['saml-schema-metadata-sp-spid.xsd',
+                          'saml-schema-metadata-sp-spid-av29.xsd']
+        )
+        self.test_SPSSODescriptor_SPID()
+        self.test_AssertionConsumerService_SPID()
+        self.test_AttributeConsumingService_SPID()
+
+    def test_profile_spid_sp_public(self):
+        self.test_profile_spid_sp()
+        # TODO
+        # self.test_ExtensionsContactPersonSPPublic()
+
+    def test_profile_spid_sp_private(self):
+        self.test_profile_spid_sp()
+        # TODO
+        # self.test_ExtensionsContactPersonSPPrivate()
+
+    def test_profile_spid_ag_full(self):
+        self.test_profile_spid_sp()
+        # TODO
+        # self.test_ExtensionsContactPersonAGFull()
+
+    def test_profile_spid_ag_lite(self):
+        self.test_profile_spid_sp()
+        # TODO
+        # self.test_ExtensionsContactPersonAGLite()
+
+    def test_profile_spid_op_full(self):
+        self.test_profile_spid_sp()
+        # TODO
+        # self.test_ExtensionsContactPersonOPFull()

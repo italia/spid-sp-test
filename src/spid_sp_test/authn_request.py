@@ -171,11 +171,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             )
         return idp_server
 
-    def test_xsd_and_xmldsig(self):
+    def test_xsd(self):
         '''Test if the XSD validates and if the signature is valid'''
-
-        msg = ('The AuthnRequest must validate against XSD '
-               'and must have a valid signature')
 
         _orig_pos = os.getcwd()
         os.chdir(self.xsds_files_path)
@@ -195,12 +192,18 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self.handle_result('error', '-> '.join((msg, f'{e}')))
         os.chdir(_orig_pos)
 
+        return self.is_ok(f'{self.__class__.__name__}.test_xsd')
+
+    def test_xmldsig(self):
         cert = self.md.xpath(
             '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
             '/KeyInfo/X509Data/X509Certificate/text()')
 
         desc = cert
         error_kwargs = dict(description = desc) if desc else {}
+
+        msg = ('The AuthnRequest must validate against XSD '
+               'and must have a valid signature')
 
         if not cert:
             self.handle_result('error', '-> '.join(
@@ -265,7 +268,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self._assertTrue(is_valid,
                          'AuthnRequest Signature validation failed',
                          **error_kwargs)
-        return self.is_ok(f'{self.__class__.__name__}.test_xsd_and_xmldsig')
+        return self.is_ok(f'{self.__class__.__name__}.test_xmldsig')
 
     def test_AuthnRequest(self):
         '''Test the compliance of AuthnRequest element'''
@@ -338,6 +341,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             'The IsPassive attribute must not be present - TR pag. 9 ',
             **error_kwargs
         )
+        return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest')
+
+    def test_AuthnRequest_SPID(self):
+        '''Test the compliance of AuthnRequest element'''
+        req = self.doc.xpath('/AuthnRequest')[0]
+
+        req_desc = [etree.tostring(ent).decode() for ent in req if req is not None]
+        error_kwargs = dict(description = req_desc) if req_desc else {}
 
         acr = req.xpath('//RequestedAuthnContext/AuthnContextClassRef')
         acr_desc = [etree.tostring(_acr).decode() for _acr in acr]
@@ -459,7 +470,46 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 f'The {attr} attribute must be equal to an AttributeConsumingService index - TR pag. 8 ',
                 **error_kwargs
             )
-        return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest')
+        return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest_SPID')
+
+    def test_AuthnRequest_SPID_extra(self):
+        '''Test the compliance of AuthnRequest element'''
+
+        # ForceAuthn must be true if 'Comparison' is 'minimum' and
+        # SPID level is L1
+
+        req = self.doc.xpath('/AuthnRequest')
+        rac = None
+        acr = None
+        if req:
+            rac = req[0].xpath('./RequestedAuthnContext')
+        if rac:
+            acr = rac[0].xpath('./AuthnContextClassRef')
+
+        if req and rac and acr:
+            req = req[0]
+            rac = rac[0]
+            acr = acr[0]
+
+            if (rac.get('Comparison') == 'minimum'
+                    and acr.text == 'https://www.spid.gov.it/SpidL1'):
+                self._assertTrue(
+                    ('ForceAuthn' in req.attrib),
+                    'The ForceAuthn attribute must be present '
+                    'because of minimum/SpidL1',
+                    description = req.attrib
+                )
+                self._assertEqual(
+                    req.get('ForceAuthn').lower(),
+                    'true',
+                    'The ForceAuthn attribute must be True '
+                    'because of minimum/SpidL1',
+                    description = req.attrib
+                )
+        else:
+            self.handle_error('AuthnRequest or RequestAuthnContext or AytnContextClassRef missing',)
+
+        return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest_extra')
 
     def test_Subject(self):
         '''Test the compliance of Subject element'''
@@ -818,15 +868,22 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         )
         return self.is_ok(f'{self.__class__.__name__}.test_RequesterID')
 
-    def test_all(self):
-        self.test_xsd_and_xmldsig()
+    def test_profile_saml2core(self):
+        self.test_xsd()
         self.test_AuthnRequest()
         self.test_Subject()
         self.test_Issuer()
-        self.test_NameIDPolicy()
         self.test_Conditions()
+        self.test_Scoping()
+        self.test_RequesterID()
+
+    def test_profile_spid_sp(self):
+        self.test_profile_saml2core()
+
+        self.test_xmldsig()
+        self.test_AuthnRequest_SPID()
+        self.test_AuthnRequest_SPID_extra()
+        self.test_NameIDPolicy()
         self.test_RequestedAuthnContext()
         self.test_Signature()
         self.test_RelayState()
-        self.test_Scoping()
-        self.test_RequesterID()
