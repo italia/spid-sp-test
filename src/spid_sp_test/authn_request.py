@@ -795,9 +795,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             alg = method[0].get('Algorithm')
             self._assertIn(alg, constants.ALLOWED_XMLDSIG_ALGS,
-                           (('The signature algorithm must be one of [%s] - TR pag. 10') %
-                            (', '.join(constants.ALLOWED_XMLDSIG_ALGS))),
-                            **error_kwargs)  # noqa
+                           'The signature algorithm must be valid - TR pag. 10',
+                           description=
+                                f"One of {', '.join(constants.ALLOWED_XMLDSIG_ALGS)}"
+                          )  # noqa
 
             method = sign[0].xpath('./SignedInfo/Reference/DigestMethod')
             self._assertTrue((len(method) == 1),
