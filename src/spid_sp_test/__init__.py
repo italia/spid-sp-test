@@ -65,7 +65,7 @@ class AbstractSpidCheck(object):
 
     def handle_error(self, error_message, description='',
                      traceback: str = None):
-        # self.handle_result('error', f"{error_message} : FAILED", description)
+        getattr(self.logger, 'error')(error_message)
         self.error_counter += 1
         # here report as json
         value = f'{description}' if not traceback else f'{description}: {traceback }'

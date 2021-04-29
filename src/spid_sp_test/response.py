@@ -258,7 +258,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         else:
             status = False
         status_code = f'[http status_code: {res.status_code}]'
-        self._assertTrue(status, f'{msg}: : {status_code}')
+        self._assertTrue(status, f'{msg}: {status_code}')
         return status, status_code
 
     def dump_html_response(self, fname, description, result, content):
