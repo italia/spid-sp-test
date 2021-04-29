@@ -489,7 +489,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 self._assertIn(
                     ra.get('Name'),
                     constants.SPID_ATTRIBUTES,
-                    f'{ra.attrib}: The "Name" attribute in RequestedAttribute element must be valid',
+                    f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element must be valid',
                     description = f"one of [{', '.join(constants.SPID_ATTRIBUTES)}] - TR pag. 20 and AV n.6"
                 )
 

@@ -38,7 +38,7 @@ class AbstractSpidCheck(object):
                       level: str,
                       title: str, description: str = '',
                       traceback: str = None):
-        msg = f'{title} [{description}]' if description else f'{title}'
+        msg = f'{title}'
         getattr(self.logger, level, 'debug')(msg)
         value = f'{description}' if not traceback else f'{description}: {traceback }'
         if level not in ('error', 'debug', 'critical', 'warning'):
