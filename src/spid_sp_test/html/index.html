@@ -79,8 +79,10 @@
                       <th scope="row">{{ loop.index }}</th>
                       {% if test.result == "success" %}
                         <td style="background-color: #f2ffe6; border: 1px solid green;">{{ test.result }}</td>
-                      {% else %}
+                      {% elif test.result == "failure" %}
                         <td style="background-color: #ffebe6; border: 1px solid red;">{{ test.result }}</td>
+                      {% else %}
+                         <td style="background-color: orange; border: 1px solid red;">{{ test.result }}</td>
                       {% endif %}
                       <td>{{ test.test }}</td>
                       <td>{{ test.value }}</td>

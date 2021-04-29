@@ -157,7 +157,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'AuthnRequestID': self.authnreq_attrs['ID'],
             'IssueInstant': self.authnreq_attrs['IssueInstant'],
             'NotOnOrAfter': (now + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M:%SZ'),
-            'AssertionConsumerURL':  self.authnreq_attrs.get('AssertionConsumerURL', self.acs_url),
+            'AssertionConsumerURL': self.authnreq_attrs.get('AssertionConsumerURL', self.acs_url),
             'NameIDNameQualifier': settings.DEFAULT_RESPONSE['NameIDNameQualifier'],
             'NameID': 'that-transient-opaque-value',
             'AssertionID': saml_rnd_id(),
@@ -258,7 +258,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         else:
             status = False
         status_code = f'[http status_code: {res.status_code}]'
-        self._assertTrue(status, f'{msg}: : {status_code}')
+        self._assertTrue(status, f'{msg}: {status_code}')
         return status, status_code
 
     def dump_html_response(self, fname, description, result, content):
@@ -289,7 +289,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.logger.debug(msg)
         return res
 
-    def test_all(self):
+    def test_profile_spid_sp(self):
         for i in self.test_names:
             self.do_authnrequest()
             response_obj = self.load_test(test_name=i)
