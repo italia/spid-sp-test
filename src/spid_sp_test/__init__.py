@@ -83,6 +83,7 @@ class AbstractSpidCheck(object):
         if not check and level == 'info':
             self.handle_error(error_message, description, traceback)
         else:
+            level = 'info' if level in ('warning',) else level
             self.handle_result(level, f"{error_message}", description, traceback)
 
     def _assertTrue(self, check, error_message,

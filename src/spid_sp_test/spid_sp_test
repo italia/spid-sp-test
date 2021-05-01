@@ -232,15 +232,15 @@ if __name__ == '__main__':
         sys.exit(0)
 
     elif args.metadata_url:
+        if args.extra:
+            _cls = SpidSpMetadataCheckExtra
+        else:
+            _cls = SpidSpMetadataCheck
         data_md = dict(metadata_url=args.metadata_url,
                        production=args.production)
-        metadata_check = SpidSpMetadataCheck(**data_md)
+        metadata_check = _cls(**data_md)
         selective_run(metadata_check, profile, args.list)
         tests_done.append(metadata_check)
-        if args.extra:
-            metadata_check_extra = SpidSpMetadataCheckExtra(**data_md)
-            selective_run(metadata_check_extra, profile, args.list)
-            tests_done.append(metadata_check_extra)
 
     else:
         logging.error('At least --idp-metadata or --metadata-url is needed!')

@@ -171,6 +171,8 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
             )
 
     def test_profile_spid_sp(self):
+        super().test_profile_spid_sp()
+
         self.test_Signature_extra()
         self.test_AttributeConsumingService_extra()
         self.test_SPSSODescriptor_extra()
