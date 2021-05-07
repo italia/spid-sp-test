@@ -12,17 +12,17 @@ This tool was born by separating the test library already present in [spid-saml-
 Features
 --------
 
-spid-sp-test is:
+spid-sp-test can:
 
-- able to test a SAML2 SPID Metadata file or http url
-- able to test a SAML2 SPID AuthnRequest file or or http url
-- able to test ACS behaviour, how a SP replies to a SAML2 Response
-- able to dump the responses sent to an ACS and the HTML of the SP's response
-- able to handle Attributes to send in Responses or test configurations of the Responses via json configuration files
-- able to configure response template with Jinja2
-- able to get new test-suite via multiple json files
+- test a SAML2 SPID Metadata file or http url
+- test a SAML2 SPID AuthnRequest file or or http url
+- test ACS behaviour, how a SP replies to a SAML2 Response
+- dump the responses sent to an ACS and the HTML of the SP's response
+- handle Attributes to send in Responses or test configurations of the Responses via json configuration files
+- configure response template with Jinja2
+- get new test-suite via multiple json files
 - fully integrable in CI
-- able to export a detailed report in json format, in stdout or in a file
+- export a detailed report in json format, in stdout or in a file
 
 Generally it's:
 
@@ -190,7 +190,7 @@ Examples with Docker
 --------------------
 
 Before starting you have to obtain the `italia/spid-sp-test` image. You can pull it from Docker Hub
-  
+
     $ docker pull italia/spid-sp-test:0.5.6
 
 or build locally
