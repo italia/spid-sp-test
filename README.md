@@ -186,6 +186,23 @@ This example works also a Shibboleth IdP-SP proxy/gateway.
 python3 src/spid_sp_test/spid_sp_test --metadata-url https://sp.testunical.it/pymetadata_signed.xml --authn-url "https://sp.testunical.it/Shibboleth.sso/Login?target=https://sp.testunical.it/secure/index.php&entityID=http://localhost:8080" --debug ERROR --extra -tr
 ````
 
+Examples with Docker
+--------------------
+
+Before starting you have to obtain the `italia/spid-sp-test` image. You can pull it from Docker Hub
+  
+    $ docker pull italia/spid-sp-test:0.5.6
+
+or build locally
+
+    $ docker build --tag italia/spid-sp-test:0.5.6 .
+
+The container working directory is set to `/spid` therefore, local files should be mounted relatively to `/spid` path.
+
+    $ docker run -ti --rm \
+        -v "$(pwd)/tests/metadata:/spid/mymetadata:ro" \
+        -v "$(pwd)/tests/metadata:/spid/dumps:rw" \
+        italia/spid-sp-test:0.5.6 --metadata-url file://mymetadata/spid-django-other.xml
 
 Test Responses and html dumps
 -----------------------------
