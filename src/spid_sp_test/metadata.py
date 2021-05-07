@@ -148,6 +148,23 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         return self.is_ok(
             f'{self.__class__.__name__}.test_SPSSODescriptor_SPID')
 
+
+    def test_NameIDFormat_Transient(self):
+        spsso = self.doc.xpath('//EntityDescriptor/SPSSODescriptor/NameIDFormat')
+        desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
+        error_kwargs = dict(description = desc) if desc else {}
+
+        if spsso:
+            _rule = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+            self._assertTrue(
+                (spsso[0].text == _rule),
+                f'The NameIDFormat must {_rule}',
+                **error_kwargs)
+
+        return self.is_ok(
+            f'{self.__class__.__name__}.test_NameIDFormat_SPID')
+
+
     def test_xmldsig(self):
         '''Verify the SP metadata signature'''
         tmp_file = NamedTemporaryFile()
@@ -558,6 +575,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.test_EntityDescriptor()
 
         self.test_SPSSODescriptor()
+        self.test_NameIDFormat_Transient()
         self.test_xmldsig()
         self.test_Signature()
         self.test_KeyDescriptor()
