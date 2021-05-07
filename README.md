@@ -96,7 +96,9 @@ optional arguments:
   -aj ATTR_JSON, --attr-json ATTR_JSON
                         loads user attributes via json, eg: tests/example.attributes.json
   -report               json report in stdout
-  -o O                  json report to file, -report is required
+  -o O                  report to file, -report is required
+  -rf {json,html}, --report_format {json,html}
+                        Report format, json or pdf
   -d {CRITICAL,ERROR,WARNING,INFO,DEBUG}, --debug {CRITICAL,ERROR,WARNING,INFO,DEBUG}
                         Debug level, see python logging
   -xp XMLSEC_PATH, --xmlsec-path XMLSEC_PATH
@@ -105,6 +107,9 @@ optional arguments:
   --html-path HTML_PATH, -hp HTML_PATH
                         Only works with Response tests activated. Path where the html response pages will be dumped after by the SP
   --exit-zero, -ez      exit with 0 even if tests fails
+  -pr {saml2-sp,spid-sp-public,spid-sp-private,spid-pub-ag-full,spid-pub-ag-lite,spid-sp-pub-op-full,spid-sp-extra}, --profile {saml2-sp,spid-sp-public,spid-sp-private,spid-pub-ag-full,spid-pub-ag-lite,spid-sp-pub-op-full,spid-sp-extra}
+                        which profile to check
+
 
 examples:
         src/spid_sp_test/spid_sp_test --metadata-url file://metadata.xml
