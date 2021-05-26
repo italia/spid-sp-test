@@ -531,11 +531,14 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             'Only one Organization element can be present - TR pag. 20'
         )
 
+        enames = ['OrganizationName',
+                  'OrganizationDisplayName',
+                  'OrganizationURL']
+        lang_counter = dict()
+
         if len(orgs) == 1:
             org = orgs[0]
-            for ename in ['OrganizationName',
-                          'OrganizationDisplayName',
-                          'OrganizationURL']:
+            for ename in enames:
                 elements = org.xpath(f'./{ename}')
                 self._assertGreater(
                     len(elements),
@@ -551,6 +554,13 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         **error_kwargs
                     )
 
+                    lang = element.attrib.items()[0][1]
+                    if lang_counter.get(lang):
+                        lang_counter[lang] += 1
+                    else:
+                        lang_counter[lang] = 1
+
+
                     self._assertIsNotNone(
                         element.text,
                         f'The {ename} element must have a value - TR pag. 20',
@@ -559,13 +569,25 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
                     if ename == 'OrganizationURL' and self.production:
                         OrganizationURLvalue = element.text.strip()
-                        if not (OrganizationURLvalue.startswith('http://') or OrganizationURLvalue.startswith('https://')):
+                        if not (OrganizationURLvalue.startswith('http://') or
+                                OrganizationURLvalue.startswith('https://')):
                             OrganizationURLvalue = f'https://{OrganizationURLvalue}'
                         self._assertIsValidHttpUrl(
                             OrganizationURLvalue,
                             f'The {ename} -element must be a valid URL - TR pag. 20',
                             **error_kwargs
                         )
+
+            # lang counter check
+            for k,v in lang_counter.items():
+                num_enames = len(enames)
+                self._assertTrue(
+                        (v == num_enames),
+                        (f'The elements OrganizationName, OrganizationDisplayName and OrganizationURL '
+                         'MUST have the same number of lang attributes'), # noqa
+                        **error_kwargs
+                    )
+
         return self.is_ok(f'{self.__class__.__name__}.test_Organization')
 
     def test_profile_saml2core(self):
