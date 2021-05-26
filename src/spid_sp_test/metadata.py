@@ -527,7 +527,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         error_kwargs = dict(description = desc) if desc else {}
 
         self._assertTrue(
-            (len(orgs) <= 1),
+            (len(orgs) == 1),
             'Only one Organization element can be present - TR pag. 20'
         )
 
