@@ -90,23 +90,23 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         error_kwargs = dict(description = desc) if desc else {}
         if not self.doc.attrib.get('entityID'):
             _msg = (f'Missing entityID in {self.doc.attrib}: '
-                    'The entityID attribute must be present - TR pag. 19')
+                    'The entityID attribute MUST be present - TR pag. 19')
             self.handle_result('error', _msg, **error_kwargs)
         elif len(entity_desc) > 1:
-            _msg = 'Only one EntityDescriptor element must be present - TR pag. 19'
+            _msg = 'Only one EntityDescriptor element MUST be present - TR pag. 19'
             self.handle_result('error', _msg, **error_kwargs)
         elif not entity_desc[0].get('entityID'):
-            _msg = 'The entityID attribute must have a value - TR pag. 19'
+            _msg = 'The entityID attribute MUST have a value - TR pag. 19'
             self.handle_result('error', _msg, **error_kwargs)
 
         if self.production:
             self._assertIsValidHttpsUrl(
                 self.doc.attrib.get('entityID'),
-                'The entityID attribute must be a valid HTTPS url'
+                'The entityID attribute MUST be a valid HTTPS url'
             )
 
         self._assertTrue((self.doc.attrib.get('entityID') == self.metadata_url),
-                         f'The EntityID must be equal to {self.metadata_url}',
+                         f'The EntityID MUST be equal to {self.metadata_url}',
                          description=f"{self.doc.attrib.get('entityID')}",
                          level='warning')
 
@@ -118,7 +118,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         error_kwargs = dict(description = desc) if desc else {}
 
         self._assertTrue((len(spsso) == 1),
-                         'Only one SPSSODescriptor element must be present',
+                         'Only one SPSSODescriptor element MUST be present',
                          **error_kwargs)
         return self.is_ok(f'{self.__class__.__name__}.test_SPSSODescriptor')
 
@@ -129,20 +129,20 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
         for attr in ['protocolSupportEnumeration', 'AuthnRequestsSigned']:
             self._assertTrue((attr in spsso[0].attrib),
-                             f'The {attr} attribute must be present - TR pag. 20',
+                             f'The {attr} attribute MUST be present - TR pag. 20',
                              **error_kwargs)
 
             a = spsso[0].get(attr)
             self._assertIsNotNone(
                 a,
-                f'The {attr} attribute must have a value - TR pag. 20',
+                f'The {attr} attribute MUST have a value - TR pag. 20',
                 **error_kwargs)
 
             if attr == 'AuthnRequestsSigned' and a:
                 self._assertEqual(
                     a.lower(),
                     'true',
-                    f'The {attr} attribute must be true - TR pag. 20',
+                    f'The {attr} attribute MUST be true - TR pag. 20',
                     **error_kwargs)
 
         return self.is_ok(
@@ -158,7 +158,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             _rule = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
             self._assertTrue(
                 (spsso[0].text == _rule),
-                f'The NameIDFormat must {_rule}',
+                f'The NameIDFormat MUST {_rule}',
                 **error_kwargs)
 
         return self.is_ok(
@@ -179,7 +179,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                       tmp_file.name]
         cmd = ' '.join(xmlsec_cmd)
         is_valid = True
-        msg = 'the metadata signature must be valid - TR pag. 19'
+        msg = 'the metadata signature MUST be valid - TR pag. 19'
 
         try:
             subprocess.run(cmd, shell=True, check=True,
@@ -232,64 +232,64 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         desc = [etree.tostring(ent).decode() for ent in sign if sign]
         error_kwargs = dict(description = desc) if desc else {}
         self._assertTrue((len(sign) > 0),
-                         'The Signature element must be present - TR pag. 19',
+                         'The Signature element MUST be present - TR pag. 19',
                          **error_kwargs)
 
         error_kwargs = dict(description = desc, traceback = '')
         if not sign:
             self.handle_result(
                 'error',
-                'The SignatureMethod element must be present - TR pag. 19',
+                'The SignatureMethod element MUST be present - TR pag. 19',
                 **error_kwargs)
             self.handle_result(
                 'error',
-                'The Algorithm attribute must be present in SignatureMethod element - TR pag. 19',
+                'The Algorithm attribute MUST be present in SignatureMethod element - TR pag. 19',
                 **error_kwargs)
             self.handle_result(
                 'error',
-                "The signature algorithm must be valid - TR pag. 19",
+                "The signature algorithm MUST be valid - TR pag. 19",
                 description = f"Must be one of [{', '.join(constants.ALLOWED_XMLDSIG_ALGS)}]")
 
             self.handle_result(
                 'error',
-                'The Algorithm attribute must be present in DigestMethod element - TR pag. 19',
+                'The Algorithm attribute MUST be present in DigestMethod element - TR pag. 19',
                 **error_kwargs)
             self.handle_result(
                 'error',
-                f"The digest algorithm must be valid - TR pag. 19",
+                f"The digest algorithm MUST be valid - TR pag. 19",
                 description = f"Must be one of [{', '.join(constants.ALLOWED_DGST_ALGS)}]")
         else:
             method = sign[0].xpath('./SignedInfo/SignatureMethod')
             desc = [etree.tostring(ent).decode() for ent in method if method]
             error_kwargs = dict(description = desc) if desc else {}
             self._assertTrue((len(method) > 0),
-                             'The SignatureMethod element must be present - TR pag. 19',
+                             'The SignatureMethod element MUST be present - TR pag. 19',
                              **error_kwargs)
 
             self._assertTrue(('Algorithm' in method[0].attrib),
-                             'The Algorithm attribute must be present '
+                             'The Algorithm attribute MUST be present '
                              'in SignatureMethod element - TR pag. 19',
                              **error_kwargs)
 
             alg = method[0].get('Algorithm')
             self._assertIn(alg, constants.ALLOWED_XMLDSIG_ALGS,
-                           'The signature algorithm must be valid - TR pag. 19',
+                           'The signature algorithm MUST be valid - TR pag. 19',
                            description = f"One of {(', '.join(constants.ALLOWED_XMLDSIG_ALGS))}"
             )
 
             method = sign[0].xpath('./SignedInfo/Reference/DigestMethod')
             self._assertTrue((len(method) == 1),
-                             'The DigestMethod element must be present - TR pag. 19',
+                             'The DigestMethod element MUST be present - TR pag. 19',
                              **error_kwargs)
 
             self._assertTrue(('Algorithm' in method[0].attrib),
-                             'The Algorithm attribute must be present '
+                             'The Algorithm attribute MUST be present '
                              'in DigestMethod element - TR pag. 19',
                              **error_kwargs)
 
             alg = method[0].get('Algorithm')
             self._assertIn(alg, constants.ALLOWED_DGST_ALGS,
-                           'The digest algorithm must be valid - TR pag. 19',
+                           'The digest algorithm MUST be valid - TR pag. 19',
                            description = f"One of {(', '.join(constants.ALLOWED_DGST_ALGS))}",
             )
 
@@ -302,7 +302,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                              '/KeyDescriptor[@use="signing"]')
         self._assertGreaterEqual(
             len(kds), 1,
-            'At least one signing KeyDescriptor must be present - TR pag. 19'
+            'At least one signing KeyDescriptor MUST be present - TR pag. 19'
         )
 
         desc = [etree.tostring(ent).decode() for ent in kds if kds]
@@ -312,7 +312,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             certs = kd.xpath('./KeyInfo/X509Data/X509Certificate')
             self._assertGreaterEqual(
                 len(certs), 1,
-                'At least one signing x509 must be present - TR pag. 19',
+                'At least one signing x509 MUST be present - TR pag. 19',
                 **error_kwargs)
 
         kds = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
@@ -322,7 +322,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             certs = kd.xpath('./KeyInfo/X509Data/X509Certificate')
             self._assertGreaterEqual(
                 len(certs), 1,
-                'At least one encryption x509 must be present - TR pag. 19',
+                'At least one encryption x509 MUST be present - TR pag. 19',
                 **error_kwargs)
 
         return self.is_ok(f'{self.__class__.__name__}.test_KeyDescriptor')
@@ -334,7 +334,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self._assertGreaterEqual(
             len(slos),
             1,
-            'One or more SingleLogoutService elements must be present - AV n. 3'
+            'One or more SingleLogoutService elements MUST be present - AV n. 3'
         )
 
         desc = [etree.tostring(ent).decode() for ent in slos if slos]
@@ -344,13 +344,13 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             for attr in ['Binding', 'Location']:
                 self._assertTrue(
                     (attr in slo.attrib),
-                    f'The {attr} attribute in SingleLogoutService element must be present - AV n. 3',
+                    f'The {attr} attribute in SingleLogoutService element MUST be present - AV n. 3',
                     **error_kwargs)
 
                 a = slo.get(attr)
                 self._assertIsNotNone(
                     a,
-                    f'The {attr} attribute in SingleLogoutService element must have a value',
+                    f'The {attr} attribute in SingleLogoutService element MUST have a value',
                     **error_kwargs
                 )
 
@@ -358,7 +358,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                     self._assertIn(
                         a,
                         constants.ALLOWED_SINGLELOGOUT_BINDINGS,
-                        (('The %s attribute in SingleLogoutService element must be one of [%s] - AV n. 3') %  # noqa
+                        (('The %s attribute in SingleLogoutService element MUST be one of [%s] - AV n. 3') %  # noqa
                          (attr, ', '.join(constants.ALLOWED_BINDINGS))),
                         **error_kwargs # noqa
                     )
@@ -367,7 +367,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         a,
                         f'The {attr} attribute '
                         'in SingleLogoutService element '
-                        'must be a valid HTTPS URL - AV n. 1 and n. 3',
+                        'MUST be a valid HTTPS URL - AV n. 1 and n. 3',
                         **error_kwargs
                     )
         return self.is_ok(f'{self.__class__.__name__}.test_SingleLogoutService')
@@ -382,33 +382,33 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
         self._assertGreaterEqual(len(acss), 1,
                                  'At least one AssertionConsumerService '
-                                 'must be present - TR pag. 20')
+                                 'MUST be present - TR pag. 20')
 
         for acs in acss:
             for attr in ['index', 'Binding', 'Location']:
                 self._assertTrue(
                     (attr in acs.attrib),
-                    f'The {attr} attribute must be present - TR pag. 20'
+                    f'The {attr} attribute MUST be present - TR pag. 20'
                 )
                 a = acs.get(attr)
                 if attr == 'index':
                     self._assertGreaterEqual(
                         int(a),
                         0,
-                        f'The {attr} attribute must be >= 0 - TR pag. 20',
+                        f'The {attr} attribute MUST be >= 0 - TR pag. 20',
                         **error_kwargs
                     )
                 elif attr == 'Binding':
                     self._assertIn(
                         a, constants.ALLOWED_BINDINGS,
-                        (('The %s attribute must be one of [%s] - TR pag. 20') %
+                        (('The %s attribute MUST be one of [%s] - TR pag. 20') %
                          (attr, ', '.join(constants.ALLOWED_BINDINGS))),
                         **error_kwargs
                     )
                 elif attr == 'Location' and self.production:
                     self._assertIsValidHttpsUrl(
                         a,
-                        f'The {attr} attribute must be a '
+                        f'The {attr} attribute MUST be a '
                         'valid HTTPS url - TR pag. 20 and AV n. 1',
                         **error_kwargs
                     )
@@ -426,7 +426,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
         self._assertTrue((len(acss) == 1),
                          'Only one default AssertionConsumerService '
-                         'must be present - TR pag. 20',
+                         'MUST be present - TR pag. 20',
                          **error_kwargs)
 
         acss = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
@@ -451,7 +451,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self._assertGreaterEqual(
             len(acss),
             1,
-            'One or more AttributeConsumingService elements must be present - TR pag. 20',
+            'One or more AttributeConsumingService elements MUST be present - TR pag. 20',
             **error_kwargs
         )
         return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService')
@@ -466,7 +466,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         for acs in acss:
             self._assertTrue(
                 ('index' in acs.attrib),
-                'The index attribute in AttributeConsumigService element must be present',
+                'The index attribute in AttributeConsumigService element MUST be present',
                 **error_kwargs)
 
             idx = int(acs.get('index'))
@@ -474,25 +474,25 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 idx,
                 0,
                 'The index attribute in AttributeConsumigService '
-                'element must be >= 0 - TR pag. 20',
+                'element MUST be >= 0 - TR pag. 20',
                 **error_kwargs
             )
 
             sn = acs.xpath('./ServiceName')
             self._assertTrue((len(sn) > 0),
-                             'The ServiceName element must be present',
+                             'The ServiceName element MUST be present',
                              **error_kwargs)
             for sns in sn:
                 self._assertIsNotNone(
                     sns.text,
-                    'The ServiceName element must have a value',
+                    'The ServiceName element MUST have a value',
                     **error_kwargs)
 
             ras = acs.xpath('./RequestedAttribute')
             self._assertGreaterEqual(
                 len(ras),
                 1,
-                'One or more RequestedAttribute elements must be present - TR pag. 20',
+                'One or more RequestedAttribute elements MUST be present - TR pag. 20',
                 **error_kwargs
             )
 
@@ -500,13 +500,13 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 self._assertTrue(
                     ('Name' in ra.attrib),
                     'The Name attribute in RequestedAttribute element '
-                    'must be present - TR pag. 20 and AV n. 6',
+                    'MUST be present - TR pag. 20 and AV n. 6',
                     **error_kwargs)
 
                 self._assertIn(
                     ra.get('Name'),
                     constants.SPID_ATTRIBUTES,
-                    f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element must be valid',
+                    f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element MUST be valid',
                     description = f"one of [{', '.join(constants.SPID_ATTRIBUTES)}] - TR pag. 20 and AV n.6"
                 )
 
@@ -514,7 +514,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
             self._assertEqual(
                 len(al),
                 len(set(al)),
-                'AttributeConsumigService must not contain duplicated RequestedAttribute - TR pag. 20',
+                'AttributeConsumigService MUST not contain duplicated RequestedAttribute - TR pag. 20',
                 **error_kwargs
             )
         return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService_SPID')
@@ -543,14 +543,14 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                 self._assertGreater(
                     len(elements),
                     0,
-                    f'One or more {ename} elements must be present - TR pag. 20',
+                    f'One or more {ename} elements MUST be present - TR pag. 20',
                     **error_kwargs
                 )
 
                 for element in elements:
                     self._assertTrue(
                         ('{http://www.w3.org/XML/1998/namespace}lang' in element.attrib),  # noqa
-                        f'The lang attribute in {ename} element must be present - TR pag. 20', # noqa
+                        f'The lang attribute in {ename} element MUST be present - TR pag. 20', # noqa
                         **error_kwargs
                     )
 
@@ -563,7 +563,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
                     self._assertIsNotNone(
                         element.text,
-                        f'The {ename} element must have a value - TR pag. 20',
+                        f'The {ename} element MUST have a value - TR pag. 20',
                         **error_kwargs
                     )
 
@@ -574,7 +574,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                             OrganizationURLvalue = f'https://{OrganizationURLvalue}'
                         self._assertIsValidHttpUrl(
                             OrganizationURLvalue,
-                            f'The {ename} -element must be a valid URL - TR pag. 20',
+                            f'The {ename} -element MUST be a valid URL - TR pag. 20',
                             **error_kwargs
                         )
 

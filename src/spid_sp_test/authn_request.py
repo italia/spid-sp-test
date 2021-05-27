@@ -202,8 +202,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         desc = cert
         error_kwargs = dict(description = desc) if desc else {}
 
-        msg = ('The AuthnRequest must validate against XSD '
-               'and must have a valid signature')
+        msg = ('The AuthnRequest MUST validate against XSD '
+               'and MUST have a valid signature')
 
         if not cert:
             self.handle_result('error', '-> '.join(
@@ -280,7 +280,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self._assertTrue(
             (len(req) == 1),
-            'One AuthnRequest element must be present',
+            'One AuthnRequest element MUST be present',
             **error_kwargs
         )
         if req:
@@ -291,7 +291,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         for attr in ('ID', 'Version', 'IssueInstant', 'Destination'):
             self._assertTrue(
                 (attr in req.attrib),
-                f'The {attr} attribute must be present - TR pag. 8 ',
+                f'The {attr} attribute MUST be present - TR pag. 8 ',
                 **error_kwargs
             )
 
@@ -299,7 +299,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             if (attr == 'ID'):
                 self._assertIsNotNone(
                     value,
-                    f'The {attr} attribute must have a value - TR pag. 8 ',
+                    f'The {attr} attribute MUST have a value - TR pag. 8 ',
                     **error_kwargs
                 )
 
@@ -308,38 +308,38 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertEqual(
                     value,
                     exp,
-                    f'The {attr} attribute must be {exp} - TR pag. 8 ',
+                    f'The {attr} attribute MUST be {exp} - TR pag. 8 ',
                     **error_kwargs
                 )
 
             if (attr == 'IssueInstant'):
                 self._assertIsNotNone(
                     value,
-                    f'The {attr} attribute must have a value - TR pag. 8 ',
+                    f'The {attr} attribute MUST have a value - TR pag. 8 ',
                     **error_kwargs
                 )
                 self._assertTrue(
                     bool(constants.UTC_STRING.search(value)),
-                    f'The {attr} attribute must be a valid UTC string - TR pag. 8 ',
+                    f'The {attr} attribute MUST be a valid UTC string - TR pag. 8 ',
                     **error_kwargs
                 )
 
             if (attr == 'Destination'):
                 self._assertIsNotNone(
                     value,
-                    f'The {attr} attribute must have a value - TR pag. 8 ',
+                    f'The {attr} attribute MUST have a value - TR pag. 8 ',
                     **error_kwargs
                 )
                 if self.production:
                     self._assertIsValidHttpsUrl(
                         value,
-                        f'The {attr} attribute must be a valid HTTPS url - TR pag. 8 ',
+                        f'The {attr} attribute MUST be a valid HTTPS url - TR pag. 8 ',
                         **error_kwargs
                     )
 
         self._assertTrue(
             ('IsPassive' not in req.attrib),
-            'The IsPassive attribute must not be present - TR pag. 9 ',
+            'The IsPassive attribute MUST not be present - TR pag. 9 ',
             **error_kwargs
         )
         return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest')
@@ -359,13 +359,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             if bool(constants.SPID_LEVEL_23.search(level)):
                 self._assertTrue(
                     ('ForceAuthn' in req.attrib),
-                    'The ForceAuthn attribute must be present if SPID level > 1 - TR pag. 8 ',
+                    'The ForceAuthn attribute MUST be present if SPID level > 1 - TR pag. 8 ',
                     description = acr_desc
                 )
                 value = req.get('ForceAuthn')
                 self._assertTrue(
                     (value.lower() in constants.BOOLEAN_TRUE),
-                    'The ForceAuthn attribute must be true or 1 - TR pag. 8 ',
+                    'The ForceAuthn attribute MUST be true or 1 - TR pag. 8 ',
                     **error_kwargs
                 )
 
@@ -384,19 +384,19 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             self._assertTrue(
                 value in availableassertionindexes,
-                f'The {attr} attribute must be equal to an AssertionConsumerService index - TR pag. 8 ',
+                f'The {attr} attribute MUST be equal to an AssertionConsumerService index - TR pag. 8 ',
                 description = acss_desc
             )
 
             self._assertIsNotNone(
                 value,
-                f'The {attr} attribute must have a value- TR pag. 8 ',
+                f'The {attr} attribute MUST have a value- TR pag. 8 ',
                 **error_kwargs
             )
             self._assertGreaterEqual(
                 int(value),
                 0,
-                f'The {attr} attribute must be >= 0 - TR pag. 8 and pag. 20',
+                f'The {attr} attribute MUST be >= 0 - TR pag. 8 and pag. 20',
                 **error_kwargs
             )
 
@@ -410,14 +410,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             for attr in ['AssertionConsumerServiceURL', 'ProtocolBinding']:
                 self._assertTrue(
                     (attr in req.attrib),
-                    f'The {attr} attribute must be present - TR pag. 8 ',
+                    f'The {attr} attribute MUST be present - TR pag. 8 ',
                     **error_kwargs
                 )
 
                 value = req.get(attr)
                 self._assertIsNotNone(
                     value,
-                    f'The {attr} attribute must have a value - TR pag. 8 ',
+                    f'The {attr} attribute MUST have a value - TR pag. 8 ',
                     **error_kwargs
                 )
 
@@ -425,13 +425,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     if self.production:
                         self._assertIsValidHttpsUrl(
                             value,
-                            f'The {attr} attribute must be a valid HTTPS url - TR pag. 8 and pag. 16',
+                            f'The {attr} attribute MUST be a valid HTTPS url - TR pag. 8 and pag. 16',
                             **error_kwargs
                         )
 
                     self._assertTrue(
                         value in availableassertionlocations,
-                        f'The {attr} attribute must be equal to an AssertionConsumerService Location - TR pag. 8 ',
+                        f'The {attr} attribute MUST be equal to an AssertionConsumerService Location - TR pag. 8 ',
                         **error_kwargs
                     )
 
@@ -440,7 +440,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     self._assertEqual(
                         value,
                         exp,
-                        f'The {attr} attribute must be {exp} - TR pag. 8 ',
+                        f'The {attr} attribute MUST be {exp} - TR pag. 8 ',
                         **error_kwargs
                     )
 
@@ -457,18 +457,18 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             value = req.get(attr)
             self._assertIsNotNone(
                 value,
-                f'The {attr} attribute must have a value - TR pag. 8',
+                f'The {attr} attribute MUST have a value - TR pag. 8',
                 **error_kwargs
             )
             self._assertGreaterEqual(
                 int(value),
                 0,
-                f'The {attr} attribute must be >= 0 - TR pag. 8 and pag. 20',
+                f'The {attr} attribute MUST be >= 0 - TR pag. 8 and pag. 20',
                 **error_kwargs
             )
             self._assertTrue(
                 value in availableattributeindexes,
-                f'The {attr} attribute must be equal to an AttributeConsumingService index - TR pag. 8 ',
+                f'The {attr} attribute MUST be equal to an AttributeConsumingService index - TR pag. 8 ',
                 **error_kwargs
             )
         return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest_SPID')
@@ -476,7 +476,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
     def test_AuthnRequest_SPID_extra(self):
         '''Test the compliance of AuthnRequest element'''
 
-        # ForceAuthn must be true if 'Comparison' is 'minimum' and
+        # ForceAuthn MUST be true if 'Comparison' is 'minimum' and
         # SPID level is L1
 
         req = self.doc.xpath('/AuthnRequest')
@@ -496,14 +496,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     and acr.text == 'https://www.spid.gov.it/SpidL1'):
                 self._assertTrue(
                     ('ForceAuthn' in req.attrib),
-                    'The ForceAuthn attribute must be present '
+                    'The ForceAuthn attribute MUST be present '
                     'because of minimum/SpidL1',
                     description = req.attrib
                 )
                 self._assertEqual(
                     req.get('ForceAuthn', "").lower(),
                     'true',
-                    'The ForceAuthn attribute must be True '
+                    'The ForceAuthn attribute MUST be True '
                     'because of minimum/SpidL1',
                     description = req.attrib
                 )
@@ -534,14 +534,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertEqual(
                 len(name_id),
                 1,
-                'One NameID element in Subject element must be present - TR pag. 9',
+                'One NameID element in Subject element MUST be present - TR pag. 9',
                 **error_kwargs
             )
             name_id = name_id[0]
             for attr in ['Format', 'NameQualifier']:
                 self._assertTrue(
                     (attr in name_id.attrib),
-                    f'The {attr} attribute must be present - TR pag. 9',
+                    f'The {attr} attribute MUST be present - TR pag. 9',
                     **error_kwargs
                 )
 
@@ -549,7 +549,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
                 self._assertIsNotNone(
                     value,
-                    f'The {attr} attribute must have a value - TR pag. 9',
+                    f'The {attr} attribute MUST have a value - TR pag. 9',
                     **error_kwargs
                 )
 
@@ -558,7 +558,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     self._assertEqual(
                         value,
                         exp,
-                        f'The {attr} attribute must be {exp} - TR pag. 9',
+                        f'The {attr} attribute MUST be {exp} - TR pag. 9',
                         **error_kwargs
                     )
         return self.is_ok(f'{self.__class__.__name__}.test_Subject')
@@ -572,7 +572,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self._assertTrue(
             (len(e) == 1),
-            'One Issuer element must be present - TR pag. 9',
+            'One Issuer element MUST be present - TR pag. 9',
             error_kwargs
         )
 
@@ -583,7 +583,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self._assertIsNotNone(
             e.text,
-            'The Issuer element must have a value - TR pag. 9',
+            'The Issuer element MUST have a value - TR pag. 9',
             **error_kwargs
         )
 
@@ -591,14 +591,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         entityid = entitydescriptor[0].get('entityID')
         self._assertEqual(
             e.text, entityid,
-            "The Issuer's value must be equal to entityID - TR pag. 9",
+            "The Issuer's value MUST be equal to entityID - TR pag. 9",
             **error_kwargs
         )
 
         for attr in ['Format', 'NameQualifier']:
             self._assertTrue(
                 (attr in e.attrib),
-                f'The {attr} attribute must be present - TR pag. 9',
+                f'The {attr} attribute MUST be present - TR pag. 9',
                 **error_kwargs
             )
 
@@ -606,7 +606,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             self._assertIsNotNone(
                 value,
-                f'The {attr} attribute must have a value - TR pag. 9',
+                f'The {attr} attribute MUST have a value - TR pag. 9',
                 **error_kwargs
             )
 
@@ -615,7 +615,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertEqual(
                     value,
                     exp,
-                    f'The {attr} attribute must be {exp} - TR pag. 9',
+                    f'The {attr} attribute MUST be {exp} - TR pag. 9',
                     **error_kwargs
                 )
         return self.is_ok(f'{self.__class__.__name__}.test_Issuer')
@@ -630,7 +630,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self._assertTrue(
             (len(e) == 1),
-            'One NameIDPolicy element must be present - TR pag. 9',
+            'One NameIDPolicy element MUST be present - TR pag. 9',
             **error_kwargs
         )
 
@@ -641,14 +641,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self._assertTrue(
             ('AllowCreate' not in e.attrib),
-            'The AllowCreate attribute must not be present - AV n.5 ',
+            'The AllowCreate attribute MUST not be present - AV n.5 ',
             **error_kwargs
         )
 
         attr = 'Format'
         self._assertTrue(
             (attr in e.attrib),
-            f'The {attr} attribute must be present - TR pag. 9',
+            f'The {attr} attribute MUST be present - TR pag. 9',
             **error_kwargs
         )
 
@@ -656,7 +656,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self._assertIsNotNone(
             value,
-            f'The {attr} attribute must have a value - TR pag. 9',
+            f'The {attr} attribute MUST have a value - TR pag. 9',
             **error_kwargs
         )
 
@@ -665,7 +665,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertEqual(
                 value,
                 exp,
-                f'The {attr} attribute must be {exp} - TR pag. 9',
+                f'The {attr} attribute MUST be {exp} - TR pag. 9',
                 **error_kwargs
             )
         return self.is_ok(f'{self.__class__.__name__}.test_NameIDPolicy')
@@ -690,7 +690,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             for attr in ['NotBefore', 'NotOnOrAfter']:
                 self._assertTrue(
                     (attr in e.attrib),
-                    f'The {attr} attribute must be present - TR pag. 9',
+                    f'The {attr} attribute MUST be present - TR pag. 9',
                     **error_kwargs
                 )
 
@@ -698,13 +698,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
                 self._assertIsNotNone(
                     value,
-                    f'The {attr} attribute must have a value - TR pag. 9',
+                    f'The {attr} attribute MUST have a value - TR pag. 9',
                     **error_kwargs
                 )
 
                 self._assertTrue(
                     bool(constants.regex.UTC_STRING.search(value)),
-                    f'The {attr} attribute must have avalid UTC string - TR pag. 9',
+                    f'The {attr} attribute MUST have avalid UTC string - TR pag. 9',
                     **error_kwargs
                 )
         return self.is_ok(f'{self.__class__.__name__}.test_Conditions')
@@ -720,7 +720,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self._assertEqual(
             len(e),
             1,
-            'Only one RequestedAuthnContext element must be present - TR pag. 9',
+            'Only one RequestedAuthnContext element MUST be present - TR pag. 9',
             **error_kwargs
         )
         if e:
@@ -729,14 +729,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             attr = 'Comparison'
             self._assertTrue(
                 (attr in e.attrib),
-                f'The {attr} attribute must be present - TR pag. 10',
+                f'The {attr} attribute MUST be present - TR pag. 10',
                 **error_kwargs
             )
 
             value = e.get(attr)
             self._assertIsNotNone(
                 value,
-                f'The {attr} attribute must have a value - TR pag. 10',
+                f'The {attr} attribute MUST have a value - TR pag. 10',
                 **error_kwargs
             )
 
@@ -745,14 +745,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 value,
                 allowed,
                 'Attribute not valid - TR pag. 10',
-                description = f"The {attr} attribute must be one of [{', '.join(allowed)}]"
+                description = f"The {attr} attribute MUST be one of [{', '.join(allowed)}]"
             )
 
             acr = e.xpath('./AuthnContextClassRef')
             self._assertEqual(
                 len(acr),
                 1,
-                'Only one AuthnContexClassRef element must be present - TR pag. 9',
+                'Only one AuthnContexClassRef element MUST be present - TR pag. 9',
                 description = [etree.tostring(_acr).decode() for _acr in acr]
             )
 
@@ -760,13 +760,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 acr = acr[0]
                 self._assertIsNotNone(
                     acr.text,
-                    'The AuthnContexClassRef element must have a value - TR pag. 9',
+                    'The AuthnContexClassRef element MUST have a value - TR pag. 9',
                     description = etree.tostring(acr)
                 )
 
                 self._assertTrue(
                     bool(constants.SPID_LEVEL_ALL.search(acr.text)),
-                    'The AuthnContextClassRef element must have a valid SPID level - TR pag. 9 and AV n.5',
+                    'The AuthnContextClassRef element MUST have a valid SPID level - TR pag. 9 and AV n.5',
                     description = etree.tostring(acr)
                 )
         return self.is_ok(f'{self.__class__.__name__}.test_RequestedAuthnContext')
@@ -781,39 +781,39 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             error_kwargs = dict(description = desc) if desc else {}
 
             self._assertTrue((len(sign) == 1),
-                             'The Signature element must be present - TR pag. 10',
+                             'The Signature element MUST be present - TR pag. 10',
                              **error_kwargs)
 
             method = sign[0].xpath('./SignedInfo/SignatureMethod')
             self._assertTrue((len(method) == 1),
-                             'The SignatureMethod element must be present- TR pag. 10',
+                             'The SignatureMethod element MUST be present- TR pag. 10',
                              **error_kwargs)
 
             self._assertTrue(('Algorithm' in method[0].attrib),
-                             'The Algorithm attribute must be present '
+                             'The Algorithm attribute MUST be present '
                              'in SignatureMethod element - TR pag. 10',
                              **error_kwargs)
 
             alg = method[0].get('Algorithm')
             self._assertIn(alg, constants.ALLOWED_XMLDSIG_ALGS,
-                           'The signature algorithm must be valid - TR pag. 10',
+                           'The signature algorithm MUST be valid - TR pag. 10',
                            description=
                                 f"One of {', '.join(constants.ALLOWED_XMLDSIG_ALGS)}"
                           )  # noqa
 
             method = sign[0].xpath('./SignedInfo/Reference/DigestMethod')
             self._assertTrue((len(method) == 1),
-                             'The DigestMethod element must be present',
+                             'The DigestMethod element MUST be present',
                              **error_kwargs)
 
             self._assertTrue(('Algorithm' in method[0].attrib),
-                             'The Algorithm attribute must be present '
+                             'The Algorithm attribute MUST be present '
                              'in DigestMethod element - TR pag. 10',
                              **error_kwargs)
 
             alg = method[0].get('Algorithm')
             self._assertIn(alg, constants.ALLOWED_DGST_ALGS,
-                           (('The digest algorithm must be one of [%s] - TR pag. 10') %
+                           (('The digest algorithm MUST be one of [%s] - TR pag. 10') %
                             (', '.join(constants.ALLOWED_DGST_ALGS))),
                            **error_kwargs)
 
@@ -828,7 +828,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             relaystate = self.params['RelayState']
             self._assertTrue(
                 (relaystate.find('http') == -1),
-                'RelayState must not be immediately intelligible - TR pag. 14 or pag. 15',
+                'RelayState MUST not be immediately intelligible - TR pag. 14 or pag. 15',
                 description = relaystate
             )
         else:
@@ -849,7 +849,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self._assertEqual(
             len(e),
             0,
-            'The Scoping element must not be present - AV n.5',
+            'The Scoping element MUST not be present - AV n.5',
             **error_kwargs
         )
         return self.is_ok(f'{self.__class__.__name__}.test_Scoping')
@@ -865,7 +865,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self._assertEqual(
             len(e),
             0,
-            'The RequesterID  element must not be present - AV n.5',
+            'The RequesterID  element MUST not be present - AV n.5',
             **error_kwargs
         )
         return self.is_ok(f'{self.__class__.__name__}.test_RequesterID')

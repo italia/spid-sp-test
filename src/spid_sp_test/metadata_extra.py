@@ -34,7 +34,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 sign_cert = parse_pem(fname)
                 self._assertFalse(
                     sign_cert[0].lower().startswith('sha1'),
-                    ((f'The certificate #{i} must not use '
+                    ((f'The certificate #{i} MUST not use '
                       f'weak signature algorithm: {sign_cert[0].lower()}')),
                     **error_kwargs
                 )
@@ -43,7 +43,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 self._assertIn(
                     sign_cert[2],
                     exp,
-                    ((f'The key type of certificate #{i} must be one of [%s] - TR pag. 19') %
+                    ((f'The key type of certificate #{i} MUST be one of [%s] - TR pag. 19') %
                      (', '.join(exp))),
                     **error_kwargs
                 )
@@ -57,7 +57,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
                 self._assertTrue(
                     (int(sign_cert[1]) >= exp),
-                    f'The key length of certificate #{i} must be >= {exp}. Instead it is {sign_cert[1]}',
+                    f'The key length of certificate #{i} MUST be >= {exp}. Instead it is {sign_cert[1]}',
                     **error_kwargs
                 )
 
@@ -82,21 +82,21 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         for attr in ['protocolSupportEnumeration', 'WantAssertionsSigned']:
             self._assertTrue(
                 (attr in spsso[0].attrib),
-                f'The {attr} attribute must be present'
+                f'The {attr} attribute MUST be present'
             )
 
             if attr == 'protocolSupportEnumeration':
                 a = spsso[0].get(attr)
                 self._assertIsNotNone(
                     a,
-                    f'The {attr} attribute must have a value',
+                    f'The {attr} attribute MUST have a value',
                     **error_kwargs
                 )
 
                 self._assertEqual(
                     a,
                     'urn:oasis:names:tc:SAML:2.0:protocol',
-                    f'The {attr} attribute must be '
+                    f'The {attr} attribute MUST be '
                     'urn:oasis:names:tc:SAML:2.0:protocol',
                     **error_kwargs
                 )
@@ -105,7 +105,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 a = spsso[0].get(attr)
                 self._assertIsNotNone(
                     a,
-                    f'The {attr} attribute must have a value',
+                    f'The {attr} attribute MUST have a value',
                     **error_kwargs
                 )
 
@@ -113,7 +113,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     self._assertEqual(
                         a.lower(),
                         'true',
-                        f'The {attr} attribute must be true',
+                        f'The {attr} attribute MUST be true',
                         **error_kwargs
                     )
         return self.is_ok(
@@ -137,7 +137,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                         constants.ALLOWED_FORMATS,
                         (('The NameFormat attribute '
                           'in RequestedAttribute element '
-                          'must be one of [%s]') %
+                          'MUST be one of [%s]') %
                          (', '.join(constants.ALLOWED_FORMATS))),
                         **error_kwargs
                     )
@@ -147,7 +147,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
     def test_Organization_extra(self):
         orgs = self.doc.xpath('//EntityDescriptor/Organization')
-        self._assertTrue((len(orgs) == 1), 'An Organization must be present')
+        self._assertTrue((len(orgs) == 1), 'An Organization MUST be present')
 
         desc = [etree.tostring(ent).decode() for ent in orgs if orgs]
         error_kwargs = dict(description = desc) if desc else {}
@@ -163,7 +163,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 )
                 self._assertTrue(
                     (len(e) == 1),
-                    f'An IT localised Organization {elem} must be present',
+                    f'An IT localised Organization {elem} MUST be present',
                     **error_kwargs
                 )
             return self.is_ok(
