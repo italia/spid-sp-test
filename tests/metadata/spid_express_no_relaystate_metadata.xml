@@ -1,81 +1,80 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta name="viewport" content="width=device-width" /><title>https://dev.euronovate.com:53000/metadata</title><link rel="stylesheet" type="text/css" href="resource://content-accessible/viewsource.css" /></head><body id="viewsource" class="highlight" style="-moz-tab-size: 4"><pre id="line1"><span></span><span class="pi">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;</span><span>
-<span id="line2"></span></span><span>&lt;<span class="start-tag">EntityDescriptor</span> <span class="attribute-name">xmlns</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:metadata</a>" <span class="attribute-name">xmlns:ds</span>="<a class="attribute-value">http://www.w3.org/2000/09/xmldsig#</a>" <span class="attribute-name">entityID</span>="<a class="attribute-value">https://dev.euronovate.com</a>" <span class="attribute-name">ID</span>="<a class="attribute-value">https___dev_euronovate_com</a>"&gt;</span><span></span><span>&lt;<span class="start-tag">Signature</span> <span class="attribute-name">xmlns</span>="<a class="attribute-value">http://www.w3.org/2000/09/xmldsig#</a>"&gt;</span><span></span><span>&lt;<span class="start-tag">SignedInfo</span>&gt;</span><span></span><span>&lt;<span class="start-tag">CanonicalizationMethod</span> <span class="attribute-name">Algorithm</span>="<a class="attribute-value">http://www.w3.org/2001/10/xml-exc-c14n#</a>"<span>/</span>&gt;</span><span></span><span>&lt;<span class="start-tag">SignatureMethod</span> <span class="attribute-name">Algorithm</span>="<a class="attribute-value">http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</a>"<span>/</span>&gt;</span><span></span><span>&lt;<span class="start-tag">Reference</span> <span class="attribute-name">URI</span>="<a class="attribute-value">#https___dev_euronovate_com</a>"&gt;</span><span></span><span>&lt;<span class="start-tag">Transforms</span>&gt;</span><span></span><span>&lt;<span class="start-tag">Transform</span> <span class="attribute-name">Algorithm</span>="<a class="attribute-value">http://www.w3.org/2000/09/xmldsig#enveloped-signature</a>"<span>/</span>&gt;</span><span></span><span>&lt;<span class="start-tag">Transform</span> <span class="attribute-name">Algorithm</span>="<a class="attribute-value">http://www.w3.org/2001/10/xml-exc-c14n#</a>"<span>/</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">Transforms</span>&gt;</span><span></span><span>&lt;<span class="start-tag">DigestMethod</span> <span class="attribute-name">Algorithm</span>="<a class="attribute-value">http://www.w3.org/2001/04/xmlenc#sha256</a>"<span>/</span>&gt;</span><span></span><span>&lt;<span class="start-tag">DigestValue</span>&gt;</span><span>0eoSsJnM6L3WAj/CX19tRIMSDGFoIf8RQA9o2d2F6cw=</span><span>&lt;/<span class="end-tag">DigestValue</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">Reference</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">SignedInfo</span>&gt;</span><span></span><span>&lt;<span class="start-tag">SignatureValue</span>&gt;</span><span>R8M6j2wsAhJINxqzCTJvt6DOYgUtixKwdEhxwSbnixbm6IFnmfxBoeOyAmMcmnse/s75/jC24h8LKSg+rncrgkF/woQEqt/P2XATg63YRgmvIpIRBWIMMKK4ZGlulaYMzO61R6f9LMcBL2K2UvIV2sABNFztub9JjZHiitiwBqy1VMOYVQ+St1+UWRZ/EtZwlzrhwj1ViSSx44mPrVSTGAPQs18SRrbAnv49HHdQutVA76IWE4Jcf52id3AnkaJ8DVRwevvBpFIHu1SxMTiIGLvWqEh3DOYHY4zaAQaxGE7Tb1vQ84tfeEkmw70JNLHggitaWRCjNigRgna9Wv4+8Q==</span><span>&lt;/<span class="end-tag">SignatureValue</span>&gt;</span><span></span><span>&lt;<span class="start-tag">KeyInfo</span>&gt;</span><span></span><span>&lt;<span class="start-tag">X509Data</span>&gt;</span><span></span><span>&lt;<span class="start-tag">X509Certificate</span>&gt;</span><span>MIID3jCCAsagAwIBAgIJAKBQF959P09KMA0GCSqGSIb3DQEBCwUAMIGDMQswCQYD
-<span id="line3"></span>VQQGEwJJVDEOMAwGA1UECAwFU3RhdGUxDTALBgNVBAcMBENpdHkxEzARBgNVBAoM
-<span id="line4"></span>CkFjbWUgSW5jLiAxFjAUBgNVBAsMDUlUIERlcGFydG1lbnQxKDAmBgNVBAMMH3Nw
-<span id="line5"></span>aWQtZXhwcmVzcy5zZWxmc2lnbmVkLmV4YW1wbGUwHhcNMjEwNTI3MDYyNjU1WhcN
-<span id="line6"></span>MjIwNTI3MDYyNjU1WjCBgzELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBVN0YXRlMQ0w
-<span id="line7"></span>CwYDVQQHDARDaXR5MRMwEQYDVQQKDApBY21lIEluYy4gMRYwFAYDVQQLDA1JVCBE
-<span id="line8"></span>ZXBhcnRtZW50MSgwJgYDVQQDDB9zcGlkLWV4cHJlc3Muc2VsZnNpZ25lZC5leGFt
-<span id="line9"></span>cGxlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwyfu2by42WpQd1G9
-<span id="line10"></span>oLClO0XTK3Sb3hv7AUMqcdKMCMtDyvf+UAPFOcLvvYsJSIsfrdiGoxERJ1NJwsm8
-<span id="line11"></span>hnXOQjeGwAEf7bonO6cFckqQ9hGNIrGkXITwwYz2Eckp4ZIlBGV1tFxZ+VNsG48L
-<span id="line12"></span>9oFMo4ZGFGcMhqCPfVDMlojF0wdJBUY/SO5peHNrnAEmd+c9ZLlG/c7C0zEIfbbP
-<span id="line13"></span>apQuj7cN/47mfZ4KIbf0ft+6+DTBsoEJL7X30CWqvO6GuWp9YBR7REYDgwlq4F59
-<span id="line14"></span>dy6fuz91xK9lUVmymVmfCKQPy2qbNVfHmoFjlhjjBuZaydfMLFahFD5w61QYn3kv
-<span id="line15"></span>ofZjZwIDAQABo1MwUTAdBgNVHQ4EFgQU9pQQH9v3Gx5xiQZiqdoBhXgDX3IwHwYD
-<span id="line16"></span>VR0jBBgwFoAU9pQQH9v3Gx5xiQZiqdoBhXgDX3IwDwYDVR0TAQH/BAUwAwEB/zAN
-<span id="line17"></span>BgkqhkiG9w0BAQsFAAOCAQEAGlefkxOnAeu/7yV2Y/zIAOKPqUYIFlA2ddOTOLwB
-<span id="line18"></span>9KVEkY9QWBK6kkw2SSOpE/MJF416ohNxZXCWfp0wP/Y0fbOdlTJe23qX8yBTjKay
-<span id="line19"></span>68leJmUgRvaQceb633N9Ly0qvEdDw33wu6wSNUTkQGvC5GnyuuQ5KsYGezG+VQ77
-<span id="line20"></span>ur0AfXKpPqHNWOIUdk06lkoP6rgIZTbNvoikOU8hF8xYuhzkVuwhMH/rPDZreube
-<span id="line21"></span>jxVkq8cimUix97fcGGN5lT+Fyh91niV/JAeZvj5o1vUWo2cOM2aFsc517F49s8ud
-<span id="line22"></span>PprbAXRiB2LdomPbbf2VBXYXTVV9O3NbDUEtYKED6l5eaA==
-<span id="line23"></span></span><span>&lt;/<span class="end-tag">X509Certificate</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">X509Data</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">KeyInfo</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">Signature</span>&gt;</span><span>
-<span id="line24"></span>  </span><span>&lt;<span class="start-tag">SPSSODescriptor</span> <span class="attribute-name">protocolSupportEnumeration</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:protocol</a>" <span class="attribute-name">AuthnRequestsSigned</span>="<a class="attribute-value">true</a>" <span class="attribute-name">WantAssertionsSigned</span>="<a class="attribute-value">true</a>" <span class="attribute-name">xmlns</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:metadata</a>"&gt;</span><span>
-<span id="line25"></span>    </span><span>&lt;<span class="start-tag">KeyDescriptor</span> <span class="attribute-name">use</span>="<a class="attribute-value">signing</a>"&gt;</span><span>
-<span id="line26"></span>      </span><span>&lt;<span class="start-tag">ds:KeyInfo</span>&gt;</span><span>
-<span id="line27"></span>        </span><span>&lt;<span class="start-tag">ds:X509Data</span>&gt;</span><span>
-<span id="line28"></span>          </span><span>&lt;<span class="start-tag">ds:X509Certificate</span>&gt;</span><span>MIID3jCCAsagAwIBAgIJAKBQF959P09KMA0GCSqGSIb3DQEBCwUAMIGDMQswCQYD
-<span id="line29"></span>VQQGEwJJVDEOMAwGA1UECAwFU3RhdGUxDTALBgNVBAcMBENpdHkxEzARBgNVBAoM
-<span id="line30"></span>CkFjbWUgSW5jLiAxFjAUBgNVBAsMDUlUIERlcGFydG1lbnQxKDAmBgNVBAMMH3Nw
-<span id="line31"></span>aWQtZXhwcmVzcy5zZWxmc2lnbmVkLmV4YW1wbGUwHhcNMjEwNTI3MDYyNjU1WhcN
-<span id="line32"></span>MjIwNTI3MDYyNjU1WjCBgzELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBVN0YXRlMQ0w
-<span id="line33"></span>CwYDVQQHDARDaXR5MRMwEQYDVQQKDApBY21lIEluYy4gMRYwFAYDVQQLDA1JVCBE
-<span id="line34"></span>ZXBhcnRtZW50MSgwJgYDVQQDDB9zcGlkLWV4cHJlc3Muc2VsZnNpZ25lZC5leGFt
-<span id="line35"></span>cGxlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwyfu2by42WpQd1G9
-<span id="line36"></span>oLClO0XTK3Sb3hv7AUMqcdKMCMtDyvf+UAPFOcLvvYsJSIsfrdiGoxERJ1NJwsm8
-<span id="line37"></span>hnXOQjeGwAEf7bonO6cFckqQ9hGNIrGkXITwwYz2Eckp4ZIlBGV1tFxZ+VNsG48L
-<span id="line38"></span>9oFMo4ZGFGcMhqCPfVDMlojF0wdJBUY/SO5peHNrnAEmd+c9ZLlG/c7C0zEIfbbP
-<span id="line39"></span>apQuj7cN/47mfZ4KIbf0ft+6+DTBsoEJL7X30CWqvO6GuWp9YBR7REYDgwlq4F59
-<span id="line40"></span>dy6fuz91xK9lUVmymVmfCKQPy2qbNVfHmoFjlhjjBuZaydfMLFahFD5w61QYn3kv
-<span id="line41"></span>ofZjZwIDAQABo1MwUTAdBgNVHQ4EFgQU9pQQH9v3Gx5xiQZiqdoBhXgDX3IwHwYD
-<span id="line42"></span>VR0jBBgwFoAU9pQQH9v3Gx5xiQZiqdoBhXgDX3IwDwYDVR0TAQH/BAUwAwEB/zAN
-<span id="line43"></span>BgkqhkiG9w0BAQsFAAOCAQEAGlefkxOnAeu/7yV2Y/zIAOKPqUYIFlA2ddOTOLwB
-<span id="line44"></span>9KVEkY9QWBK6kkw2SSOpE/MJF416ohNxZXCWfp0wP/Y0fbOdlTJe23qX8yBTjKay
-<span id="line45"></span>68leJmUgRvaQceb633N9Ly0qvEdDw33wu6wSNUTkQGvC5GnyuuQ5KsYGezG+VQ77
-<span id="line46"></span>ur0AfXKpPqHNWOIUdk06lkoP6rgIZTbNvoikOU8hF8xYuhzkVuwhMH/rPDZreube
-<span id="line47"></span>jxVkq8cimUix97fcGGN5lT+Fyh91niV/JAeZvj5o1vUWo2cOM2aFsc517F49s8ud
-<span id="line48"></span>PprbAXRiB2LdomPbbf2VBXYXTVV9O3NbDUEtYKED6l5eaA==
-<span id="line49"></span></span><span>&lt;/<span class="end-tag">ds:X509Certificate</span>&gt;</span><span>
-<span id="line50"></span>        </span><span>&lt;/<span class="end-tag">ds:X509Data</span>&gt;</span><span>
-<span id="line51"></span>      </span><span>&lt;/<span class="end-tag">ds:KeyInfo</span>&gt;</span><span>
-<span id="line52"></span>    </span><span>&lt;/<span class="end-tag">KeyDescriptor</span>&gt;</span><span>
-<span id="line53"></span>    </span><span>&lt;<span class="start-tag">SingleLogoutService</span> <span class="attribute-name">Binding</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST</a>" <span class="attribute-name">Location</span>="<a class="attribute-value">https://dev.euronovate.com:53000/slo</a>"<span>/</span>&gt;</span><span>
-<span id="line54"></span>    </span><span>&lt;<span class="start-tag">NameIDFormat</span>&gt;</span><span>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</span><span>&lt;/<span class="end-tag">NameIDFormat</span>&gt;</span><span>
-<span id="line55"></span>    </span><span>&lt;<span class="start-tag">AssertionConsumerService</span> <span class="attribute-name">index</span>="<a class="attribute-value">0</a>" <span class="attribute-name">isDefault</span>="<a class="attribute-value">true</a>" <span class="attribute-name">Binding</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST</a>" <span class="attribute-name">Location</span>="<a class="attribute-value">https://dev.euronovate.com:53000/acs</a>"<span>/</span>&gt;</span><span>
-<span id="line56"></span>    </span><span>&lt;<span class="start-tag">AttributeConsumingService</span> <span class="attribute-name">index</span>="<a class="attribute-value">0</a>"&gt;</span><span>
-<span id="line57"></span>      </span><span>&lt;<span class="start-tag">ServiceName</span> <span class="attribute-name">xml:lang</span>="<a class="attribute-value">it</a>"&gt;</span><span>Required attrs</span><span>&lt;/<span class="end-tag">ServiceName</span>&gt;</span><span>
-<span id="line58"></span>      </span><span>&lt;<span class="start-tag">RequestedAttribute</span> <span class="attribute-name">FriendlyName</span>="<a class="attribute-value">Indirizzo</a>" <span class="attribute-name">Name</span>="<a class="attribute-value">address</a>" <span class="attribute-name">NameFormat</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:attrname-format:basic</a>"<span>/</span>&gt;</span><span>
-<span id="line59"></span>      </span><span>&lt;<span class="start-tag">RequestedAttribute</span> <span class="attribute-name">FriendlyName</span>="<a class="attribute-value">Email</a>" <span class="attribute-name">Name</span>="<a class="attribute-value">email</a>" <span class="attribute-name">NameFormat</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:attrname-format:basic</a>"<span>/</span>&gt;</span><span>
-<span id="line60"></span>      </span><span>&lt;<span class="start-tag">RequestedAttribute</span> <span class="attribute-name">FriendlyName</span>="<a class="attribute-value">Nome</a>" <span class="attribute-name">Name</span>="<a class="attribute-value">name</a>" <span class="attribute-name">NameFormat</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:attrname-format:basic</a>"<span>/</span>&gt;</span><span>
-<span id="line61"></span>      </span><span>&lt;<span class="start-tag">RequestedAttribute</span> <span class="attribute-name">FriendlyName</span>="<a class="attribute-value">Cognome</a>" <span class="attribute-name">Name</span>="<a class="attribute-value">familyName</a>" <span class="attribute-name">NameFormat</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:attrname-format:basic</a>"<span>/</span>&gt;</span><span>
-<span id="line62"></span>      </span><span>&lt;<span class="start-tag">RequestedAttribute</span> <span class="attribute-name">FriendlyName</span>="<a class="attribute-value">Codice fiscale</a>" <span class="attribute-name">Name</span>="<a class="attribute-value">fiscalNumber</a>" <span class="attribute-name">NameFormat</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:attrname-format:basic</a>"<span>/</span>&gt;</span><span>
-<span id="line63"></span>      </span><span>&lt;<span class="start-tag">RequestedAttribute</span> <span class="attribute-name">FriendlyName</span>="<a class="attribute-value">Numero di telefono</a>" <span class="attribute-name">Name</span>="<a class="attribute-value">mobilePhone</a>" <span class="attribute-name">NameFormat</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:attrname-format:basic</a>"<span>/</span>&gt;</span><span>
-<span id="line64"></span>    </span><span>&lt;/<span class="end-tag">AttributeConsumingService</span>&gt;</span><span>
-<span id="line65"></span>  </span><span>&lt;/<span class="end-tag">SPSSODescriptor</span>&gt;</span><span>
-<span id="line66"></span>  </span><span>&lt;<span class="start-tag">Organization</span>&gt;</span><span>
-<span id="line67"></span>    </span><span>&lt;<span class="start-tag">OrganizationName</span> <span class="attribute-name">xml:lang</span>="<a class="attribute-value">it</a>"&gt;</span><span>Euronovate</span><span>&lt;/<span class="end-tag">OrganizationName</span>&gt;</span><span>
-<span id="line68"></span>    </span><span>&lt;<span class="start-tag">OrganizationDisplayName</span> <span class="attribute-name">xml:lang</span>="<a class="attribute-value">it</a>"&gt;</span><span>Euronovate SA</span><span>&lt;/<span class="end-tag">OrganizationDisplayName</span>&gt;</span><span>
-<span id="line69"></span>    </span><span>&lt;<span class="start-tag">OrganizationURL</span> <span class="attribute-name">xml:lang</span>="<a class="attribute-value">it</a>"&gt;</span><span>https://dev.euronovate.com:53000</span><span>&lt;/<span class="end-tag">OrganizationURL</span>&gt;</span><span>
-<span id="line70"></span>  </span><span>&lt;/<span class="end-tag">Organization</span>&gt;</span><span>
-<span id="line71"></span>  </span><span>&lt;<span class="start-tag">ContactPerson</span> <span class="attribute-name">contactType</span>="<a class="attribute-value">other</a>"&gt;</span><span>
-<span id="line72"></span>    </span><span>&lt;<span class="start-tag">Extensions</span>&gt;</span><span>
-<span id="line73"></span>      </span><span>&lt;<span class="start-tag">VATNumber</span> <span class="attribute-name">xmlns</span>="<a class="attribute-value">https://spid.gov.it/saml-extensions</a>"&gt;</span><span>vatNumber</span><span>&lt;/<span class="end-tag">VATNumber</span>&gt;</span><span>
-<span id="line74"></span>      </span><span>&lt;<span class="start-tag">FiscalCode</span> <span class="attribute-name">xmlns</span>="<a class="attribute-value">https://spid.gov.it/saml-extensions</a>"&gt;</span><span>fiscalCode</span><span>&lt;/<span class="end-tag">FiscalCode</span>&gt;</span><span>
-<span id="line75"></span>      </span><span>&lt;<span class="start-tag">Private</span> <span class="attribute-name">xmlns</span>="<a class="attribute-value">https://spid.gov.it/saml-extensions</a>"<span>/</span>&gt;</span><span>
-<span id="line76"></span>    </span><span>&lt;/<span class="end-tag">Extensions</span>&gt;</span><span>
-<span id="line77"></span>    </span><span>&lt;<span class="start-tag">EmailAddress</span> <span class="attribute-name">xmlns</span>="<a class="attribute-value">urn:oasis:names:tc:SAML:2.0:metadata</a>"&gt;</span><span>emailAddress</span><span>&lt;/<span class="end-tag">EmailAddress</span>&gt;</span><span>
-<span id="line78"></span>    </span><span>&lt;<span class="start-tag">TelephoneNumber</span>&gt;</span><span>telephoneNumber</span><span>&lt;/<span class="end-tag">TelephoneNumber</span>&gt;</span><span>
-<span id="line79"></span>  </span><span>&lt;/<span class="end-tag">ContactPerson</span>&gt;</span><span>
-<span id="line80"></span></span><span>&lt;/<span class="end-tag">EntityDescriptor</span>&gt;</span><span></span></pre></body></html>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://dev.euronovate.com" ID="https___dev_euronovate_com"><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI="#https___dev_euronovate_com"><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>0eoSsJnM6L3WAj/CX19tRIMSDGFoIf8RQA9o2d2F6cw=</DigestValue></Reference></SignedInfo><SignatureValue>R8M6j2wsAhJINxqzCTJvt6DOYgUtixKwdEhxwSbnixbm6IFnmfxBoeOyAmMcmnse/s75/jC24h8LKSg+rncrgkF/woQEqt/P2XATg63YRgmvIpIRBWIMMKK4ZGlulaYMzO61R6f9LMcBL2K2UvIV2sABNFztub9JjZHiitiwBqy1VMOYVQ+St1+UWRZ/EtZwlzrhwj1ViSSx44mPrVSTGAPQs18SRrbAnv49HHdQutVA76IWE4Jcf52id3AnkaJ8DVRwevvBpFIHu1SxMTiIGLvWqEh3DOYHY4zaAQaxGE7Tb1vQ84tfeEkmw70JNLHggitaWRCjNigRgna9Wv4+8Q==</SignatureValue><KeyInfo><X509Data><X509Certificate>MIID3jCCAsagAwIBAgIJAKBQF959P09KMA0GCSqGSIb3DQEBCwUAMIGDMQswCQYD
+VQQGEwJJVDEOMAwGA1UECAwFU3RhdGUxDTALBgNVBAcMBENpdHkxEzARBgNVBAoM
+CkFjbWUgSW5jLiAxFjAUBgNVBAsMDUlUIERlcGFydG1lbnQxKDAmBgNVBAMMH3Nw
+aWQtZXhwcmVzcy5zZWxmc2lnbmVkLmV4YW1wbGUwHhcNMjEwNTI3MDYyNjU1WhcN
+MjIwNTI3MDYyNjU1WjCBgzELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBVN0YXRlMQ0w
+CwYDVQQHDARDaXR5MRMwEQYDVQQKDApBY21lIEluYy4gMRYwFAYDVQQLDA1JVCBE
+ZXBhcnRtZW50MSgwJgYDVQQDDB9zcGlkLWV4cHJlc3Muc2VsZnNpZ25lZC5leGFt
+cGxlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwyfu2by42WpQd1G9
+oLClO0XTK3Sb3hv7AUMqcdKMCMtDyvf+UAPFOcLvvYsJSIsfrdiGoxERJ1NJwsm8
+hnXOQjeGwAEf7bonO6cFckqQ9hGNIrGkXITwwYz2Eckp4ZIlBGV1tFxZ+VNsG48L
+9oFMo4ZGFGcMhqCPfVDMlojF0wdJBUY/SO5peHNrnAEmd+c9ZLlG/c7C0zEIfbbP
+apQuj7cN/47mfZ4KIbf0ft+6+DTBsoEJL7X30CWqvO6GuWp9YBR7REYDgwlq4F59
+dy6fuz91xK9lUVmymVmfCKQPy2qbNVfHmoFjlhjjBuZaydfMLFahFD5w61QYn3kv
+ofZjZwIDAQABo1MwUTAdBgNVHQ4EFgQU9pQQH9v3Gx5xiQZiqdoBhXgDX3IwHwYD
+VR0jBBgwFoAU9pQQH9v3Gx5xiQZiqdoBhXgDX3IwDwYDVR0TAQH/BAUwAwEB/zAN
+BgkqhkiG9w0BAQsFAAOCAQEAGlefkxOnAeu/7yV2Y/zIAOKPqUYIFlA2ddOTOLwB
+9KVEkY9QWBK6kkw2SSOpE/MJF416ohNxZXCWfp0wP/Y0fbOdlTJe23qX8yBTjKay
+68leJmUgRvaQceb633N9Ly0qvEdDw33wu6wSNUTkQGvC5GnyuuQ5KsYGezG+VQ77
+ur0AfXKpPqHNWOIUdk06lkoP6rgIZTbNvoikOU8hF8xYuhzkVuwhMH/rPDZreube
+jxVkq8cimUix97fcGGN5lT+Fyh91niV/JAeZvj5o1vUWo2cOM2aFsc517F49s8ud
+PprbAXRiB2LdomPbbf2VBXYXTVV9O3NbDUEtYKED6l5eaA==
+</X509Certificate></X509Data></KeyInfo></Signature>
+  <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" AuthnRequestsSigned="true" WantAssertionsSigned="true" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <KeyDescriptor use="signing">
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate>MIID3jCCAsagAwIBAgIJAKBQF959P09KMA0GCSqGSIb3DQEBCwUAMIGDMQswCQYD
+VQQGEwJJVDEOMAwGA1UECAwFU3RhdGUxDTALBgNVBAcMBENpdHkxEzARBgNVBAoM
+CkFjbWUgSW5jLiAxFjAUBgNVBAsMDUlUIERlcGFydG1lbnQxKDAmBgNVBAMMH3Nw
+aWQtZXhwcmVzcy5zZWxmc2lnbmVkLmV4YW1wbGUwHhcNMjEwNTI3MDYyNjU1WhcN
+MjIwNTI3MDYyNjU1WjCBgzELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBVN0YXRlMQ0w
+CwYDVQQHDARDaXR5MRMwEQYDVQQKDApBY21lIEluYy4gMRYwFAYDVQQLDA1JVCBE
+ZXBhcnRtZW50MSgwJgYDVQQDDB9zcGlkLWV4cHJlc3Muc2VsZnNpZ25lZC5leGFt
+cGxlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwyfu2by42WpQd1G9
+oLClO0XTK3Sb3hv7AUMqcdKMCMtDyvf+UAPFOcLvvYsJSIsfrdiGoxERJ1NJwsm8
+hnXOQjeGwAEf7bonO6cFckqQ9hGNIrGkXITwwYz2Eckp4ZIlBGV1tFxZ+VNsG48L
+9oFMo4ZGFGcMhqCPfVDMlojF0wdJBUY/SO5peHNrnAEmd+c9ZLlG/c7C0zEIfbbP
+apQuj7cN/47mfZ4KIbf0ft+6+DTBsoEJL7X30CWqvO6GuWp9YBR7REYDgwlq4F59
+dy6fuz91xK9lUVmymVmfCKQPy2qbNVfHmoFjlhjjBuZaydfMLFahFD5w61QYn3kv
+ofZjZwIDAQABo1MwUTAdBgNVHQ4EFgQU9pQQH9v3Gx5xiQZiqdoBhXgDX3IwHwYD
+VR0jBBgwFoAU9pQQH9v3Gx5xiQZiqdoBhXgDX3IwDwYDVR0TAQH/BAUwAwEB/zAN
+BgkqhkiG9w0BAQsFAAOCAQEAGlefkxOnAeu/7yV2Y/zIAOKPqUYIFlA2ddOTOLwB
+9KVEkY9QWBK6kkw2SSOpE/MJF416ohNxZXCWfp0wP/Y0fbOdlTJe23qX8yBTjKay
+68leJmUgRvaQceb633N9Ly0qvEdDw33wu6wSNUTkQGvC5GnyuuQ5KsYGezG+VQ77
+ur0AfXKpPqHNWOIUdk06lkoP6rgIZTbNvoikOU8hF8xYuhzkVuwhMH/rPDZreube
+jxVkq8cimUix97fcGGN5lT+Fyh91niV/JAeZvj5o1vUWo2cOM2aFsc517F49s8ud
+PprbAXRiB2LdomPbbf2VBXYXTVV9O3NbDUEtYKED6l5eaA==
+</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </KeyDescriptor>
+    <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://dev.euronovate.com:53000/slo"/>
+    <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+    <AssertionConsumerService index="0" isDefault="true" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://dev.euronovate.com:53000/acs"/>
+    <AttributeConsumingService index="0">
+      <ServiceName xml:lang="it">Required attrs</ServiceName>
+      <RequestedAttribute FriendlyName="Indirizzo" Name="address" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+      <RequestedAttribute FriendlyName="Email" Name="email" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+      <RequestedAttribute FriendlyName="Nome" Name="name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+      <RequestedAttribute FriendlyName="Cognome" Name="familyName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+      <RequestedAttribute FriendlyName="Codice fiscale" Name="fiscalNumber" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+      <RequestedAttribute FriendlyName="Numero di telefono" Name="mobilePhone" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
+    </AttributeConsumingService>
+  </SPSSODescriptor>
+  <Organization>
+    <OrganizationName xml:lang="it">Euronovate</OrganizationName>
+    <OrganizationDisplayName xml:lang="it">Euronovate SA</OrganizationDisplayName>
+    <OrganizationURL xml:lang="it">https://dev.euronovate.com:53000</OrganizationURL>
+  </Organization>
+  <ContactPerson contactType="other">
+    <Extensions>
+      <VATNumber xmlns="https://spid.gov.it/saml-extensions">vatNumber</VATNumber>
+      <FiscalCode xmlns="https://spid.gov.it/saml-extensions">fiscalCode</FiscalCode>
+      <Private xmlns="https://spid.gov.it/saml-extensions"/>
+    </Extensions>
+    <EmailAddress xmlns="urn:oasis:names:tc:SAML:2.0:metadata">emailAddress</EmailAddress>
+    <TelephoneNumber>telephoneNumber</TelephoneNumber>
+  </ContactPerson>
+</EntityDescriptor>
