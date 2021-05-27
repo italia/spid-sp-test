@@ -140,7 +140,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         except KeyError:
             raise SAMLRequestNotFound(self.authn_request)
 
-        self.relay_state = self.authn_request.get('RelayState')
+        self.relay_state = self.authn_request.get('RelayState') or ""
 
         self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f'{BASE_DIR}/xsd'
@@ -222,9 +222,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     f'-----BEGIN CERTIFICATE-----\n{cert}-----END CERTIFICATE-----'.encode()
                 )
                 cert_file.seek(0)
+                _sigalg = self.authn_request.get('SigAlg', "")
                 quoted_req = urllib.parse.quote_plus(self.authn_request['SAMLRequest'])
-                quoted_rs = urllib.parse.quote_plus(self.authn_request.get('RelayState', ""))
-                quoted_sigalg = urllib.parse.quote_plus(self.authn_request.get('SigAlg', ""))
+                breakpoint()
+                quoted_rs = urllib.parse.quote_plus(self.authn_request.get('RelayState') or "")
+                quoted_sigalg = urllib.parse.quote_plus(_sigalg)
                 authn_req = (f"SAMLRequest={quoted_req}&"
                              f"RelayState={quoted_rs}&"
                              f"SigAlg={quoted_sigalg}")
@@ -244,7 +246,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 pubkey_file.write(x509_cert.encode())
                 pubkey_file.seek(0)
 
-                dgst = self.authn_request['SigAlg'].split('-')[-1]
+                dgst = _sigalg.split('-')[-1]
                 signature = signature_file.name
 
                 ver_cmd = (f'openssl dgst -{dgst} '
