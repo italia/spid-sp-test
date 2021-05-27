@@ -120,7 +120,7 @@ examples:
         src/spid_sp_test/spid_sp_test --idp-metadata
 
         # test an authentication request made by a SP
-        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=spid-idp-test
+        src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080
 
         # select which tests to execute
         src/spid_sp_test/spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=http://localhost:8080 --extra --debug ERROR -json -l xsd_check
