@@ -28,6 +28,7 @@ def test_django_redirect():
     assert es != 0
 
 def test_spid_express_no_relaystate():
+    """Must fail"""
     es = run_cmd("spid_express_no_relaystate_redirect.url",
                  metadata = "spid_express_no_relaystate_metadata.xml")
-    assert es == 0
+    assert es != 0
