@@ -223,8 +223,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 )
                 cert_file.seek(0)
                 quoted_req = urllib.parse.quote_plus(self.authn_request['SAMLRequest'])
-                quoted_rs = urllib.parse.quote_plus(self.authn_request['RelayState'])
-                quoted_sigalg = urllib.parse.quote_plus(self.authn_request['SigAlg'])
+                quoted_rs = urllib.parse.quote_plus(self.authn_request.get('RelayState', ""))
+                quoted_sigalg = urllib.parse.quote_plus(self.authn_request.get('SigAlg', ""))
                 authn_req = (f"SAMLRequest={quoted_req}&"
                              f"RelayState={quoted_rs}&"
                              f"SigAlg={quoted_sigalg}")
@@ -881,10 +881,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
     def test_profile_spid_sp(self):
         self.test_profile_saml2core()
 
+        self.test_RelayState()
+        self.test_Signature()
         self.test_xmldsig()
         self.test_AuthnRequest_SPID()
         self.test_AuthnRequest_SPID_extra()
         self.test_NameIDPolicy()
         self.test_RequestedAuthnContext()
-        self.test_Signature()
-        self.test_RelayState()
