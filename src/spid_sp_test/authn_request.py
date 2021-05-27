@@ -823,8 +823,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
     def test_RelayState(self):
         '''Test the compliance of RelayState parameter'''
-        if ('RelayState' in self.params):
-            relaystate = self.params.get('RelayState')
+        if ('RelayState' in self.params) and self.params.get('RelayState'):
+            relaystate = self.params['RelayState']
             self._assertTrue(
                 (relaystate.find('http') == -1),
                 'RelayState must not be immediately intelligible - TR pag. 14 or pag. 15',
