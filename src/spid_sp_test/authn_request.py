@@ -224,7 +224,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 cert_file.seek(0)
                 _sigalg = self.authn_request.get('SigAlg', "")
                 quoted_req = urllib.parse.quote_plus(self.authn_request['SAMLRequest'])
-                breakpoint()
                 quoted_rs = urllib.parse.quote_plus(self.authn_request.get('RelayState') or "")
                 quoted_sigalg = urllib.parse.quote_plus(_sigalg)
                 authn_req = (f"SAMLRequest={quoted_req}&"
@@ -502,7 +501,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     description = req.attrib
                 )
                 self._assertEqual(
-                    req.get('ForceAuthn').lower(),
+                    req.get('ForceAuthn', "").lower(),
                     'true',
                     'The ForceAuthn attribute must be True '
                     'because of minimum/SpidL1',
