@@ -588,6 +588,13 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
                         **error_kwargs
                     )
 
+            self._assertTrue(
+                    ("it" in lang_counter),
+                    (f'The elements OrganizationName, OrganizationDisplayName and OrganizationURL '
+                     'MUST have at least an it language enabled'), # noqa
+                    **error_kwargs
+                )
+
         return self.is_ok(f'{self.__class__.__name__}.test_Organization')
 
     def test_profile_saml2core(self):
