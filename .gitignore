@@ -25,3 +25,4 @@ dumps/*
 *html_report/*
 *html/*
 *.pdf
+tests/.DS_Store
