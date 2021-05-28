@@ -441,6 +441,23 @@ pip install requirements-dev.txt
 pytest --cov=src/spid_sp_test tests/test_*
 ````
 
+If you need a docker, you can do:
+1. create the developer image
+````
+docker build -f Dockerfile-devenv --no-cache . --tag italia/spid-sp-test-devenv
+````
+2. run coverage tests on the development image
+````
+docker run italia/spid-sp-test-devenv
+````
+3. if you need to use the image as a developer machine or inspect the enviroment, you can access in it with
+````
+docker run -it --entrypoint /bin/bash italia/spid-sp-test-devenv
+````
+4. The final step is a live coding from your host machine and the development docker instance, using volumes
+````
+docker run -it -v $(pwd):/tmp/src --entrypoint /bin/bash italia/spid-sp-test-devenv
+````
 
 Authors
 -------
