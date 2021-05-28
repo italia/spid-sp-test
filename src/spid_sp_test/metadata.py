@@ -34,7 +34,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
         self.metadata_url = metadata_url
         self.production = production
         self.metadata = self.get(metadata_url)
-        # self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f'{BASE_DIR}/xsd'
 
         self.doc = etree.fromstring(self.metadata)
