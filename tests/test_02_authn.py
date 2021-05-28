@@ -32,3 +32,7 @@ def test_spid_express_no_relaystate():
     es = run_cmd("spid_express_no_relaystate_redirect.url",
                  metadata = "spid_express_no_relaystate_metadata.xml")
     assert es != 0
+
+def test_django_post_wrong_signature():
+    es = run_cmd('spid_django_wrong_signature.xml')
+    assert es != 0

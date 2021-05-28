@@ -195,77 +195,80 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         return self.is_ok(f'{self.__class__.__name__}.test_xsd')
 
     def test_xmldsig(self):
-        cert = self.md.xpath(
+        certs = self.md.xpath(
             '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
             '/KeyInfo/X509Data/X509Certificate/text()')
 
-        desc = cert
+        desc = certs
         error_kwargs = dict(description = desc) if desc else {}
 
         msg = ('The AuthnRequest MUST validate against XSD '
                'and MUST have a valid signature')
 
-        if not cert:
+        if not certs:
             self.handle_result('error', '-> '.join(
-                (msg, 'AuthnRequest Signature validation failed'),
+                (msg, 'AuthnRequest Signature validation failed: certificates are missing.'),
                 **error_kwargs)
             )
             return self.is_ok(f'{self.__class__.__name__}.test_xsd_and_xmldsig')
         else:
-            cert = cert[0]
+            is_valid = False
+            for cert in certs:
+                if self.IS_HTTP_REDIRECT:
+                    with NamedTemporaryFile(suffix='.xml') as cert_file:
+                        if cert[-1] != '\n':
+                            cert += '\n'
+                        cert_file.write(
+                            f'-----BEGIN CERTIFICATE-----\n{cert}-----END CERTIFICATE-----'.encode()
+                        )
+                        cert_file.seek(0)
+                        _sigalg = self.authn_request.get('SigAlg', "")
+                        quoted_req = urllib.parse.quote_plus(self.authn_request['SAMLRequest'])
+                        quoted_rs = urllib.parse.quote_plus(self.authn_request.get('RelayState') or "")
+                        quoted_sigalg = urllib.parse.quote_plus(_sigalg)
+                        authn_req = (f"SAMLRequest={quoted_req}&"
+                                     f"RelayState={quoted_rs}&"
+                                     f"SigAlg={quoted_sigalg}")
 
-        if self.IS_HTTP_REDIRECT:
-            with NamedTemporaryFile(suffix='.xml') as cert_file:
-                if cert[-1] != '\n':
-                    cert += '\n'
-                cert_file.write(
-                    f'-----BEGIN CERTIFICATE-----\n{cert}-----END CERTIFICATE-----'.encode()
-                )
-                cert_file.seek(0)
-                _sigalg = self.authn_request.get('SigAlg', "")
-                quoted_req = urllib.parse.quote_plus(self.authn_request['SAMLRequest'])
-                quoted_rs = urllib.parse.quote_plus(self.authn_request.get('RelayState') or "")
-                quoted_sigalg = urllib.parse.quote_plus(_sigalg)
-                authn_req = (f"SAMLRequest={quoted_req}&"
-                             f"RelayState={quoted_rs}&"
-                             f"SigAlg={quoted_sigalg}")
+                        payload_file = NamedTemporaryFile(suffix='.xml')
+                        payload_file.write(authn_req.encode())
+                        payload_file.seek(0)
 
-                payload_file = NamedTemporaryFile(suffix='.xml')
-                payload_file.write(authn_req.encode())
-                payload_file.seek(0)
+                        signature_file = NamedTemporaryFile(suffix='.sign')
+                        signature_file.write(base64.b64decode(self.authn_request['Signature'].encode()))
+                        signature_file.seek(0)
 
-                signature_file = NamedTemporaryFile(suffix='.sign')
-                signature_file.write(base64.b64decode(self.authn_request['Signature'].encode()))
-                signature_file.seek(0)
+                        pubkey_file = NamedTemporaryFile(suffix='.crt')
+                        x509_cert = subprocess.getoutput(
+                            f'openssl x509 -in {cert_file.name} -noout -pubkey'
+                        )
+                        pubkey_file.write(x509_cert.encode())
+                        pubkey_file.seek(0)
 
-                pubkey_file = NamedTemporaryFile(suffix='.crt')
-                x509_cert = subprocess.getoutput(
-                    f'openssl x509 -in {cert_file.name} -noout -pubkey'
-                )
-                pubkey_file.write(x509_cert.encode())
-                pubkey_file.seek(0)
+                        dgst = _sigalg.split('-')[-1]
+                        signature = signature_file.name
 
-                dgst = _sigalg.split('-')[-1]
-                signature = signature_file.name
+                        ver_cmd = (f'openssl dgst -{dgst} '
+                                   f'-verify {pubkey_file.name} '
+                                   f'-signature {signature} {payload_file.name}')
+                        exit_msg = subprocess.getoutput(ver_cmd)
+                        error_kwargs['description'] = exit_msg
+                        if 'Verified OK' in exit_msg:
+                            is_valid = True
+                        else:
+                            is_valid = False
 
-                ver_cmd = (f'openssl dgst -{dgst} '
-                           f'-verify {pubkey_file.name} '
-                           f'-signature {signature} {payload_file.name}')
-                exit_msg = subprocess.getoutput(ver_cmd)
-                error_kwargs['description'] = exit_msg
-                if 'Verified OK' in exit_msg:
-                    is_valid = True
                 else:
-                    is_valid = False
+                    # pyXMLSecurity allows to pass a certificate without store it on a file
+                    backend = CryptoBackendXMLSecurity()
+                    is_valid = backend.validate_signature(self.authn_request_decoded,
+                                                          cert_file=cert,
+                                                          cert_type='pem',
+                                                          node_name=constants.NODE_NAME,
+                                                          node_id=None)
+                if is_valid:
+                    break
 
-        else:
-            # pyXMLSecurity allows to pass a certificate without store it on a file
-            backend = CryptoBackendXMLSecurity()
-            is_valid = backend.validate_signature(self.authn_request_decoded,
-                                                  cert_file=cert,
-                                                  cert_type='pem',
-                                                  node_name=constants.NODE_NAME,
-                                                  node_id=None)
         self._assertTrue(is_valid,
                          'AuthnRequest Signature validation failed',
                          **error_kwargs)
