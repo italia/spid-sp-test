@@ -22,6 +22,7 @@ LABEL maintainer="Paolo Smiraglia <paolo.smiraglia@gmail.com>"
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        xmlsec1 \
         libxml2-dev \
         libxmlsec1-dev \
         libxmlsec1-openssl \
