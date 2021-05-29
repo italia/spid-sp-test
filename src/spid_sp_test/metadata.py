@@ -601,7 +601,9 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         return self.is_ok(f'{self.__class__.__name__}.test_Organization')
 
     def test_profile_saml2core(self):
-        self.xsd_check()
+        self.xsd_check(
+            xsds_files = ['saml-schema-metadata-2.0.xsd']
+        )
 
         # loop for all the attrs that starts with test_ ... todo?
         self.test_EntityDescriptor()
@@ -639,7 +641,10 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         self.test_Contacts_PubPriv(contact_type='billing')
         self.test_Contacts_VATFC()
         self.test_Contacts_Priv()
-        self.xsd_check(xsds_files = ['spid-invoicing.xsd'])
+        self.xsd_check(xsds_files = [
+            'saml-schema-metadata-2.0.xsd',
+            'spid-invoicing.xsd'
+        ])
 
     def test_profile_spid_ag_full(self):
         self.test_profile_spid_sp()
