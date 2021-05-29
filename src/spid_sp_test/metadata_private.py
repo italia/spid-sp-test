@@ -31,9 +31,6 @@ class SpidSpMetadataCheckPrivate(object):
             self.handle_error(_msg, **error_kwargs)
         if exts:
             ext = exts[0]
-            if ext.attrib.get('fpa') != "https://spid.gov.it/invoicing-extensions":
-                _msg = 'The namespace “https://spid.gov.it/invoicing-extensions” MUST be present'
-                self.handle_error(_msg, **error_kwargs)
 
             company = self.doc.xpath(
                 '//ContactPerson/Extensions/CessionarioCommittente/CompanyName'
