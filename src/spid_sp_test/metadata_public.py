@@ -1,6 +1,7 @@
 import re
 
 from lxml import etree
+from . indicepa import get_indicepa_by_ipacode
 
 
 class SpidSpMetadataCheckPublic(object):
@@ -68,6 +69,19 @@ class SpidSpMetadataCheckPublic(object):
                 self.handle_result('error', _msg, **error_kwargs)
             elif phone[0:3] != '+39':
                 _msg = 'The TelephoneNumber element MUST start with “+39”'
+                self.handle_result('error', _msg, **error_kwargs)
+
+        ipacode = self.doc.xpath('//ContactPerson/Extensions/IPACode')
+        if not ipacode:
+            _msg = 'The IPACode element MUST be present'
+            self.handle_result('error', _msg, **error_kwargs)
+        elif ipacode:
+            ipacode = ipacode[0]
+            if not ipacode.text:
+                _msg = 'The IPACode element MUST have a value'
+                self.handle_result('error', _msg, **error_kwargs)
+            elif get_indicepa_by_ipacode(ipacode.text)[0] != 1:
+                _msg = 'The IPACode element MUST have a valid value present on IPA '
                 self.handle_result('error', _msg, **error_kwargs)
 
         return self.is_ok(f'{self.__class__.__name__}.test_Contacts_PubPriv')
