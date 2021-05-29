@@ -636,6 +636,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
     def test_profile_spid_sp_private(self):
         self.test_profile_spid_sp()
         self.test_Contacts_PubPriv()
+        self.test_Contacts_PubPriv(contact_type='billing')
         self.test_Contacts_VATFC()
         self.test_Contacts_Priv()
 

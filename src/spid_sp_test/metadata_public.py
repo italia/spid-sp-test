@@ -6,7 +6,7 @@ from . indicepa import get_indicepa_by_ipacode
 
 class SpidSpMetadataCheckPublic(object):
 
-    def test_Contacts_PubPriv(self):
+    def test_Contacts_PubPriv(self, contact_type="other"):
         entity_desc = self.doc.xpath('//ContactPerson')
         desc = [etree.tostring(ent).decode() for ent in entity_desc if entity_desc]
         error_kwargs = dict(description = desc) if desc else {}
@@ -25,15 +25,16 @@ class SpidSpMetadataCheckPublic(object):
             _msg = 'The contactType attribute MUST have a value - TR pag. 19'
             self.handle_error(_msg, **error_kwargs)
 
-        others = self.doc.xpath('//ContactPerson[@contactType="other"]')
+        others = self.doc.xpath(f'//ContactPerson[@contactType="{contact_type}"]')
         if len(others) != 1:
-            _msg = 'Only one ContactPerson element of contactType "other" MUST be present'
+            _msg = f'Only one ContactPerson element of contactType "{contact_type}" MUST be present'
             self.handle_error(_msg, **error_kwargs)
 
-        exts = self.doc.xpath('//ContactPerson/Extensions')
-        if len(others) != 1:
-            _msg = 'Only one Extensions element inside ContactPerson element MUST be present'
-            self.handle_error(_msg, **error_kwargs)
+        if contact_type == 'other':
+            exts = self.doc.xpath('//ContactPerson/Extensions')
+            if len(others) != 1:
+                _msg = 'Only one Extensions element inside ContactPerson element MUST be present'
+                self.handle_error(_msg, **error_kwargs)
 
         orgs = self.doc.xpath('//EntityDescriptor/Organization/OrganizationName')
         if orgs:
