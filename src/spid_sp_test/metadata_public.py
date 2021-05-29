@@ -42,7 +42,7 @@ class SpidSpMetadataCheckPublic(object):
             if company:
                 company = company[0]
                 if company.text != org.text:
-                    _msg = 'If the Company element is present it MUST be equal to OrganizationName'
+                    _msg = 'If the Company element if present it MUST be equal to OrganizationName'
                     self.handle_error(_msg, **error_kwargs)
 
 
