@@ -1,6 +1,10 @@
 import requests
+import logging
+
 
 API_URL = 'https://indicepa.gov.it/PortaleServices/api/aoo'
+logger = logging.getLogger(__name__)
+
 
 def get_indicepa_by_ipacode(value):
     qs = '''
@@ -23,17 +27,22 @@ def get_indicepa_by_ipacode(value):
 
     qs_final = qs.replace('$IPACode', value)
     header = {"Content-Type": "application/json"}
-    response = requests.post(API_URL, headers=header, data=qs_final)
 
-    res = False
+    response = None
     try:
+        response = requests.post(
+                    API_URL, headers=header, data=qs_final, timeout=5)
+    except Exception as e:
+        logger.error(e)
+        return {-1, {}}
+    else:
         res = response.json()
-    except KeyError:
-        pass
-
-    result = (
-        res['risposta']['paginazione']['numeroRigheTotali'],
-        res
-    )
-
-    return result
+        try:
+            result = (
+                res['risposta']['paginazione']['numeroRigheTotali'],
+                res
+            )
+            return result
+        except KeyError:
+            logger.error(f"{API_URL} invalid response")
+            return {-1, {}}

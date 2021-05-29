@@ -69,6 +69,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     **error_kwargs
                 )
                 os.remove(fname)
+
         return self.is_ok(
             f'{self.__class__.__name__}.test_Signature_extra'
         )

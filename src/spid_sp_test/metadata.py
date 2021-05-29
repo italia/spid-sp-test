@@ -81,9 +81,10 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
             except Exception as e:
                 os.chdir(_orig_pos)
                 logger.error(f'{msg}: {e}')
-                self.handle_error(msg,
-                                  description='xsd test failed',
-                                  traceback=f'{e}')
+                self.handle_result('error',
+                                   msg,
+                                   description='xsd test failed',
+                                   traceback=f'{e}')
         os.chdir(_orig_pos)
         return self.is_ok(f'{self.__class__.__name__}.xsd_check')
 
@@ -91,16 +92,25 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         entity_desc = self.doc.xpath('//EntityDescriptor')
         desc = [etree.tostring(ent).decode() for ent in entity_desc if entity_desc]
         error_kwargs = dict(description = desc) if desc else {}
-        if not self.doc.attrib.get('entityID'):
-            _msg = (f'Missing entityID in {self.doc.attrib}: '
-                    'The entityID attribute MUST be present - TR pag. 19')
-            self.handle_result('error', _msg, **error_kwargs)
-        elif len(entity_desc) > 1:
-            _msg = 'Only one EntityDescriptor element MUST be present - TR pag. 19'
-            self.handle_result('error', _msg, **error_kwargs)
-        elif not entity_desc[0].get('entityID'):
-            _msg = 'The entityID attribute MUST have a value - TR pag. 19'
-            self.handle_result('error', _msg, **error_kwargs)
+
+        self._assertTrue(
+            self.doc.attrib.get('entityID'),
+            (f'Missing entityID in {self.doc.attrib}: '
+             'The entityID attribute MUST be present - TR pag. 19'),
+             description = self.doc.attrib.get('entityID'),
+        )
+
+        self._assertTrue(
+            len(entity_desc) == 1,
+            'Only one EntityDescriptor element MUST be present - TR pag. 19',
+             description = self.doc.attrib.get('entityID'),
+        )
+
+        self._assertTrue(
+            entity_desc[0].get('entityID'),
+            'The entityID attribute MUST have a value - TR pag. 19',
+             description = entity_desc[0].get('entityID'),
+        )
 
         if self.production:
             self._assertIsValidHttpsUrl(
@@ -441,7 +451,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
                          'with index = 0 - TR pag. 20',
                          **error_kwargs)
         return self.is_ok(
-            f'{self.__class__.__name__}.test_AssertionConsumerService__SPID')
+            f'{self.__class__.__name__}.test_AssertionConsumerService_SPID')
 
     def test_AttributeConsumingService(self):
         '''Test the compliance of AttributeConsumingService element(s)'''
