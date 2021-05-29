@@ -30,11 +30,10 @@ class SpidSpMetadataCheckPublic(object):
             _msg = f'Only one ContactPerson element of contactType "{contact_type}" MUST be present'
             self.handle_error(_msg, **error_kwargs)
 
-        if contact_type == 'other':
-            exts = self.doc.xpath('//ContactPerson/Extensions')
-            if len(others) != 1:
-                _msg = 'Only one Extensions element inside ContactPerson element MUST be present'
-                self.handle_error(_msg, **error_kwargs)
+        exts = self.doc.xpath('//ContactPerson/Extensions')
+        if len(exts) != 1:
+            _msg = 'Only one Extensions element inside ContactPerson element MUST be present'
+            self.handle_error(_msg, **error_kwargs)
 
         orgs = self.doc.xpath('//EntityDescriptor/Organization/OrganizationName')
         if orgs:
