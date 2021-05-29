@@ -12,6 +12,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from lxml import etree
 from tempfile import NamedTemporaryFile
+from . metadata_public import SpidSpMetadataCheckPublic
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
@@ -19,7 +20,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 logger = logging.getLogger(__name__)
 
 
-class SpidSpMetadataCheck(AbstractSpidCheck):
+class SpidSpMetadataCheck(AbstractSpidCheck, SpidSpMetadataCheckPublic):
 
     def __init__(self,
                  metadata_url,
@@ -625,8 +626,8 @@ class SpidSpMetadataCheck(AbstractSpidCheck):
 
     def test_profile_spid_sp_public(self):
         self.test_profile_spid_sp()
-        # TODO
-        # self.test_ExtensionsContactPersonSPPublic()
+        self.test_Contacts_PubPriv()
+
 
     def test_profile_spid_sp_private(self):
         self.test_profile_spid_sp()
