@@ -23,6 +23,14 @@ class SpidSpMetadataCheckPrivate(object):
             _msg = (f'The Private element MUST be empty')
             self.handle_error(_msg, **error_kwargs)
 
+        exts = self.doc.xpath('//ContactPerson/Extensions/CessionarioCommittente')
+        if len(exts) != 1:
+            _msg = 'The CessionarioCommittente element MUST be present'
+            self.handle_error(_msg, **error_kwargs)
+        elif ext[0].attrib.get('fpa') != "https://spid.gov.it/invoicing-extensions":
+            _msg = 'The namespace “https://spid.gov.it/invoicing-extensions” MUST be present'
+            self.handle_error(_msg, **error_kwargs)
+
         ctype = self.doc.xpath('//ContactPerson/Extensions/Public')
         if ctype:
             _msg = ('The Public element MUST not be present')
