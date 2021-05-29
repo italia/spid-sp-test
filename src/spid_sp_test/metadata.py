@@ -639,6 +639,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         self.test_Contacts_PubPriv(contact_type='billing')
         self.test_Contacts_VATFC()
         self.test_Contacts_Priv()
+        self.xsd_check(xsds_files = ['spid-invoicing.xsd'])
 
     def test_profile_spid_ag_full(self):
         self.test_profile_spid_sp()

@@ -36,8 +36,8 @@ class SpidSpMetadataCheckPublic(object):
             self.handle_error(_msg, **error_kwargs)
 
         orgs = self.doc.xpath('//EntityDescriptor/Organization/OrganizationName')
-        if orgs:
-            org = orgs[1]
+        if len(orgs) >= 1:
+            org = orgs[0]
             company = self.doc.xpath('//ContactPerson/Extensions/CompanyName')
             if company:
                 company = company[0]

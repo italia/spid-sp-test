@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<schema 
-	targetNamespace="https://spid.gov.it/invoicing-extensions" 
-  xmlns:fpa="https://spid.gov.it/invoicing-extensions" 
-	xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
-	xmlns="http://www.w3.org/2001/XMLSchema" 
+<schema
+	targetNamespace="https://spid.gov.it/invoicing-extensions"
+  xmlns:fpa="https://spid.gov.it/invoicing-extensions"
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+	xmlns="http://www.w3.org/2001/XMLSchema"
   elementFormDefault="unqualified"
   attributeFormDefault="unqualified"
 	version="1.0">
-   
+
   <import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd" />
-    
+
   <element name="CessionarioCommittente" type="fpa:CessionarioCommittenteType" />
   <complexType name="CessionarioCommittenteType">
     <annotation>
       <documentation>Blocco relativo ai dati del Cessionario / Committente</documentation>
     </annotation>
     <sequence>
-      <element ref="fpa:DatiAnagrafici" minOccurs="1" maxOccurs="1"/> 
-      <element ref="fpa:Sede" minOccurs="1" maxOccurs="1"/> 
+      <element ref="fpa:DatiAnagrafici" minOccurs="1" maxOccurs="1"/>
+      <element ref="fpa:Sede" minOccurs="1" maxOccurs="1"/>
     </sequence>
   </complexType>
 
@@ -25,10 +25,10 @@
   <complexType name="DatiAnagraficiCessionarioType">
     <sequence>
       <choice minOccurs="1" maxOccurs="2">
-        <element ref="fpa:IdFiscaleIVA"   minOccurs="1" maxOccurs="1"/> 
-        <element ref="fpa:CodiceFiscale"  minOccurs="1" maxOccurs="1"/> 
+        <element ref="fpa:IdFiscaleIVA"   minOccurs="1" maxOccurs="1"/>
+        <element ref="fpa:CodiceFiscale"  minOccurs="1" maxOccurs="1"/>
       </choice>
-      <element ref="fpa:Anagrafica"   minOccurs="1" maxOccurs="1"/> 
+      <element ref="fpa:Anagrafica"   minOccurs="1" maxOccurs="1"/>
     </sequence>
   </complexType>
 
@@ -40,27 +40,27 @@
     <sequence>
       <choice>
         <sequence>
-          <element ref="fpa:Denominazione" minOccurs="1" maxOccurs="1"/> 
+          <element ref="fpa:Denominazione" minOccurs="1" maxOccurs="1"/>
         </sequence>
         <sequence>
-          <element ref="fpa:Nome"     minOccurs="1" maxOccurs="1"/> 
-          <element ref="fpa:Cognome"  minOccurs="1" maxOccurs="1"/> 
+          <element ref="fpa:Nome"     minOccurs="1" maxOccurs="1"/>
+          <element ref="fpa:Cognome"  minOccurs="1" maxOccurs="1"/>
         </sequence>
       </choice>
-      <element ref="fpa:Titolo"       minOccurs="0" maxOccurs="1"/> 
-      <element ref="fpa:CodEORI"      minOccurs="0" maxOccurs="1"/> 
+      <element ref="fpa:Titolo"       minOccurs="0" maxOccurs="1"/>
+      <element ref="fpa:CodEORI"      minOccurs="0" maxOccurs="1"/>
     </sequence>
   </complexType>
 
   <element name="Sede" type="fpa:IndirizzoType" />
   <complexType name="IndirizzoType">
     <sequence>
-      <element ref="fpa:Indirizzo"    minOccurs="1" maxOccurs="1"/> 
-      <element ref="fpa:NumeroCivico" minOccurs="0" maxOccurs="1"/> 
-      <element ref="fpa:CAP"          minOccurs="1" maxOccurs="1"/> 
-      <element ref="fpa:Comune"       minOccurs="1" maxOccurs="1"/> 
-      <element ref="fpa:Provincia"    minOccurs="0" maxOccurs="1"/> 
-      <element ref="fpa:Nazione"      minOccurs="1" maxOccurs="1"/> 
+      <element ref="fpa:Indirizzo"    minOccurs="1" maxOccurs="1"/>
+      <element ref="fpa:NumeroCivico" minOccurs="0" maxOccurs="1"/>
+      <element ref="fpa:CAP"          minOccurs="1" maxOccurs="1"/>
+      <element ref="fpa:Comune"       minOccurs="1" maxOccurs="1"/>
+      <element ref="fpa:Provincia"    minOccurs="0" maxOccurs="1"/>
+      <element ref="fpa:Nazione"      minOccurs="1" maxOccurs="1"/>
     </sequence>
   </complexType>
 
