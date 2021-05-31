@@ -253,24 +253,28 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
             self.handle_result(
                 'error',
                 'The SignatureMethod element MUST be present - TR pag. 19',
-                **error_kwargs)
+                **error_kwargs
+            )
             self.handle_result(
                 'error',
                 'The Algorithm attribute MUST be present in SignatureMethod element - TR pag. 19',
-                **error_kwargs)
+                **error_kwargs
+            )
             self.handle_result(
                 'error',
                 "The signature algorithm MUST be valid - TR pag. 19",
-                description = f"Must be one of [{', '.join(constants.ALLOWED_XMLDSIG_ALGS)}]")
-
+                description = f"Must be one of [{', '.join(constants.ALLOWED_XMLDSIG_ALGS)}]"
+            )
             self.handle_result(
                 'error',
                 'The Algorithm attribute MUST be present in DigestMethod element - TR pag. 19',
-                **error_kwargs)
+                **error_kwargs
+            )
             self.handle_result(
                 'error',
                 f"The digest algorithm MUST be valid - TR pag. 19",
-                description = f"Must be one of [{', '.join(constants.ALLOWED_DGST_ALGS)}]")
+                description = f"Must be one of [{', '.join(constants.ALLOWED_DGST_ALGS)}]"
+            )
         else:
             method = sign[0].xpath('./SignedInfo/SignatureMethod')
             desc = [etree.tostring(ent).decode() for ent in method if method]
@@ -610,7 +614,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
 
         return self.is_ok(f'{self.__class__.__name__}.test_Organization')
 
-    def test_profile_saml2core(self):
+    def test_profile_saml2core( self):
         self.xsd_check(
             xsds_files = ['saml-schema-metadata-2.0.xsd']
         )
@@ -644,11 +648,20 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         self.test_Contacts_PubPriv()
         self.test_Contacts_VATFC()
         self.test_Contacts_Pub()
+        self.test_extensions_public_private(ext_type="Public")
+        self.test_contactperson_email()
+        self.test_contactperson_phone()
 
     def test_profile_spid_sp_private(self):
         self.test_profile_spid_sp()
         self.test_Contacts_PubPriv()
         self.test_Contacts_PubPriv(contact_type='billing')
+        self.test_extensions_public_private(ext_type="Private")
+        self.test_contactperson_email()
+        self.test_contactperson_phone()
+        self.test_contactperson_email(
+            email_xpath="//ContactPerson/Extensions/CessionarioCommittente/EmailAddress"
+        )
         self.test_Contacts_VATFC()
         self.test_Contacts_Priv()
         self.xsd_check(xsds_files = [

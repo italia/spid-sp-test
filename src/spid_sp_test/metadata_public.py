@@ -56,44 +56,50 @@ class SpidSpMetadataCheckPublic(object):
                     description = (company.text, org.text)
                 )
 
+        return self.is_ok(f'{self.__class__.__name__}.test_Contacts_PubPriv')
 
-        email = entity_desc = self.doc.xpath('//ContactPerson/EmailAddress')
+    def test_contactperson_email(self,
+                                 email_xpath='//ContactPerson/EmailAddress'):
+        email = entity_desc = self.doc.xpath(email_xpath)
         self._assertTrue(
             email,
-            'The EmailAddress element MUST be present',
+            f'The {email_xpath} element MUST be present',
             description = email,
         )
         if email:
             self._assertTrue(
                 email[0].text,
-                'The EmailAddress element MUST have a value',
+                f'The {email_xpath} element MUST have a value',
                 description = email[0],
             )
             self._assertTrue(
                 re.match(EMAIL_REGEXP, email[0].text),
-                'The EmailAddress element MUST be a valid email address',
+                f'The {email_xpath} element MUST be a valid email address',
                 description = email[0],
             )
+        return self.is_ok(f'{self.__class__.__name__}.test_contactperson_email-{email_xpath}')
 
-        phone = entity_desc = self.doc.xpath('//ContactPerson/TelephoneNumber')
+    def test_contactperson_phone(self, phone_xpath='//ContactPerson/TelephoneNumber'):
+        phone = entity_desc = self.doc.xpath(phone_xpath)
         if phone:
             phone = phone[0].text
             self._assertTrue(
                 phone,
-                'The TelephoneNumber element MUST have a value',
+                f'The {phone_xpath} element MUST have a value',
             )
             self._assertTrue(
                 (' ' not in phone),
-                'The TelephoneNumber element MUST not contain spaces',
+                f'The {phone_xpath} element MUST not contain spaces',
                 description = phone,
             )
             self._assertTrue(
                 (phone[0:3] == '+39'),
-                'The TelephoneNumber element MUST start with "+39"',
+                f'The {phone_xpath} element MUST start with "+39"',
                 description = phone,
             )
 
-        return self.is_ok(f'{self.__class__.__name__}.test_Contacts_PubPriv')
+        return self.is_ok(f'{self.__class__.__name__}.test_contactperson_phone')
+
 
     def test_Contacts_Pub(self):
         entity_desc = self.doc.xpath('//ContactPerson')
@@ -119,24 +125,28 @@ class SpidSpMetadataCheckPublic(object):
                     'The IPACode element MUST have a valid value present on IPA',
                 )
 
-        ctype = self.doc.xpath('//ContactPerson/Extensions/Public')
+        return self.is_ok(f'{self.__class__.__name__}.test_Contacts_Pub')
+
+    def test_extensions_public_private(self, ext_type="Public"):
+        ext_type_not = "Private" if ext_type == "Public" else "Public"
+
+        ctype = self.doc.xpath(f'//ContactPerson/Extensions/{ext_type.title()}')
         self._assertTrue(
             ctype,
-            'Missing ContactPerson/Extensions/Public, this element MUST be present',
+            f'Missing ContactPerson/Extensions/{ext_type.title()}, this element MUST be present',
         )
         if ctype:
             self._assertFalse(
                 ctype[0].text,
-                'The Public element MUST be empty',
+                f'The {ext_type.title()} element MUST be empty',
             )
 
-        ctype = self.doc.xpath('//ContactPerson/Extensions/Private')
+        ctype = self.doc.xpath(f'//ContactPerson/Extensions/{ext_type_not.title()}')
         self._assertFalse(
             ctype,
-            'The Private element MUST not be present',
+            f'The {ext_type_not.title()} element MUST not be present',
         )
-
-        return self.is_ok(f'{self.__class__.__name__}.test_Contacts_Pub')
+        return self.is_ok(f'{self.__class__.__name__}.test_extentions_public')
 
     def test_Contacts_VATFC(self):
         entity_desc = self.doc.xpath('//ContactPerson')

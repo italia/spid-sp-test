@@ -511,7 +511,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     description = req.attrib
                 )
         else:
-            self.handle_error('AuthnRequest or RequestAuthnContext or AytnContextClassRef missing',)
+            self.handle_error(
+                'AuthnRequest or RequestAuthnContext or AytnContextClassRef missing'
+            )
 
         return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest_extra')
 
