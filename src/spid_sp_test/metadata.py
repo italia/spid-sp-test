@@ -669,17 +669,22 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
             'spid-invoicing.xsd'
         ])
 
-    def test_profile_spid_ag_full(self):
+    def test_profile_spid_ag_public_full(self):
         self.test_profile_spid_sp()
-        # TODO
-        # self.test_ExtensionsContactPersonAGFull()
+        self.test_Contacts_PubPriv()
+        self.test_extensions_public_private(ext_type="Public")
+        #TODO
 
-    def test_profile_spid_ag_lite(self):
+    def test_profile_spid_ag_public_lite(self):
         self.test_profile_spid_sp()
         # TODO
         # self.test_ExtensionsContactPersonAGLite()
 
-    def test_profile_spid_op_full(self):
+    def test_profile_spid_op_public_full(self):
         self.test_profile_spid_sp()
         # TODO
         # self.test_ExtensionsContactPersonOPFull()
+
+    def test_profile_spid_op_public_lite(self):
+        self.test_profile_spid_sp()
+        # TODO
