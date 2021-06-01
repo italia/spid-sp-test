@@ -14,7 +14,7 @@ from lxml import etree
 from tempfile import NamedTemporaryFile
 from . metadata_public import SpidSpMetadataCheckPublic
 from . metadata_private import SpidSpMetadataCheckPrivate
-
+from . metadata_ag import SpidSpMetadataCheckAG
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 
 
@@ -23,7 +23,8 @@ logger = logging.getLogger(__name__)
 
 class SpidSpMetadataCheck(AbstractSpidCheck,
                           SpidSpMetadataCheckPublic,
-                          SpidSpMetadataCheckPrivate):
+                          SpidSpMetadataCheckPrivate,
+                          SpidSpMetadataCheckAG):
 
     def __init__(self,
                  metadata_url,
@@ -648,6 +649,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
     def test_profile_spid_sp_public(self):
         self.test_profile_spid_sp()
         self.test_Contacts_PubPriv()
+        self.test_Extensions_PubPriv()
         self.test_Contacts_VATFC()
         self.test_Contacts_IPACode()
         self.test_extensions_public_private(ext_type="Public")
@@ -656,6 +658,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         self.test_profile_spid_sp()
         self.test_Contacts_PubPriv()
         self.test_Contacts_PubPriv(contact_type='billing')
+        self.test_Extensions_PubPriv()
         self.test_extensions_public_private(ext_type="Private")
         self.test_contactperson_email(
             email_xpath="//ContactPerson/Extensions/CessionarioCommittente/EmailAddress"
@@ -669,23 +672,30 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
 
     def test_profile_spid_ag_public_full(self):
         self.test_profile_spid_sp()
-        self.test_Contacts_PubPriv()
+
         self.test_extensions_public_private(ext_type="Public")
         self.test_Contacts_IPACode()
         self.test_Contacts_VATFC()
         self.test_extensions_public_ag()
+        self.test_Extensions_PubPriv()
+        self.test_Contacts_PubPriv()
 
-        # TODO
-        # The entityID MUST not contains the query-string part
-        # Only one ContactPerson of contactType “other” and spid:entityType “spid:aggregator” can be present
-        # Only one ContactPerson of contactType “other” and spid:entityType “spid:aggregated” can be present
-        # Only one Extensions element inside ContactPerson element MUST be present
-        # If the ContactPerson is of spid:entityType “aggregated”, the Company element MUST be equal to OrganizationName
-
-        # The entityID MUST contain the activity code “pub-ag-full”
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
+        self.test_Contacts_PubPriv(contact_type="aggregator")
+        self.test_Contacts_PubPriv(contact_type="aggregated")
+
+        # The entityID MUST not contains the query-string part
+        self.test_entityid_qs()
+
+        # The entityID MUST contain the activity code “pub-ag-full”
+        self.test_entityid_contains(value='pub-ag-full')
+
         # The PublicServicesFullAggregator element MUST be present
+        self.test_extensions_public_ag(
+            ext_types = ["//ContactPerson/Extensions/PublicServicesFullAggregator"],
+            must=True)
+
 
     def test_profile_spid_ag_public_lite(self):
         self.test_profile_spid_sp()
@@ -717,9 +727,9 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
 
         self.test_Contacts_VATFC()
         self.test_extensions_public_private(ext_type="Public")
+
         # TODO
         # The entityID MUST contain the activity code “pub-op-lite”
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
         # The PublicServicesLightOperator element MUST be present
-        # The PublicOperator element MUST be present

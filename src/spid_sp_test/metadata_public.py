@@ -37,6 +37,9 @@ class SpidSpMetadataCheckPublic(object):
             description = others
         )
 
+        return self.is_ok(f'{self.__class__.__name__}.test_Contacts_PubPriv')
+
+    def test_Extensions_PubPriv(self):
         exts = self.doc.xpath('//ContactPerson/Extensions')
         self._assertTrue(
             len(exts) == 1,
@@ -56,7 +59,7 @@ class SpidSpMetadataCheckPublic(object):
                     description = (company.text, org.text)
                 )
 
-        return self.is_ok(f'{self.__class__.__name__}.test_Contacts_PubPriv')
+        return self.is_ok(f'{self.__class__.__name__}.test_Extensions_PubPriv')
 
     def test_contactperson_email(self,
                                  email_xpath='//ContactPerson/EmailAddress'):
@@ -147,24 +150,6 @@ class SpidSpMetadataCheckPublic(object):
             f'The {ext_type_not.title()} element MUST not be present',
         )
         return self.is_ok(f'{self.__class__.__name__}.test_extentions_public')
-
-    def test_extensions_public_ag(self, ext_types=[
-                    "//ContactPerson/Extensions/PublicServicesFullAggregator",
-                    "//ContactPerson/Extensions/PublicServicesLightAggregator",
-                    "//ContactPerson/Extensions/PrivateServicesFullAggregator",
-                    "//ContactPerson/Extensions/PrivateServicesLightAggregator",
-                    "//ContactPerson/Extensions/PublicServicesFullOperator",
-                    "//ContactPerson/Extensions/PublicServicesLightOperator"]):
-
-        for ext_type in ext_types:
-            ctype = self.doc.xpath(f'//ContactPerson/Extensions/{ext_type.title()}')
-            if ctype:
-                self._assertFalse(
-                    ctype[0].text,
-                    f'The {ext_type.title()} element MUST be empty',
-                )
-
-        return self.is_ok(f'{self.__class__.__name__}.test_extensions_public_ag')
 
     def test_Contacts_VATFC(self):
         entity_desc = self.doc.xpath('//ContactPerson')
