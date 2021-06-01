@@ -660,9 +660,12 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         self.test_Contacts_PubPriv(contact_type='billing')
         self.test_Extensions_PubPriv()
         self.test_extensions_public_private(ext_type="Private")
-        self.test_contactperson_email(
-            email_xpath="//ContactPerson/Extensions/CessionarioCommittente/EmailAddress"
-        )
+
+        # invalid ! to be removed soon
+        # self.test_contactperson_email(
+            # email_xpath="//ContactPerson/Extensions/CessionarioCommittente/EmailAddress"
+        # )
+
         self.test_Contacts_VATFC()
         self.test_Contacts_Priv()
         self.xsd_check(xsds_files = [
