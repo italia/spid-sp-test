@@ -670,7 +670,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
             'spid-invoicing.xsd'
         ])
 
-    def test_profile_spid_pub_ag_public_full(self):
+    def test_profile_spid_ag_public_full(self):
         self.test_profile_spid_sp()
 
         self.test_extensions_public_private(ext_type="Public")
@@ -697,7 +697,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         )
 
 
-    def test_profile_spid_pub_ag_public_lite(self):
+    def test_profile_spid_ag_public_lite(self):
         self.test_profile_spid_sp()
         self.test_extensions_public_private(ext_type="Public")
 
@@ -718,20 +718,26 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
             must=True
         )
 
-    def test_profile_spid_pub_op_public_full(self):
+    def test_profile_spid_op_public_full(self):
         self.test_profile_spid_sp()
 
         self.test_Contacts_VATFC()
         self.test_extensions_public_private(ext_type="Public")
 
-        # TODO
-        #
         # The entityID MUST contain the activity code “pub-op-full”
-        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
-        # The PublicServicesFullOperator element MUST be present
-        #
+        self.test_entityid_contains(value='pub-ag-full')
 
-    def test_profile_spid_pub_op_public_lite(self):
+        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        self.test_Contacts_PubPriv(contact_type="aggregator")
+
+        # The PublicServicesFullOperator element MUST be present
+        self.test_extensions_public_ag(
+            ext_types = ["//ContactPerson/Extensions/PublicServicesFullOperator"],
+            must=True
+        )
+
+
+    def test_profile_spid_op_public_lite(self):
         self.test_profile_spid_sp()
 
         self.test_Contacts_VATFC()

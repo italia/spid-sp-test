@@ -207,10 +207,10 @@ if __name__ == '__main__':
             'saml2-sp',
             'spid-sp-public',
             'spid-sp-private',
-            'spid-pub-ag-public-full',
-            'spid-pub-ag-public-lite',
-            'spid-sp-pub-op-public-full',
-            'spid-sp-pub-op-public-lite'
+            'spid-sp-ag-public-full',
+            'spid-sp-ag-public-lite',
+            'spid-sp-op-public-full',
+            'spid-sp-op-public-lite'
         ),
         help="which profile to check"
     )
