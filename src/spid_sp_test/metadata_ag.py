@@ -17,7 +17,7 @@ class SpidSpMetadataCheckAG(object):
                     must=False):
 
         for ext_type in ext_types:
-            ctype = self.doc.xpath(f'//ContactPerson/Extensions/{ext_type.title()}')
+            ctype = self.doc.xpath(ext_type)
             if must:
                 self._assertTrue(
                     ctype,
@@ -52,7 +52,6 @@ class SpidSpMetadataCheckAG(object):
 
         entity_desc = self.doc.xpath('//EntityDescriptor')
         eid = entity_desc[0].get('entityID')
-
         self._assertTrue(
             value in eid,
             (f'The entityID MUST contain {value}'),

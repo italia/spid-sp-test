@@ -670,7 +670,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
             'spid-invoicing.xsd'
         ])
 
-    def test_profile_spid_ag_public_full(self):
+    def test_profile_spid_pub_ag_public_full(self):
         self.test_profile_spid_sp()
 
         self.test_extensions_public_private(ext_type="Public")
@@ -678,7 +678,6 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         self.test_Contacts_VATFC()
         self.test_extensions_public_ag()
         self.test_Extensions_PubPriv()
-        self.test_Contacts_PubPriv()
 
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
@@ -694,22 +693,32 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         # The PublicServicesFullAggregator element MUST be present
         self.test_extensions_public_ag(
             ext_types = ["//ContactPerson/Extensions/PublicServicesFullAggregator"],
-            must=True)
+            must=True
+        )
 
 
-    def test_profile_spid_ag_public_lite(self):
+    def test_profile_spid_pub_ag_public_lite(self):
         self.test_profile_spid_sp()
-        self.test_Contacts_PubPriv()
         self.test_extensions_public_private(ext_type="Public")
 
-        # TODO
         # The entityID MUST contain the activity code “pub-ag-lite”
+        self.test_entityid_contains(value='pub-ag-lite')
+
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
-        # If the ContactPerson is of spid:entityType “spid:aggregator” the Extensions element MUST contain the element spid:KeyDescriptor with attribute use “spid:validation”
-        # The PublicServicesLightAggregator element MUST be present
+        self.test_Contacts_PubPriv(contact_type="aggregator")
+        self.test_Contacts_PubPriv(contact_type="aggregated")
 
-    def test_profile_spid_op_public_full(self):
+        # TODO
+        # If the ContactPerson is of spid:entityType “spid:aggregator” the Extensions element MUST contain the element spid:KeyDescriptor with attribute use “spid:validation”
+
+        # The PublicServicesLightAggregator element MUST be present
+        self.test_extensions_public_ag(
+            ext_types = ["//ContactPerson/Extensions/PublicServicesLightAggregator"],
+            must=True
+        )
+
+    def test_profile_spid_pub_op_public_full(self):
         self.test_profile_spid_sp()
 
         self.test_Contacts_VATFC()
@@ -722,7 +731,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         # The PublicServicesFullOperator element MUST be present
         #
 
-    def test_profile_spid_op_public_lite(self):
+    def test_profile_spid_pub_op_public_lite(self):
         self.test_profile_spid_sp()
 
         self.test_Contacts_VATFC()
