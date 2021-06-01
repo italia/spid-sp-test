@@ -40,12 +40,19 @@ class SpidSpMetadataCheckPublic(object):
         return self.is_ok(f'{self.__class__.__name__}.test_Contacts_PubPriv')
 
     def test_Extensions_PubPriv(self):
-        exts = self.doc.xpath('//ContactPerson/Extensions')
-        self._assertTrue(
-            len(exts) == 1,
-            'Only one Extensions element inside ContactPerson element MUST be present',
-            description = exts
-        )
+        _conts = self.doc.xpath('//ContactPerson')
+
+        for cont in _conts:
+            ext_cnt = 0
+            for child in cont.getchildren():
+                if child.tag == 'Extension':
+                    ext_cnt += 1
+
+            self._assertFalse(
+                ext_cnt > 1,
+                'Only one Extensions element inside ContactPerson element MUST be present',
+                description = etree.tostring(cont).decode()
+            )
 
         orgs = self.doc.xpath('//EntityDescriptor/Organization/OrganizationName')
         if len(orgs) >= 1:
