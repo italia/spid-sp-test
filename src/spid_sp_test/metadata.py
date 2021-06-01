@@ -743,8 +743,16 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         self.test_Contacts_VATFC()
         self.test_extensions_public_private(ext_type="Public")
 
-        # TODO
         # The entityID MUST contain the activity code “pub-op-lite”
+        self.test_entityid_contains(value='pub-op-lite')
+
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
-        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
+        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
+        self.test_Contacts_PubPriv(contact_type="aggregator")
+        self.test_Contacts_PubPriv(contact_type="aggregated")
+
         # The PublicServicesLightOperator element MUST be present
+        self.test_extensions_public_ag(
+            ext_types = ["//ContactPerson/Extensions/PublicServicesLightOperator"],
+            must=True
+        )
