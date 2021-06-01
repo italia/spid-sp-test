@@ -673,20 +673,53 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         self.test_extensions_public_private(ext_type="Public")
         self.test_Contacts_IPACode()
         self.test_Contacts_VATFC()
-        self.test_extensions_public_private(ext_type="Public")
         self.test_extensions_public_ag()
-        #TODO
+
+        # TODO
+        # The entityID MUST not contains the query-string part
+        # Only one ContactPerson of contactType “other” and spid:entityType “spid:aggregator” can be present
+        # Only one ContactPerson of contactType “other” and spid:entityType “spid:aggregated” can be present
+        # Only one Extensions element inside ContactPerson element MUST be present
+        # If the ContactPerson is of spid:entityType “aggregated”, the Company element MUST be equal to OrganizationName
+
+        # The entityID MUST contain the activity code “pub-ag-full”
+        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
+        # The PublicServicesFullAggregator element MUST be present
 
     def test_profile_spid_ag_public_lite(self):
         self.test_profile_spid_sp()
+        self.test_Contacts_PubPriv()
+        self.test_extensions_public_private(ext_type="Public")
+
         # TODO
-        # self.test_ExtensionsContactPersonAGLite()
+        # The entityID MUST contain the activity code “pub-ag-lite”
+        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
+        # If the ContactPerson is of spid:entityType “spid:aggregator” the Extensions element MUST contain the element spid:KeyDescriptor with attribute use “spid:validation”
+        # The PublicServicesLightAggregator element MUST be present
 
     def test_profile_spid_op_public_full(self):
         self.test_profile_spid_sp()
+
+        self.test_Contacts_VATFC()
+        self.test_extensions_public_private(ext_type="Public")
+
         # TODO
-        # self.test_ExtensionsContactPersonOPFull()
+        #
+        # The entityID MUST contain the activity code “pub-op-full”
+        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        # The PublicServicesFullOperator element MUST be present
+        #
 
     def test_profile_spid_op_public_lite(self):
         self.test_profile_spid_sp()
+
+        self.test_Contacts_VATFC()
+        self.test_extensions_public_private(ext_type="Public")
         # TODO
+        # The entityID MUST contain the activity code “pub-op-lite”
+        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
+        # The PublicServicesLightOperator element MUST be present
+        # The PublicOperator element MUST be present
