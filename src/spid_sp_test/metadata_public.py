@@ -10,7 +10,6 @@ class SpidSpMetadataCheckPublic(object):
 
     def test_Contacts_PubPriv(self, contact_type="other"):
         entity_desc = self.doc.xpath('//ContactPerson')
-
         self._assertTrue(entity_desc, 'ContactPerson MUST be present')
 
         if entity_desc:
@@ -140,7 +139,8 @@ class SpidSpMetadataCheckPublic(object):
     def test_extensions_public_private(self, ext_type="Public"):
         ext_type_not = "Private" if ext_type == "Public" else "Public"
 
-        ctype = self.doc.xpath(f'//ContactPerson/Extensions/{ext_type.title()}')
+        # only if other, billing doesn't have any Private element in it!
+        ctype = self.doc.xpath(f'//ContactPerson[@contactType="other"]/Extensions/{ext_type.title()}')
         self._assertTrue(
             ctype,
             f'Missing ContactPerson/Extensions/{ext_type.title()}, this element MUST be present',
