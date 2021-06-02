@@ -27,17 +27,6 @@ class SpidSpMetadataCheckPrivate(object):
 
         if exts:
             ext = exts[0]
-            company = self.doc.xpath(
-                '//ContactPerson/Extensions/CessionarioCommittente/CompanyName'
-            )
-            if company:
-                company = company[0]
-                self._assertTrue(
-                    company.text,
-                    'If the Company element is present it MUST have a value',
-                    description = company,
-                )
-
             tise = self.doc.xpath(
                 '//ContactPerson/Extensions/CessionarioCommittente/TerzoIntermediarioSoggettoEmittente'
             )

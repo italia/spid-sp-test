@@ -56,9 +56,16 @@ class SpidSpMetadataCheckPublic(object):
         orgs = self.doc.xpath('//EntityDescriptor/Organization/OrganizationName')
         if len(orgs) >= 1:
             org = orgs[0]
-            company = self.doc.xpath('//ContactPerson/Extensions/CompanyName')
+            company = self.doc.xpath('//ContactPerson/CompanyName')
             if company:
                 company = company[0]
+
+                self._assertTrue(
+                    company.text,
+                    'If the Company element is present it MUST have a value',
+                    description = company,
+                )
+
                 self._assertTrue(
                     company.text == org.text,
                     'If the Company element if present it MUST be equal to OrganizationName',
