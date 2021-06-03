@@ -35,7 +35,7 @@ Setup
 -----
 
 ````
-apt install libxml2-dev libxmlsec1-dev libxmlsec1-openssl
+apt install libxml2-dev libxmlsec1-dev libxmlsec1-openssl xmlsec1
 pip install spid-sp-test --upgrade --no-cache
 ````
 
