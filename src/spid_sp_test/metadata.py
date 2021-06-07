@@ -666,7 +666,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
             # email_xpath="//ContactPerson/Extensions/CessionarioCommittente/EmailAddress"
         # )
 
-        self.test_Contacts_VATFC()
+        self.test_Contacts_VATFC(private=True)
         self.test_Contacts_Priv()
         self.xsd_check(xsds_files = [
             'saml-schema-metadata-2.0.xsd',
