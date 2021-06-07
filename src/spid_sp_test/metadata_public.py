@@ -112,6 +112,7 @@ class SpidSpMetadataCheckPublic(object):
                 (phone[0:3] == '+39'),
                 f'The {phone_xpath} element MUST start with "+39"',
                 description = phone,
+                level = 'warning'
             )
 
         return self.is_ok(f'{self.__class__.__name__}.test_contactperson_phone')
