@@ -378,13 +378,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     description = acr_desc
                 )
                 value = req.get('ForceAuthn')
-                if not value:
-                    self._assertTrue(
-                        value,
-                        'The ForceAuthn attribute MUST be present if ACR > L1',
-                        **error_kwargs
-                    )
-                else:
+                if value:
                     self._assertTrue(
                         (value.lower() in constants.BOOLEAN_TRUE),
                         'The ForceAuthn attribute MUST be true or 1 - TR pag. 8 ',
