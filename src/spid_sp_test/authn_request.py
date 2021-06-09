@@ -366,11 +366,18 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     description = acr_desc
                 )
                 value = req.get('ForceAuthn')
-                self._assertTrue(
-                    (value.lower() in constants.BOOLEAN_TRUE),
-                    'The ForceAuthn attribute MUST be true or 1 - TR pag. 8 ',
-                    **error_kwargs
-                )
+                if not value:
+                    self._assertTrue(
+                        value,
+                        'The ForceAuthn attribute MUST be present if ACR > L1',
+                        **error_kwargs
+                    )
+                else:
+                    self._assertTrue(
+                        (value.lower() in constants.BOOLEAN_TRUE),
+                        'The ForceAuthn attribute MUST be true or 1 - TR pag. 8 ',
+                        **error_kwargs
+                    )
 
         attr = 'AssertionConsumerServiceIndex'
         acss = self.md.xpath('//EntityDescriptor/SPSSODescriptor'
