@@ -169,33 +169,31 @@ class SpidSpMetadataCheckPublic(object):
     def test_Contacts_VATFC(self, private=False):
         entity_desc = self.doc.xpath('//ContactPerson')
 
-        vat = self.doc.xpath('//ContactPerson/Extensions/VATNumber')
+        vats = self.doc.xpath('//ContactPerson/Extensions/VATNumber')
         self._assertTrue(
-            (len(vat) <= 1),
+            (len(vats) <= 1),
             'only one VATNumber element must be present',
-            description = vat
+            description = vats
         )
-        if vat:
-            vat = vat[0]
+        if vats:
             self._assertTrue(
-                vat.text,
+                vats[0].text,
                 'The VATNumber element MUST have a value',
             )
 
-        fc = self.doc.xpath('//ContactPerson/Extensions/FiscalCode')
-        if fc:
+        fcs = self.doc.xpath('//ContactPerson/Extensions/FiscalCode')
+        if fcs:
             self._assertTrue(
-                (len(fc) == 1),
+                (len(fcs) == 1),
                 'only one FiscalCode element must be present',
-                description = fc
+                description = fcs
             )
-            fc = fc[0]
+            fc = fcs[0]
             self._assertTrue(
                 fc.text,
                 'The FiscalCode element MUST have a value',
             )
-
-        if private and not fc and not vat:
+        if private and not len(fcs) and not len(vats):
             self._assertTrue(
                 False,
                 'If the VATNumber is not present, the FiscalCode element MUST be present',
