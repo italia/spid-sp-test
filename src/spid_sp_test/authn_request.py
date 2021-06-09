@@ -274,6 +274,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                          **error_kwargs)
         return self.is_ok(f'{self.__class__.__name__}.test_xmldsig')
 
+    def test_authnrequest_no_newlines(self):
+        self._assertFalse(
+            re.match(r'^[\t\n\s\r\ ]*', self.authn_request_decoded),
+            (f'The XML of authn request should not '
+              'contains newlines at the beginning.'),
+             description = self.metadata[0:10],
+             level='warning'
+        )
+        return self.is_ok(f'{self.__class__.__name__}.test_authnrequest_no_newlines')
+
     def test_AuthnRequest(self):
         '''Test the compliance of AuthnRequest element'''
         req = self.doc.xpath('/AuthnRequest')

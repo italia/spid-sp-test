@@ -89,6 +89,16 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         os.chdir(_orig_pos)
         return self.is_ok(f'{self.__class__.__name__}.xsd_check')
 
+    def test_metadata_no_newlines(self):
+        self._assertFalse(
+            re.match(r'^[\t\n\s\r\ ]*', self.metadata),
+            (f'The XML of metadata should not '
+              'contains newlines at the beginning.'),
+             description = self.metadata[0:10],
+             level='warning'
+        )
+        return self.is_ok(f'{self.__class__.__name__}.test_metadata_no_newlines')
+
     def test_EntityDescriptor(self):
         entity_desc = self.doc.xpath('//EntityDescriptor')
         desc = [etree.tostring(ent).decode() for ent in entity_desc if entity_desc]
