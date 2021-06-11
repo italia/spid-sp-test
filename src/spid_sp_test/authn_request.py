@@ -508,24 +508,25 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             rac = rac[0]
             acr = acr[0]
 
-            if (rac.get('Comparison') == 'minimum'
-                    and acr.text == 'https://www.spid.gov.it/SpidL1'):
+            if (rac.get('Comparison') in ('minimum', 'exact')
+                    and acr.text in
+                    ('https://www.spid.gov.it/SpidL2',
+                     'https://www.spid.gov.it/SpidL3')):
                 self._assertTrue(
                     ('ForceAuthn' in req.attrib),
-                    'The ForceAuthn attribute MUST be present '
-                    'because of minimum/SpidL1',
-                    description = req.attrib
+                     'The ForceAuthn attribute MUST be present '
+                     'because of minimum/SpidL2',
+                     description = req.attrib
                 )
-                self._assertEqual(
-                    req.get('ForceAuthn', "").lower(),
-                    'true',
+                self._assertTrue(
+                    req.get('ForceAuthn', "").lower() in ('true', 1, '1'),
                     'The ForceAuthn attribute MUST be True '
-                    'because of minimum/SpidL1',
+                    'because of minimum/SpidL2',
                     description = req.attrib
                 )
         else:
             self.handle_error(
-                'AuthnRequest or RequestAuthnContext or AytnContextClassRef missing'
+                'AuthnRequest or RequestAuthnContext or AuthnContextClassRef missing'
             )
 
         return self.is_ok(f'{self.__class__.__name__}.test_AuthnRequest_extra')
