@@ -143,4 +143,4 @@ FICEP_FULL_ATTRIBUTES = [
 ]
 
 NODE_NAME = 'urn:oasis:names:tc:SAML:2.0:assertion:Assertion'
-EMAIL_REGEXP = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+EMAIL_REGEXP = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,6}$'
