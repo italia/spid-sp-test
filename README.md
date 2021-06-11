@@ -54,6 +54,13 @@ Get fake IdP metadata (`--idp-metadata`) and copy it to your SP metadatastore fo
 spid_sp_test --idp-metadata > /path/to/spid-django/example/spid_config/metadata/spid-sp-test.xml
 ````
 
+If you have to test your service provider that is configured to use a dedicated instance of spid-testenv2, you have to:
+- get the key used by IdP (eg. spid-testenv2/conf/idp.key) and put into this project on spid-sp-test/src/spid_sp_test/idp/private.key
+- get the crt used by IdP (eg. spid-testenv2/conf/idp.crt) and put into this project on spid-sp-test/src/spid_sp_test/idp/public.cert
+- change into this project the spid-sp-test/src/spid_sp_test/idp/settings.py, customizing for example the ```BASE = "http://localhost:8080"``` with your entityID value that can be different from this default value
+- run tests
+
+
 To get spid-sp-test in a CI you have to:
 
 - configure an example project to your application
