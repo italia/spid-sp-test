@@ -25,7 +25,7 @@ def render_html_report(data:dict,
 
     page_fname = f'{output_folder}/index.html'
     try:
-        os.mkdir(output_folder)
+        os.makedirs(output_folder, exist_ok=True)
         shutil.copytree(f'{template_search_path}/static',
                         f'{output_folder}/static')
     except FileExistsError as e:

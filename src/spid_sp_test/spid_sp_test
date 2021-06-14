@@ -279,7 +279,7 @@ if __name__ == '__main__':
         )
 
         if args.html_path:
-            os.mkdir(html_path)
+            os.makedirs(html_path, exist_ok=True)
 
         response_check = SpidSpResponseCheck(**data_tr)
         selective_run(response_check, profile, args.list)
