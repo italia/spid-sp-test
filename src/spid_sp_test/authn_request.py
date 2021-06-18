@@ -857,46 +857,12 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             )
         return self.is_ok(f'{self.__class__.__name__}.test_RelayState')
 
-    def test_Scoping(self):
-        '''Test the compliance of Scoping element'''
-
-        e = self.doc.xpath('//AuthnRequest/Scoping')
-
-        desc = [etree.tostring(ent).decode() for ent in e if e]
-        error_kwargs = dict(description = desc) if desc else {}
-
-        self._assertEqual(
-            len(e),
-            0,
-            'The Scoping element MUST not be present - AV n.5',
-            **error_kwargs
-        )
-        return self.is_ok(f'{self.__class__.__name__}.test_Scoping')
-
-    def test_RequesterID(self):
-        '''Test the compliance of RequesterID element'''
-
-        e = self.doc.xpath('//AuthnRequest/RequesterID')
-
-        desc = [etree.tostring(ent).decode() for ent in e if e]
-        error_kwargs = dict(description = desc) if desc else {}
-
-        self._assertEqual(
-            len(e),
-            0,
-            'The RequesterID  element MUST not be present - AV n.5',
-            **error_kwargs
-        )
-        return self.is_ok(f'{self.__class__.__name__}.test_RequesterID')
-
     def test_profile_saml2core(self):
         self.test_xsd()
         self.test_AuthnRequest()
         self.test_Subject()
         self.test_Issuer()
         self.test_Conditions()
-        self.test_Scoping()
-        self.test_RequesterID()
 
     def test_profile_spid_sp(self):
         self.test_profile_saml2core()
