@@ -400,6 +400,15 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
                         'MUST be a valid HTTPS URL - AV n. 1 and n. 3',
                         **error_kwargs
                     )
+                elif attr == 'Location':
+                    self._assertIsValidHttpUrl(
+                        a,
+                        f'The {attr} attribute '
+                        'in SingleLogoutService element '
+                        'MUST be a valid HTTP URL - AV n. 1 and n. 3',
+                        **error_kwargs
+                    )
+
         return self.is_ok(f'{self.__class__.__name__}.test_SingleLogoutService')
 
     def test_AssertionConsumerService(self):
