@@ -16,7 +16,7 @@ from lxml import etree
 from spid_sp_test.utils import (del_ns,
                                 samlreq_from_htmlform,
                                 decode_authn_req_http_redirect)
-from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
+from spid_sp_test.idp.settings import BASE as idp_eid, SAML2_IDP_CONFIG
 from spid_sp_test import constants
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
 
@@ -345,6 +345,20 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     f'The {attr} attribute MUST have a value - TR pag. 8 ',
                     **error_kwargs
                 )
+
+                allowed_destinations = [
+                    i[0]
+                    for i in SAML2_IDP_CONFIG['service']['idp']['endpoints']['single_sign_on_service']
+                ]
+                allowed_destinations.append(idp_eid)
+
+                self._assertTrue(
+                    (value in allowed_destinations),
+                    f'The Destination attribute SHOULD be the address to '
+                     'which the request has been sent but can also be the EnityID of IdP (Av. SPID n.11)',
+                    description=value
+                )
+
                 if self.production:
                     self._assertIsValidHttpsUrl(
                         value,
