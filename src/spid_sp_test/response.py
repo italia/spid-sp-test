@@ -1,5 +1,6 @@
 import base64
 import datetime
+import importlib
 import json
 import logging
 import random
@@ -48,7 +49,8 @@ class SpidSpResponse(object):
                  response_attrs={},
                  authnreq_attrs={},
                  attributes={},
-                 template_path='./templates'):
+                 template_path='./templates',
+                 status_codes=None):
 
         try:
             self.conf = deepcopy(
@@ -57,6 +59,10 @@ class SpidSpResponse(object):
             )
         except KeyError:
             raise Exception(f'Test {conf} doesn\'t exists')
+
+        # rewrite, eg: response_mods
+        if status_codes:
+            self.conf['status_codes'] = self.status_codes
 
         self.attributes = attributes
         self.authnreq_attrs = authnreq_attrs
@@ -139,6 +145,13 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.html_path = kwargs.get('html_path')
         self.no_send_response = kwargs.get('no_send_response')
         self.kwargs = kwargs
+        self.status_codes = None
+
+    def get_acr(self):
+        _acr = self.authnreq_etree.xpath(
+            '//RequestedAuthnContext/AuthnContextClassRef')
+        if _acr:
+            return _acr[0].text
 
     def do_authnrequest(self):
         self.authn_request_data = get_authn_request(self.authn_request_url)
@@ -152,6 +165,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.authnreq_issuer = self.authnreq_etree.xpath(
             "/AuthnRequest/Issuer")[0].attrib['NameQualifier']
         now = datetime.datetime.utcnow()
+
+        self.acr = self.get_acr()
+
         self.response_attrs = {
             'ResponseID': saml_rnd_id(),
             'AuthnRequestID': self.authnreq_attrs['ID'],
@@ -165,7 +181,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             'SessionIndex': saml_rnd_id(),
             'Issuer': self.issuer,
             'Audience': self.authnreq_issuer,
-            'AuthnContextClassRef': settings.DEFAULT_RESPONSE['AuthnContextClassRef'],
+            'AuthnContextClassRef': self.acr or settings.DEFAULT_RESPONSE['AuthnContextClassRef'],
             'IssueInstantMillis': now.strftime('%Y-%m-%dT%H:%M:%S.%f')
         }
         self.relay_state = self.kwargs.get('relay_state')
@@ -241,7 +257,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             authnreq_attrs=self.authnreq_attrs,
             attributes=attributes,
             response_attrs=response_attrs or self.response_attrs,
-            template_path=self.template_path
+            template_path=self.template_path,
+            status_codes=self.status_codes
         )
         conf = settings.RESPONSE_TESTS[test_name]
         if conf.get('response'):
@@ -250,6 +267,15 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                     f'Test {test_name}: overwriting {k} with {v}'
                 )
                 spid_response.response_attrs[k] = v
+
+        # response dinamyc mods and rewrites (plugins)
+        if conf.get('response_mods'):
+            for mod_func in conf['response_mods']:
+                n1, _, n2 = mod_func.rpartition('.')
+                module = importlib.import_module(n1)
+                func = getattr(module, n2)
+                func(self, spid_response)
+
         return spid_response
 
     def check_response(self, res, msg: str, attendeds=[]):

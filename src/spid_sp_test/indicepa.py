@@ -1,5 +1,5 @@
-import requests
 import logging
+import requests
 
 
 API_URL = 'https://indicepa.gov.it/PortaleServices/api/aoo'
