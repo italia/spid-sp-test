@@ -215,6 +215,12 @@ if __name__ == '__main__':
         help="which profile to check"
     )
 
+    parser.add_argument(
+        '-ap', '--authn-plugin',
+        required=False,
+        help="use a custom plugin for authn requests, eg: for proxies/gateways"
+    )
+
     args = parser.parse_args()
     logging.basicConfig(level=getattr(logging, args.debug))
 
@@ -253,7 +259,8 @@ if __name__ == '__main__':
         data_ac = dict(
             metadata=metadata_check.metadata,
             authn_request_url=args.authn_url,
-            production=args.production
+            production=args.production,
+            authn_plugin=args.authn_plugin
         )
         authn_check = SpidSpAuthnReqCheck(**data_ac)
         selective_run(authn_check, profile, args.list)
@@ -275,7 +282,8 @@ if __name__ == '__main__':
             attr_json=args.attr_json,
             production=args.production,
             html_path=html_path if args.html_path else None,
-            no_send_response = args.no_send_response
+            no_send_response = args.no_send_response,
+            authn_plugin=args.authn_plugin
         )
 
         if args.html_path:

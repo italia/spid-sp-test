@@ -179,6 +179,8 @@ spid-sp-test offers the possibility to extend and configure new response tests t
   The templates are Jinja2 powered, so it's possible to
   extend `src/spid_sp_test/responses/templates/base.xml` with our preferred values
 
+- customize the way to get the SAML2 Authn Request, using plugins wrote by your own. If you're using a IAM Proxy with some OAuth2/OIDC frontends of a custom API, you can write your plugin and use it in the cli arguments, eg: `spid_sp_test --metadata-url https://localhost:8000/spid/metadata --extra  --authn-url https://localhost:8000/spid/login/?idp=http://localhost:8080 --debug INFO -tr --authn-plugin spid_sp_test.plugins.authn_request.Dummy`
+
 Looking at `src/spid_sp_test/responses/settings.py` or `tests/example.test-suite.json`
 we found that every test have a `response` attribute. Each element configured in would overload the
 value that will be rendered in the template. Each template can load these variable from its template context or

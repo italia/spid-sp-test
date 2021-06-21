@@ -25,6 +25,7 @@ from spid_sp_test.utils import del_ns
 from tempfile import NamedTemporaryFile
 
 from . utils import get_xmlsec1_bin, html_absolute_paths
+from . utils import load_plugin
 
 logger = logging.getLogger(__name__)
 
@@ -147,6 +148,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.kwargs = kwargs
         self.status_codes = None
 
+        self.authn_plugin = kwargs.get('authn_plugin')
+
     def get_acr(self):
         _acr = self.authnreq_etree.xpath(
             '//RequestedAuthnContext/AuthnContextClassRef')
@@ -154,7 +157,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             return _acr[0].text
 
     def do_authnrequest(self):
-        self.authn_request_data = get_authn_request(self.authn_request_url)
+        self.authn_request_data = get_authn_request(
+                self.authn_request_url, authn_plugin=self.authn_plugin)
         self.authnreq_etree = etree.fromstring(
             self.authn_request_data['SAMLRequest_xml'])
         del_ns(self.authnreq_etree)
@@ -310,7 +314,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         }
         url = self.authnreq_attrs.get('AssertionConsumerURL', self.acs_url)
         ua = self.authn_request_data['requests_session']
-        res = ua.post(url, data=data, allow_redirects=True)
+        if self.authn_plugin:
+            func = load_plugin(self.authn_plugin)
+            res = func(ua, self.authn_request_url).response(url, data)
+        else:
+            res = ua.post(url, data=data, allow_redirects=True)
         msg = f'Response http status code [{res.status_code}]: {res.content.decode()}'
         self.logger.debug(msg)
         return res

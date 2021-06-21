@@ -27,12 +27,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from tempfile import NamedTemporaryFile
 
 from . exceptions import SAMLRequestNotFound
+from . utils import load_plugin
 
 
 logger = logging.getLogger(__name__)
 
 
-def get_authn_request(authn_request_url, verify_ssl=False):
+def get_authn_request(
+    authn_request_url:str, verify_ssl:bool=False, authn_plugin:str=None):
     """
         Detects the auth request url, if http/xml file or html file
     """
@@ -41,6 +43,12 @@ def get_authn_request(authn_request_url, verify_ssl=False):
     binding = 'post' or 'redirect'
     authn_request_str = None
     requests_session = None
+
+    # eg: auth_plugin = 'that.package.module.Class'
+    requests_session = requests.Session()
+    if authn_plugin:
+        func = load_plugin(authn_plugin)
+        authn_request_url = func(requests_session, authn_request_url).request()
 
     if authn_request_url[0:7] == 'file://':
         authn_request = open(authn_request_url[7:], 'rb').read().strip().strip(b'\n')
@@ -53,7 +61,6 @@ def get_authn_request(authn_request_url, verify_ssl=False):
         else:
             raise Exception(f"Can't detect authn request from f{authn_request_url}")
     else:
-        requests_session = requests.Session()
         request = requests_session.get(
             authn_request_url,
             verify=verify_ssl,
@@ -124,7 +131,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                  authn_request: dict = {},
                  xsds_files: list = None,
                  xsds_files_path: str = None,
-                 production: bool = False):
+                 production: bool = False,
+                 authn_plugin:str = None):
 
         super(SpidSpAuthnReqCheck, self).__init__(verify_ssl=production)
         self.category = 'authnrequest_strict'
@@ -133,7 +141,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self.metadata = metadata
 
         self.authn_request = get_authn_request(authn_request_url,
-                                               verify_ssl=production)
+                                               verify_ssl=production,
+                                               authn_plugin=authn_plugin)
 
         try:
             self.authn_request_decoded = self.authn_request['SAMLRequest_xml']

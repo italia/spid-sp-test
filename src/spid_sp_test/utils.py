@@ -1,4 +1,5 @@
 import base64
+import importlib
 import lxml.objectify
 import os
 import re
@@ -220,3 +221,10 @@ def report_to_html(o):
                         res.append('<p>Obtained value: %s</p>' % t['value'])
                         res.append('</div>')
     return '\n'.join(res)
+
+
+def load_plugin(plugin_name):
+    n1, _, n2 = plugin_name.rpartition('.')
+    module = importlib.import_module(n1)
+    func = getattr(module, n2)
+    return func
