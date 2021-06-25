@@ -1,6 +1,7 @@
 import re
 
 import base64
+import binascii
 import copy
 import logging
 import os
@@ -140,9 +141,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self.logger = logger
         self.metadata = metadata
 
-        self.authn_request = get_authn_request(authn_request_url,
-                                               verify_ssl=production,
-                                               authn_plugin=authn_plugin)
+        try:
+            self.authn_request = get_authn_request(authn_request_url,
+                                                   verify_ssl=production,
+                                                   authn_plugin=authn_plugin)
+        except binascii.Error as exp:
+            _msg = f'[2.0.0] Base64 decode of AuthnRequest MUST be correct'
+            logger.critical(_msg+ f': {exp}')
+            self._assertTrue(False, _msg, description=exp)
+            self.is_ok(f'{self.__class__.__name__}.test_xmldsig-pre')
+            raise exp
 
         try:
             self.authn_request_decoded = self.authn_request['SAMLRequest_xml']
