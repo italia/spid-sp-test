@@ -4,6 +4,8 @@ spid-sp-test
 ![CI build](https://github.com/italia/spid-sp-test/workflows/spid-sp-test/badge.svg)
 ![License](https://img.shields.io/badge/license-EUPL%201.2-blue)
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
+[![Downloads](https://pepy.tech/badge/spid-sp-test)](https://pepy.tech/project/spid-sp-test)
+[![Downloads](https://pepy.tech/badge/spid-sp-test/week)](https://pepy.tech/project/spid-sp-test)
 
 spid-sp-test is a SAML2 SPID Service Provider validation tool that can be executed from the command line.
 This tool was born by separating the test library already present in [spid-saml-check](https://github.com/italia/spid-saml-check).
