@@ -2,6 +2,7 @@ import logging
 import re
 
 from pathlib import Path
+from . constants import HTTP_NO_PORT_REGEX
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -131,6 +132,12 @@ class AbstractSpidCheck(object):
                                description='', traceback: str = None,
                                level: str = 'info'):
         self._assert(re.match('https://', check if check else ''),
+                     description, traceback, level)
+
+    def _assertHttpUrlWithoutPort(self, check, error_message,
+                               description='', traceback: str = None,
+                               level: str = 'info'):
+        self._assert(re.match(HTTP_NO_PORT_REGEX, check if check else ''),
                      description, traceback, level)
 
     def _assertIsValidHttpUrl(self, check, error_message,

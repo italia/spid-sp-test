@@ -382,6 +382,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         f'The {attr} attribute MUST be a valid HTTPS url - TR pag. 8 ',
                         **error_kwargs
                     )
+                    self._assertHttpUrlWithoutPort(
+                        value,
+                        'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"'
+                    )
 
         self._assertTrue(
             ('IsPassive' not in req.attrib),
@@ -475,7 +479,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                             f'The {attr} attribute MUST be a valid HTTPS url - TR pag. 8 and pag. 16',
                             **error_kwargs
                         )
-
+                        self._assertHttpUrlWithoutPort(
+                            value,
+                            'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"'
+                        )
                     self._assertTrue(
                         value in availableassertionlocations,
                         f'The {attr} attribute MUST be equal to an AssertionConsumerService Location - TR pag. 8 ',

@@ -130,6 +130,10 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
                 self.doc.attrib.get('entityID'),
                 'The entityID attribute MUST be a valid HTTPS url'
             )
+            self._assertHttpUrlWithoutPort(
+                self.doc.attrib.get('entityID'),
+                'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"'
+            )
 
         self._assertTrue((self.doc.attrib.get('entityID') == self.metadata_url),
                          f'The EntityID MUST be equal to {self.metadata_url}',
@@ -377,16 +381,16 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
                     f'The {attr} attribute in SingleLogoutService element MUST be present - AV n. 3',
                     **error_kwargs)
 
-                a = slo.get(attr)
+                _attr = slo.get(attr)
                 self._assertIsNotNone(
-                    a,
+                    _attr,
                     f'The {attr} attribute in SingleLogoutService element MUST have a value',
                     **error_kwargs
                 )
 
                 if attr == 'Binding':
                     self._assertIn(
-                        a,
+                        _attr,
                         constants.ALLOWED_SINGLELOGOUT_BINDINGS,
                         (('The %s attribute in SingleLogoutService element MUST be one of [%s] - AV n. 3') %  # noqa
                          (attr, ', '.join(constants.ALLOWED_BINDINGS))),
@@ -394,15 +398,19 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
                     )
                 if attr == 'Location' and self.production:
                     self._assertIsValidHttpsUrl(
-                        a,
+                        _attr,
                         f'The {attr} attribute '
                         'in SingleLogoutService element '
                         'MUST be a valid HTTPS URL - AV n. 1 and n. 3',
                         **error_kwargs
                     )
+                    self._assertHttpUrlWithoutPort(
+                        _attr,
+                        'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"'
+                    )
                 elif attr == 'Location':
                     self._assertIsValidHttpUrl(
-                        a,
+                        _attr,
                         f'The {attr} attribute '
                         'in SingleLogoutService element '
                         'MUST be a valid HTTP URL - AV n. 1 and n. 3',
@@ -429,27 +437,31 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
                     (attr in acs.attrib),
                     f'The {attr} attribute MUST be present - TR pag. 20'
                 )
-                a = acs.get(attr)
+                _attr = acs.get(attr)
                 if attr == 'index':
                     self._assertGreaterEqual(
-                        int(a),
+                        int(_attr),
                         0,
                         f'The {attr} attribute MUST be >= 0 - TR pag. 20',
                         **error_kwargs
                     )
                 elif attr == 'Binding':
                     self._assertIn(
-                        a, constants.ALLOWED_BINDINGS,
+                        _attr, constants.ALLOWED_BINDINGS,
                         (('The %s attribute MUST be one of [%s] - TR pag. 20') %
                          (attr, ', '.join(constants.ALLOWED_BINDINGS))),
                         **error_kwargs
                     )
                 elif attr == 'Location' and self.production:
                     self._assertIsValidHttpsUrl(
-                        a,
+                        _attr,
                         f'The {attr} attribute MUST be a '
                         'valid HTTPS url - TR pag. 20 and AV n. 1',
                         **error_kwargs
+                    )
+                    self._assertHttpUrlWithoutPort(
+                        _attr,
+                        'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"'
                     )
                 else:
                     pass
@@ -600,7 +612,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
                         lang_counter[lang] = 1
 
 
-                    self._assertIsNotNone(
+                    self._assertTrue(
                         element.text,
                         f'The {ename} element MUST have a value - TR pag. 20',
                         **error_kwargs

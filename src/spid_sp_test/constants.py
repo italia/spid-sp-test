@@ -24,6 +24,16 @@ _UTC_STRING = r'^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12]
 
 UTC_STRING = re.compile(_UTC_STRING)
 
+HTTP_NO_PORT_REGEX = re.compile(
+        r'^(?:http)s?://' # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)' #domain...
+        # r'|localhost|' #localhost...
+        # r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}' # ...or ip
+        r')'
+        # r'(?::\d+)?' # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE
+)
+
 _SPID_LEVEL_23 = (r'(https:\/\/www\.spid\.gov\.it\/)SpidL[2-3]')  # noqa
 SPID_LEVEL_23 = re.compile(_SPID_LEVEL_23)
 
