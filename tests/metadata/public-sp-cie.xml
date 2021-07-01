@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:cie="https://www.cartaidentita.interno.gov.it/saml-extensions" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://spid.ersusicilia.it">
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:cie="https://www.cartaidentita.interno.gov.it/saml-extensions" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://www.public-sp.it">
    <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
       <md:KeyDescriptor use="signing">
          <ds:KeyInfo>
