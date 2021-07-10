@@ -1,5 +1,5 @@
 REPO=italia/spid-sp-test
-VERSION=0.5.6
+VERSION=0.9.0
 
 default: docker-build
 

@@ -9,7 +9,7 @@ _src_folder = 'src'
 _pkg_name = 'spid_sp_test'
 
 setup(
-    name='spid_sp_test',
+    name=_pkg_name,
     version='0.9.0',
     description="SAML2 SPID Service Provider validation tool that can be run from the command line",
     long_description=readme(),
@@ -17,13 +17,13 @@ setup(
     classifiers=['Development Status :: 5 - Production/Stable',
                  'License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)',
                  'Programming Language :: Python :: 3'],
-    url='https://github.com/peppelinux/spid-sp-test',
+    url='https://github.com/italia/spid-sp-test',
     author='Giuseppe De Marco',
     author_email='giuseppe.demarco@tamdigitale.governo.it',
     license='License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)',
     scripts=['src/spid_sp_test/spid_sp_test'],
     packages=[f"{_pkg_name}"],
-    package_dir={f"{_pkg_name}": f"{_src_folder}/spid_sp_test"},
+    package_dir={f"{_pkg_name}": f"{_src_folder}/{_pkg_name}"},
 
     package_data={f"{_pkg_name}": [i.replace(f'{_src_folder}/{_pkg_name}/', '')
                                    for i in glob(f'{_src_folder}/{_pkg_name}/**',
