@@ -9,7 +9,7 @@ from . indicepa import get_indicepa_by_ipacode
 class SpidSpMetadataCheckPublic(object):
 
     def test_Contacts_PubPriv(self, contact_type="other"):
-        entity_desc = self.doc.xpath('//ContactPerson')
+        entity_desc = self.doc.xpath(f'//ContactPerson[@contactType="{contact_type}"]')
         self._assertTrue(entity_desc, 'ContactPerson MUST be present')
 
         if entity_desc:
@@ -23,17 +23,14 @@ class SpidSpMetadataCheckPublic(object):
                 'The contactType attribute MUST have a value - TR pag. 19'
             )
             self._assertTrue(
-                entity_desc[0].get('contactType') == 'other',
-                'The contactType must be "other" - TR pag. 19',
+                entity_desc[0].get('contactType') == contact_type,
+                f'The contactType must be "{contact_type}" - TR pag. 19',
                 description = entity_desc[0].get('contactType')
             )
 
-        others = self.doc.xpath(
-            f'//ContactPerson[@contactType="{contact_type}"]')
         self._assertTrue(
-            len(others) == 1,
+            len(entity_desc) == 1,
             f'Only one ContactPerson element of contactType "{contact_type}" MUST be present',
-            description = others
         )
 
         return self.is_ok(f'{self.__class__.__name__}.test_Contacts_PubPriv')
@@ -144,14 +141,18 @@ class SpidSpMetadataCheckPublic(object):
 
         return self.is_ok(f'{self.__class__.__name__}.test_Contacts_IPACode')
 
-    def test_extensions_public_private(self, ext_type="Public"):
+    def test_extensions_public_private(
+                        self, ext_type="Public", contact_type='other'):
         ext_type_not = "Private" if ext_type == "Public" else "Public"
 
         # only if other, billing doesn't have any Private element in it!
-        ctype = self.doc.xpath(f'//ContactPerson[@contactType="other"]/Extensions/{ext_type.title()}')
+        ctype = self.doc.xpath(
+            f'//ContactPerson[@contactType="{contact_type}"]/Extensions/{ext_type.title()}'
+        )
         self._assertTrue(
             ctype,
-            f'Missing ContactPerson/Extensions/{ext_type.title()}, this element MUST be present',
+            f'Missing ContactPerson/Extensions/{ext_type.title()}, '
+            'this element MUST be present',
         )
         if ctype:
             self._assertFalse(
@@ -200,3 +201,41 @@ class SpidSpMetadataCheckPublic(object):
             )
 
         return self.is_ok(f'{self.__class__.__name__}.test_Contacts_VATFC')
+
+    def test_extensions_cie(self, ext_type='Public'):
+
+        attrs = ['Municipality']
+
+        if ext_type == 'Private':
+            attrs.extend(
+                ['VATNumber', 'NACE2Code', 'FiscalCode']
+            )
+        else:
+            attrs.extend(
+                ['IPACode', ]
+            )
+
+        # the following elements MUST be present
+        for ele in attrs:
+            ctype = self.doc.xpath(
+                f'//ContactPerson/Extensions/{ele}'
+            )
+
+            self._assertTrue(
+                ctype,
+                f'{ele} element MUST be present',
+            )
+
+            # is <= because already protected with the previous check
+            self._assertTrue(
+                (len(ctype) <= 1),
+                f'only one {ele} element MUST be present',
+            )
+
+            if ctype:
+                self._assertTrue(
+                    ctype[0].text,
+                    f'The {ele} element MUST have a value',
+                )
+
+        return self.is_ok(f'{self.__class__.__name__}.test_extensions_cie')

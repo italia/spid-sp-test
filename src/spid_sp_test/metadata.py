@@ -508,7 +508,8 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
         return self.is_ok(f'{self.__class__.__name__}.test_AttributeConsumingService')
 
 
-    def test_AttributeConsumingService_SPID(self):
+    def test_AttributeConsumingService_SPID(
+                    self, allowed_attributes=constants.SPID_ATTRIBUTES):
         acss = self.doc.xpath('//EntityDescriptor/SPSSODescriptor'
                               '/AttributeConsumingService')
 
@@ -556,7 +557,7 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
 
                 self._assertIn(
                     ra.get('Name'),
-                    constants.SPID_ATTRIBUTES,
+                    allowed_attributes,
                     f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element MUST be valid',
                     description = f"one of [{', '.join(constants.SPID_ATTRIBUTES)}] - TR pag. 20 and AV n.6"
                 )
@@ -792,3 +793,28 @@ class SpidSpMetadataCheck(AbstractSpidCheck,
             ext_types = ["//ContactPerson/Extensions/PublicServicesLightOperator"],
             must=True
         )
+
+    def test_profile_cie_sp(self):
+        self.test_profile_saml2core()
+        self.test_SPSSODescriptor_SPID()
+        self.test_contactperson_email()
+        self.test_AttributeConsumingService_SPID(
+            allowed_attributes = constants.CIE_ATTRIBUTES
+        )
+        # TODO: ask the validation xsd to IPZS :)
+        # self.xsd_check(xsds_files = [
+
+    def test_profile_cie_sp_public(self):
+        self.test_profile_cie_sp()
+        self.test_extensions_public_private(
+            ext_type="Public", contact_type='administrative')
+        self.test_Contacts_PubPriv(contact_type='administrative')
+        self.test_extensions_cie(ext_type="Public")
+
+    def test_profile_cie_sp_private(self):
+        self.test_profile_cie_sp()
+        self.test_extensions_public_private(
+            ext_type="Private", contact_type='technical')
+        self.test_Contacts_PubPriv(contact_type='administrative')
+        self.test_Contacts_PubPriv(contact_type='technical')
+        self.test_extensions_cie(ext_type="Private")

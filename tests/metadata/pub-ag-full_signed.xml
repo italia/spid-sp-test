@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<md:EntityDescriptor
-    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" ID="bff93e4d-d684-47d8-9bba-228e50bf4fa1" entityID="https://www.aggregator.it/pub-ag-full/TEST"
-    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-    xmlns:spid="https://spid.gov.it/saml-extensions">
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:spid="https://spid.gov.it/saml-extensions" ID="bff93e4d-d684-47d8-9bba-228e50bf4fa1" entityID="https://www.aggregator.it/pub-ag-full/TEST">
 
 <ds:Signature Id="Signature1">
 <ds:SignedInfo>
@@ -14,10 +11,15 @@
 <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-<ds:DigestValue />
+<ds:DigestValue>G8KIIbmvRYL0w71waVcYuZDM032+2VxfwHb0uVLMCFI=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue />
+<ds:SignatureValue>mVhPzfqn6nkNykfhyQEsl3GZs4OHU+APdEte6WniT6tIfxRr+UpaGHYm1jmov7ja
+AhHkg6Pfw+9u+N38K2iRYstdpUKsZuqpJx8WSeSDf8Sy3aMUjhVxkEEcxPK+kDMX
+8KHAWPd4K4Yo4wPqsA2zRJZnfbCVhJ/Z3VIT48zFRo4iaM9dMSCos2Jm9P8/VsG8
+MoAzHPXBZaNZpr0iQQPXY3Qb5K5bRw31mj6Wx2P5E/tfHaSCbA8Q80iRtW67vSrz
+bST2SalvYOvdwgC/sxUvjhjo2NDGpJzQ1pkjiPfBZftM2Tq1q8dP7Zyc+MAhiU3r
+BrVavxPWT7uRkCraWajHUw==</ds:SignatureValue>
 <ds:KeyInfo>
 <ds:X509Data>
 <ds:X509Certificate>MIIEGDCCAwCgAwIBAgIJAOrYj9oLEJCwMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdDAeFw0xOTA0MTExMDAyMDhaFw0yNTAzMDgxMDAyMDhaMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8kJVo+ugRrbbv9xhXCuVrqi4B7/MQzQc62ocwlFFujJNd4m1mXkUHFbgvwhRkQqo2DAmFeHiwCkJT3K1eeXIFhNFFroEzGPzONyekLpjNvmYIs1CFvirGOj0bkEiGaKEs+/umzGjxIhy5JQlqXE96y1+Izp2QhJimDK0/KNij8I1bzxseP0Ygc4SFveKS+7QO+PrLzWklEWGMs4DM5Zc3VRK7g4LWPWZhKdImC1rnS+/lEmHSvHisdVp/DJtbSrZwSYTRvTTz5IZDSq4kAzrDfpj16h7b3t3nFGc8UoY2Ro4tRZ3ahJ2r3b79yK6C5phY7CAANuW3gDdhVjiBNYs0CAwEAAaOByjCBxzAdBgNVHQ4EFgQU3/7kV2tbdFtphbSA4LH7+w8SkcwwgZcGA1UdIwSBjzCBjIAU3/7kV2tbdFtphbSA4LH7+w8SkcyhaaRnMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdIIJAOrYj9oLEJCwMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAJNFqXg/V3aimJKUmUaqmQEEoSc3qvXFITvT5f5bKw9yk/NVhR6wndL+z/24h1OdRqs76blgH8k116qWNkkDtt0AlSjQOx5qvFYh1UviOjNdRI4WkYONSw+vuavcx+fB6O5JDHNmMhMySKTnmRqTkyhjrch7zaFIWUSV7hsBuxpqmrWDoLWdXbV3eFH3mINA5AoIY/m0bZtzZ7YNgiFWzxQgekpxd0vcTseMnCcXnsAlctdir0FoCZztxMuZjlBjwLTtM6Ry3/48LMM8Z+lw7NMciKLLTGQyU8XmKKSSOh0dGh5Lrlt5GxIIJkH81C0YimWebz8464QPL3RbLnTKg+c=</ds:X509Certificate>
@@ -39,11 +41,9 @@
         <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://www.aggregator.it/sso" index="0" isDefault="true"/>
         <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://www.aggregator.it/sso" index="1" isDefault="false"/>
         <md:AttributeConsumingService index="0">
-            <md:ServiceName
-                xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Set 0
+            <md:ServiceName xml:lang="it">Set 0
             </md:ServiceName>
-            <md:ServiceDescription
-                xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Login Attribute Set 0
+            <md:ServiceDescription xml:lang="it">Login Attribute Set 0
             </md:ServiceDescription>
             <md:RequestedAttribute Name="spidCode" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
             <md:RequestedAttribute Name="name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
@@ -55,11 +55,9 @@
             <md:RequestedAttribute Name="registeredOffice" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
         </md:AttributeConsumingService>
         <md:AttributeConsumingService index="1">
-            <md:ServiceName
-                xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Set 1
+            <md:ServiceName xml:lang="it">Set 1
             </md:ServiceName>
-            <md:ServiceDescription
-                xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Login Attribute Set 1
+            <md:ServiceDescription xml:lang="it">Login Attribute Set 1
             </md:ServiceDescription>
             <md:RequestedAttribute Name="spidCode" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
             <md:RequestedAttribute Name="name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
@@ -74,14 +72,11 @@
         </md:AttributeConsumingService>
     </md:SPSSODescriptor>
     <md:Organization>
-        <md:OrganizationName
-            xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Organizzazione fittizia per il collaudo
+        <md:OrganizationName xml:lang="it">Organizzazione fittizia per il collaudo
         </md:OrganizationName>
-        <md:OrganizationDisplayName
-            xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Organizzazione fittizia per il collaudo
+        <md:OrganizationDisplayName xml:lang="it">Organizzazione fittizia per il collaudo
         </md:OrganizationDisplayName>
-        <md:OrganizationURL
-            xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">https://www.aggregator.it
+        <md:OrganizationURL xml:lang="it">https://www.aggregator.it
         </md:OrganizationURL>
     </md:Organization>
     <md:ContactPerson contactType="other" spid:entityType="spid:aggregator">

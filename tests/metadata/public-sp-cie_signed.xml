@@ -11,10 +11,15 @@
 <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-<ds:DigestValue />
+<ds:DigestValue>4llTAmC0KOIifN+HtaSJOAatw0tlOa7zpsXwav5+G+A=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue />
+<ds:SignatureValue>FRlSWwCejazHNJ13OiMCvWlUvcfIAHeN/w6JfZllwwBKc5UJDG7SZiH+Viy9Negr
+opTJHhMS66EmXTniUKW7xf1nMcTcPuhvyZe29bIueRfJlmA6/MjLgMER6MXAGRmw
+woSqFG8iCLuntZvxmIcnQV5IcGyh94mJo8KZ2eP5BE7Id9c3K6N+YsqlfbfKP9tk
+vPDveb2mO7nkP+852HXfNSlHsS882l55DW4sXyCiJ1aVwOv2AZHyVgQBQ246GimJ
+0wFpXv8CeI3ZRW7gAqoNIFpFANNzE0hdbOEsJ7e4KVBqk06HMCIo0QNQoN9m0s65
+MG9DJLZMFypg2J4o9hgrMw==</ds:SignatureValue>
 <ds:KeyInfo>
 <ds:X509Data>
 <ds:X509Certificate>MIIEGDCCAwCgAwIBAgIJAOrYj9oLEJCwMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdDAeFw0xOTA0MTExMDAyMDhaFw0yNTAzMDgxMDAyMDhaMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8kJVo+ugRrbbv9xhXCuVrqi4B7/MQzQc62ocwlFFujJNd4m1mXkUHFbgvwhRkQqo2DAmFeHiwCkJT3K1eeXIFhNFFroEzGPzONyekLpjNvmYIs1CFvirGOj0bkEiGaKEs+/umzGjxIhy5JQlqXE96y1+Izp2QhJimDK0/KNij8I1bzxseP0Ygc4SFveKS+7QO+PrLzWklEWGMs4DM5Zc3VRK7g4LWPWZhKdImC1rnS+/lEmHSvHisdVp/DJtbSrZwSYTRvTTz5IZDSq4kAzrDfpj16h7b3t3nFGc8UoY2Ro4tRZ3ahJ2r3b79yK6C5phY7CAANuW3gDdhVjiBNYs0CAwEAAaOByjCBxzAdBgNVHQ4EFgQU3/7kV2tbdFtphbSA4LH7+w8SkcwwgZcGA1UdIwSBjzCBjIAU3/7kV2tbdFtphbSA4LH7+w8SkcyhaaRnMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdIIJAOrYj9oLEJCwMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAJNFqXg/V3aimJKUmUaqmQEEoSc3qvXFITvT5f5bKw9yk/NVhR6wndL+z/24h1OdRqs76blgH8k116qWNkkDtt0AlSjQOx5qvFYh1UviOjNdRI4WkYONSw+vuavcx+fB6O5JDHNmMhMySKTnmRqTkyhjrch7zaFIWUSV7hsBuxpqmrWDoLWdXbV3eFH3mINA5AoIY/m0bZtzZ7YNgiFWzxQgekpxd0vcTseMnCcXnsAlctdir0FoCZztxMuZjlBjwLTtM6Ry3/48LMM8Z+lw7NMciKLLTGQyU8XmKKSSOh0dGh5Lrlt5GxIIJkH81C0YimWebz8464QPL3RbLnTKg+c=</ds:X509Certificate>
@@ -30,15 +35,15 @@
             </ds:X509Data>
          </ds:KeyInfo>
       </md:KeyDescriptor>
-      <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://www.public-sp.it/Shibboleth.sso/SLO/POST" />
+      <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://www.public-sp.it/Shibboleth.sso/SLO/POST"/>
       <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
-      <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://www.public-sp.it/Shibboleth.sso/SAML2/POST" index="0" isDefault="true" />
+      <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://www.public-sp.it/Shibboleth.sso/SAML2/POST" index="0" isDefault="true"/>
       <md:AttributeConsumingService index="0">
          <md:ServiceName xml:lang="it">CIE Service for Public Administration</md:ServiceName>
-         <md:RequestedAttribute Name="name" />
-         <md:RequestedAttribute Name="familyName" />
-         <md:RequestedAttribute Name="dateOfBirth" />
-         <md:RequestedAttribute Name="fiscalNumber" />
+         <md:RequestedAttribute Name="name"/>
+         <md:RequestedAttribute Name="familyName"/>
+         <md:RequestedAttribute Name="dateOfBirth"/>
+         <md:RequestedAttribute Name="fiscalNumber"/>
       </md:AttributeConsumingService>
    </md:SPSSODescriptor>
    <md:Organization>
@@ -48,7 +53,7 @@
    </md:Organization>
    <md:ContactPerson contactType="administrative">
       <md:Extensions>
-         <cie:Public />
+         <cie:Public/>
          <cie:FiscalCode>01234567890</cie:FiscalCode>
          <cie:IPACode>abcd_000</cie:IPACode>
          <cie:Municipality>C351</cie:Municipality>

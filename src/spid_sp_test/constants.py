@@ -116,6 +116,13 @@ SPID_ATTRIBUTES = [
     'domicileNation'
 ]
 
+CIE_ATTRIBUTES = [
+    'dateOfBirth',
+    'familyName',
+    'fiscalNumber',
+    'name'
+]
+
 SPID_LEVELS = [
     'https://www.spid.gov.it/SpidL1',
     'https://www.spid.gov.it/SpidL2',

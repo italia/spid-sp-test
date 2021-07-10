@@ -1,7 +1,7 @@
 import os
 
 DIR='metadata'
-CMD = "python3 src/spid_sp_test/spid_sp_test --metadata-url file://tests/{} -l xsd_check"
+CMD = "python3 src/spid_sp_test/spid_sp_test --metadata-url file://tests/{} --extra --debug ERROR"
 
 
 def run_cmd(mfname) -> int:
@@ -15,52 +15,28 @@ def test_metadata_missing_eid():
 
 
 def test_public_sp():
-    es = run_cmd(f'{DIR}/public-sp.xml')
+    es = run_cmd(f'{DIR}/public-sp_signed.xml')
     assert es == 0
 
 
 def test_private_sp():
-    es = run_cmd(f'{DIR}/private-sp.xml')
+    es = run_cmd(f'{DIR}/private-sp_signed.xml --profile spid-sp-private')
     assert es == 0
 
 
 def test_op_full():
-    es = run_cmd(f'{DIR}/pub-op-full.xml')
+    es = run_cmd(f'{DIR}/pub-op-full_signed.xml --profile spid-sp-op-public-full')
     assert es == 0
 
 
-def test_satosa_billing():
-    es = run_cmd(f'{DIR}/satosa-saml2spid-billing-xml')
+def test_ag_lite():
+    es = run_cmd(f'{DIR}/pub-ag-lite_signed.xml --profile spid-sp-ag-public-lite')
     assert es == 0
 
-
-def test_satosa_other():
-    es = run_cmd(f'{DIR}/satosa-saml2spid-other-xml')
+def test_ag_full():
+    es = run_cmd(f'{DIR}/pub-ag-full_signed.xml --profile spid-sp-ag-public-full')
     assert es == 0
 
-
-def test_django_billing():
-    es = run_cmd(f'{DIR}/spid-django-billing.xml')
+def test_public_cie_sp():
+    es = run_cmd(f'{DIR}/public-sp-cie_signed.xml --profile cie-sp-public')
     assert es == 0
-
-
-def test_django_other():
-    es = run_cmd(f'{DIR}/spid-django-other.xml')
-    assert es == 0
-
-
-# TODO - still fails
-# def test_pub_ag_full():
-    # """
-        # Reason: The content of element 'md:ContactPerson' is not complete. Tag md:EmailAddress expected.
-    # """
-    # es = run_cmd('pub-ag-full.xml')
-    # assert es == 0
-
-
-# def test_pub_ag_light():
-    # """
-        # Reason: The content of element 'md:ContactPerson' is not complete. Tag md:EmailAddress expected.
-    # """
-    # es = run_cmd('pub-ag-lite.xml')
-    # assert es == 0
