@@ -3,12 +3,9 @@ from spid_sp_test.idp.settings import SAML2_IDP_CONFIG
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-NameIDNameQualifier = SAML2_IDP_CONFIG['entityid']
+NameIDNameQualifier = SAML2_IDP_CONFIG["entityid"]
 
-ATTRIBUTES_TYPES = {
-    "dateOfBirth": "date",
-    "expirationDate": "date"
-}
+ATTRIBUTES_TYPES = {"dateOfBirth": "date", "expirationDate": "date"}
 
 HTTP_STATUS_ERROR_CODES = [400, 401, 403, 500]
 
@@ -41,17 +38,17 @@ ATTRIBUTES = {
 
 
 DEFAULT_RESPONSE = {
-    "IssueInstant": "",              # "2021-03-04T15:48:46Z"
-    "Issuer": SAML2_IDP_CONFIG['entityid'],
-    "AssertionID": "",               # random, eg: _b8e3193c-aa49-4c45-8ca5-1c74d7de11b2
+    "IssueInstant": "",  # "2021-03-04T15:48:46Z"
+    "Issuer": SAML2_IDP_CONFIG["entityid"],
+    "AssertionID": "",  # random, eg: _b8e3193c-aa49-4c45-8ca5-1c74d7de11b2
     "NameIDNameQualifier": NameIDNameQualifier,
-    "NameID": "",                    # random, eg: _3fc08efa-a851-4855-9f03-9b881df8ca06
-    "NotOnOrAfter": "",              # 2021-03-04T15:53:37Z
-    "NotBefore": "",                 # 2021-03-04T15:48:46Z -> IssueInstant
-    "AuthnIstant": "",               # 2021-03-04T15:48:46Z ~ IssueInstant
-    "SessionIndex": "",              # _ffa3114b-f589-417b-8602-4b0275f6bafc
+    "NameID": "",  # random, eg: _3fc08efa-a851-4855-9f03-9b881df8ca06
+    "NotOnOrAfter": "",  # 2021-03-04T15:53:37Z
+    "NotBefore": "",  # 2021-03-04T15:48:46Z -> IssueInstant
+    "AuthnIstant": "",  # 2021-03-04T15:48:46Z ~ IssueInstant
+    "SessionIndex": "",  # _ffa3114b-f589-417b-8602-4b0275f6bafc
     "AuthnContextClassRef": "https://www.spid.gov.it/SpidL1",
-    "Attributes": ATTRIBUTES
+    "Attributes": ATTRIBUTES,
 }
 
 
@@ -130,26 +127,22 @@ RESPONSE_TESTS = {
         "response": {},
         "sign_credentials": {
             "certificate": f"{BASE_DIR}/certificates/test_public.cert",
-            "privateKey": f"{BASE_DIR}/certificates/test_private.key"
-        }
+            "privateKey": f"{BASE_DIR}/certificates/test_private.key",
+        },
     },
     "8": {
         "name": "08. Response - ID non specificato",
         "description": "Attributo ID non specificato. Risultato atteso: KO",
         "status_codes": HTTP_STATUS_ERROR_CODES,
         "path": "case-08.xml",
-        "response": {
-            "ResponseID": None
-        },
+        "response": {"ResponseID": None},
     },
     "9": {
         "name": "09. Response - ID mancante",
         "description": "Attributo ID mancante. Risultato atteso: KO",
         "status_codes": HTTP_STATUS_ERROR_CODES,
         "path": "case-09.xml",
-        "response": {
-            "ResponseID": None
-        },
+        "response": {"ResponseID": None},
     },
     "10": {
         "name": "10. Response - Version diverso da 2.0",
@@ -204,9 +197,7 @@ RESPONSE_TESTS = {
         "description": "Attributo InResponseTo non specificato. Risultato atteso: KO",
         "status_codes": HTTP_STATUS_ERROR_CODES,
         "path": "case-16.xml",
-        "response": {
-            "InResponseTo": ""
-        },
+        "response": {"InResponseTo": ""},
     },
     "17": {
         "name": "17. Response - InResponseTo mancante",
@@ -243,9 +234,7 @@ RESPONSE_TESTS = {
         "description": "Attributo Destination diverso da AssertionConsumerServiceURL. Risultato atteso: KO",
         "status_codes": HTTP_STATUS_ERROR_CODES,
         "path": "case-21.xml",
-        "response": {
-            "AssertionConsumerURL": "diversodaassertionconsumerserviceurl"
-        },
+        "response": {"AssertionConsumerURL": "diversodaassertionconsumerserviceurl"},
     },
     "22": {
         "name": "22. Response - Elemento Status non specificato",
@@ -323,27 +312,21 @@ RESPONSE_TESTS = {
         "description": "Elemento Assertion mancante ed esito positivo autenticazione. Risultato atteso: KO",
         "status_codes": HTTP_STATUS_ERROR_CODES,
         "path": "case-32.xml",
-        "response": {
-            "AssertionID": None
-        },
+        "response": {"AssertionID": None},
     },
     "33": {
         "name": "33. Assertion - Attributo ID non specificato",
         "description": "Attributo ID dell'Assertion non specificato. Risultato atteso: KO",
         "status_codes": HTTP_STATUS_ERROR_CODES,
         "path": "case-33.xml",
-        "response": {
-            "AssertionID": None
-        },
+        "response": {"AssertionID": None},
     },
     "34": {
         "name": "34. Assertion - Attributo ID mancante",
         "description": "Attributo ID dell'Assertion mancante. Risultato atteso: KO",
         "status_codes": HTTP_STATUS_ERROR_CODES,
         "path": "case-34.xml",
-        "response": {
-            "AssertionID": None
-        },
+        "response": {"AssertionID": None},
     },
     "35": {
         "name": "35. Assertion - Attributo Version diverso da 2.0",
@@ -763,9 +746,9 @@ RESPONSE_TESTS = {
         "path": "base.xml",
         "response": {
             "AuthnContextClassRef": "https://www.spid.gov.it/SpidL1",
-            "Attributes": ATTRIBUTES
+            "Attributes": ATTRIBUTES,
         },
-        "response_mods": ['spid_sp_test.responses.response_mods.dynamic_acr']
+        "response_mods": ["spid_sp_test.responses.response_mods.dynamic_acr"],
     },
     "95": {
         "name": "95. Assertion - Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL2",
@@ -775,7 +758,7 @@ RESPONSE_TESTS = {
         "response": {
             "AuthnContextClassRef": "https://www.spid.gov.it/SpidL2",
         },
-        "response_mods": ['spid_sp_test.responses.response_mods.dynamic_acr']
+        "response_mods": ["spid_sp_test.responses.response_mods.dynamic_acr"],
     },
     "96": {
         "name": "96. Assertion - Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL3",
@@ -785,7 +768,7 @@ RESPONSE_TESTS = {
         "response": {
             "AuthnContextClassRef": "https://www.spid.gov.it/SpidL3",
         },
-        "response_mods": ['spid_sp_test.responses.response_mods.dynamic_acr']
+        "response_mods": ["spid_sp_test.responses.response_mods.dynamic_acr"],
     },
     "97": {
         "name": "97. Assertion - Elemento AuthContextClassRef impostato ad un valore non previsto",
@@ -819,21 +802,15 @@ RESPONSE_TESTS = {
         "response": {},
         "sign_credentials": {
             "certificate": f"{BASE_DIR}/certificates/test_public.cert",
-            "privateKey": f"{BASE_DIR}/certificates/test_private.key"
-        }
+            "privateKey": f"{BASE_DIR}/certificates/test_private.key",
+        },
     },
     "103": {
         "name": "103. Assertion - Set di attributi inviato diverso da quello richiesto",
         "description": "Set di attributi inviato diverso da quello richiesto",
         "status_codes": [200, 400, 403, 500],
         "path": "base.xml",
-        "response": {
-
-            "Attributes": {
-                "spidCode": "AGID-001",
-                "address": "via Test"
-            }
-        },
+        "response": {"Attributes": {"spidCode": "AGID-001", "address": "via Test"}},
     },
     "104": {
         "name": "104. Anomalie utente - Ripetuta sottomissione di credenziali errate (Anomalia 19)",
@@ -843,7 +820,7 @@ RESPONSE_TESTS = {
         "response": {
             "StatusCode": "urn:oasis:names:tc:SAML:2.0:status:Responder",
             "SubStatus": "urn:oasis:names:tc:SAML:2.0:status:AuthnFailed",
-            "StatusMessage": "ErrorCode nr19"
+            "StatusMessage": "ErrorCode nr19",
         },
     },
     "105": {
@@ -854,7 +831,7 @@ RESPONSE_TESTS = {
         "response": {
             "StatusCode": "urn:oasis:names:tc:SAML:2.0:status:Responder",
             "SubStatus": "urn:oasis:names:tc:SAML:2.0:status:AuthnFailed",
-            "StatusMessage": "ErrorCode nr20"
+            "StatusMessage": "ErrorCode nr20",
         },
     },
     "106": {
@@ -865,7 +842,7 @@ RESPONSE_TESTS = {
         "response": {
             "StatusCode": "urn:oasis:names:tc:SAML:2.0:status:Responder",
             "SubStatus": "urn:oasis:names:tc:SAML:2.0:status:AuthnFailed",
-            "StatusMessage": "ErrorCode nr21"
+            "StatusMessage": "ErrorCode nr21",
         },
     },
     "107": {
@@ -876,7 +853,7 @@ RESPONSE_TESTS = {
         "response": {
             "StatusCode": "urn:oasis:names:tc:SAML:2.0:status:Responder",
             "SubStatus": "urn:oasis:names:tc:SAML:2.0:status:AuthnFailed",
-            "StatusMessage": "ErrorCode nr22"
+            "StatusMessage": "ErrorCode nr22",
         },
     },
     "108": {
@@ -887,7 +864,7 @@ RESPONSE_TESTS = {
         "response": {
             "StatusCode": "urn:oasis:names:tc:SAML:2.0:status:Responder",
             "SubStatus": "urn:oasis:names:tc:SAML:2.0:status:AuthnFailed",
-            "StatusMessage": "ErrorCode nr23"
+            "StatusMessage": "ErrorCode nr23",
         },
     },
     "109": {
@@ -913,9 +890,9 @@ RESPONSE_TESTS = {
         "response": {
             "StatusCode": "urn:oasis:names:tc:SAML:2.0:status:Responder",
             "SubStatus": "urn:oasis:names:tc:SAML:2.0:status:AuthnFailed",
-            "StatusMessage": "ErrorCode nr25"
+            "StatusMessage": "ErrorCode nr25",
         },
-    }
+    },
 }
 
 
@@ -925,9 +902,9 @@ TEST_SUITE = {
         "response": {
             "AssertionConsumerURL": "",
             "ResponseID": "",
-            "AuthnRequestID": ""
+            "AuthnRequestID": "",
         },
-        "cases": RESPONSE_TESTS
+        "cases": RESPONSE_TESTS,
     },
     "test-logout": {
         "description": "Test Logout Response",
@@ -937,7 +914,7 @@ TEST_SUITE = {
             "Destination": "",
             "AuthnRequestID": "",
             "NameQualifier": NameIDNameQualifier,
-            "Issuer": ""
+            "Issuer": "",
         },
         "cases": {
             "1": {
@@ -945,8 +922,8 @@ TEST_SUITE = {
                 "description": "Logout corretto",
                 "path": "logout-1.xml",
                 "response": {},
-                "sign_response": True
+                "sign_response": True,
             }
-        }
-    }
+        },
+    },
 }

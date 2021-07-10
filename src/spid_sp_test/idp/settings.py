@@ -1,5 +1,6 @@
 from pathlib import Path
 from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT
+
 # from saml2.saml import NAME_FORMAT_BASIC
 
 
@@ -14,11 +15,12 @@ SAML2_IDP_CONFIG = {
             "endpoints": {
                 "single_sign_on_service": [
                     (f"{BASE}/samlsso", BINDING_HTTP_POST),
-                    (f"{BASE}/samlsso", BINDING_HTTP_REDIRECT)],
+                    (f"{BASE}/samlsso", BINDING_HTTP_REDIRECT),
+                ],
                 "single_logout_service": [
                     (f"{BASE}/samlsso", BINDING_HTTP_POST),
-                    (f"{BASE}/samlsso", BINDING_HTTP_REDIRECT)
-                    ]
+                    (f"{BASE}/samlsso", BINDING_HTTP_REDIRECT),
+                ],
             },
         },
     },

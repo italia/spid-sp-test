@@ -2,12 +2,12 @@ import logging
 import requests
 
 
-API_URL = 'https://indicepa.gov.it/PortaleServices/api/aoo'
+API_URL = "https://indicepa.gov.it/PortaleServices/api/aoo"
 logger = logging.getLogger(__name__)
 
 
 def get_indicepa_by_ipacode(value):
-    qs = '''
+    qs = """
     {"paginazione":
         {"campoOrdinamento":"codAoo",
          "tipoOrdinamento":"asc",
@@ -23,26 +23,22 @@ def get_indicepa_by_ipacode(value):
          "codEnte":"$IPACode",
          "codiceCategoria":null,
          "area":null
-    }'''
+    }"""
 
-    qs_final = qs.replace('$IPACode', value)
+    qs_final = qs.replace("$IPACode", value)
     header = {"Content-Type": "application/json"}
 
     response = None
     try:
-        response = requests.post(
-                    API_URL, headers=header, data=qs_final, timeout=5)
-    except Exception as e: # pragma: no cover
+        response = requests.post(API_URL, headers=header, data=qs_final, timeout=5)
+    except Exception as e:  # pragma: no cover
         logger.error(e)
         return {-1, {}}
     else:
         res = response.json()
         try:
-            result = (
-                res['risposta']['paginazione']['numeroRigheTotali'],
-                res
-            )
+            result = (res["risposta"]["paginazione"]["numeroRigheTotali"], res)
             return result
-        except KeyError: # pragma: no cover
+        except KeyError:  # pragma: no cover
             logger.error(f"{API_URL} invalid response")
             return {-1, {}}

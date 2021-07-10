@@ -12,11 +12,11 @@ from lxml import etree, html
 
 def del_ns(root):
     for elem in root.getiterator():
-        if not hasattr(elem.tag, 'find'):
+        if not hasattr(elem.tag, "find"):
             continue
-        i = elem.tag.find('}')
+        i = elem.tag.find("}")
         if i >= 0:
-            elem.tag = elem.tag[i + 1:]
+            elem.tag = elem.tag[i + 1 :]
     lxml.objectify.deannotate(root, cleanup_namespaces=True)
 
 
@@ -27,14 +27,16 @@ def parse_pem(cert):
     # sigalg
     #
 
-    cmd = ' | '.join([
-        'openssl x509 -in %s -noout -text' % cert,
-        'sed -e "s/^\\s\\s*//g"',
-        'grep "Signature Algorithm"',
-        'uniq',
-        'cut -d":" -f2',
-        'sed -e "s/^\\s\\s*//g"'
-    ])
+    cmd = " | ".join(
+        [
+            "openssl x509 -in %s -noout -text" % cert,
+            'sed -e "s/^\\s\\s*//g"',
+            'grep "Signature Algorithm"',
+            "uniq",
+            'cut -d":" -f2',
+            'sed -e "s/^\\s\\s*//g"',
+        ]
+    )
 
     try:
         p = subprocess.run(
@@ -44,7 +46,7 @@ def parse_pem(cert):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        value = p.stdout.decode('utf-8').replace('\n', '')
+        value = p.stdout.decode("utf-8").replace("\n", "")
         result.append(value)
     except subprocess.CalledProcessError as err:
         print(err)
@@ -54,13 +56,15 @@ def parse_pem(cert):
     # klen
     #
 
-    cmd = ' | '.join([
-        'openssl x509 -in %s -noout -text' % cert,
-        'sed -e "s/^\\s\\s*//g"',
-        'grep "Public-Key"',
-        'cut -d"(" -f2',
-        'cut -d" " -f1',
-    ])
+    cmd = " | ".join(
+        [
+            "openssl x509 -in %s -noout -text" % cert,
+            'sed -e "s/^\\s\\s*//g"',
+            'grep "Public-Key"',
+            'cut -d"(" -f2',
+            'cut -d" " -f1',
+        ]
+    )
 
     try:
         p = subprocess.run(
@@ -70,7 +74,7 @@ def parse_pem(cert):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        value = p.stdout.decode('utf-8').replace('\n', '')
+        value = p.stdout.decode("utf-8").replace("\n", "")
         result.append(value)
     except subprocess.CalledProcessError as err:
         print(err)
@@ -80,13 +84,15 @@ def parse_pem(cert):
     # alg
     #
 
-    cmd = ' | '.join([
-        'openssl x509 -in %s -noout -text' % cert,
-        'sed -e "s/^\\s\\s*//g"',
-        'grep "Public Key Algorithm"',
-        'cut -d":" -f2',
-        'cut -d" " -f2',
-    ])
+    cmd = " | ".join(
+        [
+            "openssl x509 -in %s -noout -text" % cert,
+            'sed -e "s/^\\s\\s*//g"',
+            'grep "Public Key Algorithm"',
+            'cut -d":" -f2',
+            'cut -d" " -f2',
+        ]
+    )
 
     try:
         p = subprocess.run(
@@ -96,7 +102,7 @@ def parse_pem(cert):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        value = p.stdout.decode('utf-8').replace('\n', '')
+        value = p.stdout.decode("utf-8").replace("\n", "")
         result.append(value)
     except subprocess.CalledProcessError as err:
         print(err)
@@ -106,11 +112,13 @@ def parse_pem(cert):
     # validity
     #
 
-    cmd = ' | '.join([
-        'openssl x509 -in %s -noout -enddate' % cert,
-        'cut -d"=" -f2',
-        'cut -b 1-20',
-    ])
+    cmd = " | ".join(
+        [
+            "openssl x509 -in %s -noout -enddate" % cert,
+            'cut -d"=" -f2',
+            "cut -b 1-20",
+        ]
+    )
 
     try:
         p = subprocess.run(
@@ -120,7 +128,7 @@ def parse_pem(cert):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        value = p.stdout.decode('utf-8').replace('\n', '')
+        value = p.stdout.decode("utf-8").replace("\n", "")
         result.append(value)
     except subprocess.CalledProcessError as err:
         print(err)
@@ -131,14 +139,14 @@ def parse_pem(cert):
 
 def samlreq_from_htmlform(html_content):
     tree = html.fromstring(html_content)
-    for elem in tree.xpath('//form'):
+    for elem in tree.xpath("//form"):
         form = elem.attrib
-        inputs = elem.xpath('input')
+        inputs = elem.xpath("input")
         for i in inputs:
-            if i.attrib['name'] == 'SAMLRequest':
-                form['SAMLRequest'] = i.attrib['value']
-            elif i.attrib['name'] == 'RelayState':
-                form['RelayState'] = i.attrib['value']
+            if i.attrib["name"] == "SAMLRequest":
+                form["SAMLRequest"] = i.attrib["value"]
+            elif i.attrib["name"] == "RelayState":
+                form["RelayState"] = i.attrib["value"]
         return form
 
 
@@ -151,8 +159,8 @@ def decode_authn_req_http_redirect(saml_req_str):
 def get_key_pem_wrapped_unwrapped(cert):
     begin_cert = "-----BEGIN PRIVATE KEY-----\n"
     end_cert = "\n-----END PRIVATE KEY-----\n"
-    unwrapped_cert = re.sub(f'{begin_cert}|{end_cert}', '', cert)
-    wrapped_cert = f'{begin_cert}{unwrapped_cert}{end_cert}'
+    unwrapped_cert = re.sub(f"{begin_cert}|{end_cert}", "", cert)
+    wrapped_cert = f"{begin_cert}{unwrapped_cert}{end_cert}"
     return wrapped_cert, unwrapped_cert
 
 
@@ -166,8 +174,8 @@ def prettify_xml(msg_str) -> bytes:
 
 
 def get_xmlsec1_bin():
-    env_bin = os.environ.get('XMLSEC1_BIN')
-    which_exe = os.popen('which xmlsec1').read()
+    env_bin = os.environ.get("XMLSEC1_BIN")
+    which_exe = os.popen("which xmlsec1").read()
     if env_bin:
         return env_bin
     elif which_exe:
@@ -180,21 +188,21 @@ def get_xmlsec1_bin():
 
 def html_absolute_paths(html_content, url):
     parse = urllib.parse.urlparse(url)
-    base_url = '://'.join((parse.scheme, parse.netloc))
+    base_url = "://".join((parse.scheme, parse.netloc))
     q = html.fromstring(html_content)
     q.make_links_absolute(base_url=base_url)
 
-    for tag in ('link', 'img'):
-        for i in q.xpath(f'//{tag}'):
+    for tag in ("link", "img"):
+        for i in q.xpath(f"//{tag}"):
             attr = i.attrib
-            if attr.get('href'):
-                first_char = attr['href'][0]
-                if first_char == '/':
-                    attr['href'] = f"{base_url}{attr['href']}"
-                elif attr['href'][:4] == 'http':
+            if attr.get("href"):
+                first_char = attr["href"][0]
+                if first_char == "/":
+                    attr["href"] = f"{base_url}{attr['href']}"
+                elif attr["href"][:4] == "http":
                     continue
-                elif first_char != '/':
-                    attr['href'] = f"{url}/{attr['href']}"
+                elif first_char != "/":
+                    attr["href"] = f"{url}/{attr['href']}"
 
     return html.tostring(q)
 
@@ -202,29 +210,39 @@ def html_absolute_paths(html_content, url):
 def report_to_html(o):
     res = []
     for h1_title in o.keys():
-        res.append('<h1>%s</h1>' % h1_title)
+        res.append("<h1>%s</h1>" % h1_title)
         for h2_title in o[h1_title].keys():
-            res.append('<h2>%s</h2>' % h2_title)
+            res.append("<h2>%s</h2>" % h2_title)
             for h3_title in o[h1_title][h2_title].keys():
-                res.append('<h3>%s</h3>' % h3_title)
+                res.append("<h3>%s</h3>" % h3_title)
                 for test_case in o[h1_title][h2_title][h3_title].keys():
-                    res.append('<h4>%s</h4>' % test_case)
+                    res.append("<h4>%s</h4>" % test_case)
                     for t in o[h1_title][h2_title][h3_title][test_case]:  # noqa
-                        res.append('<p><strong>Description:</strong> %s</p>' % t['test'])  # noqa
-                        if t['result'] == 'success':
-                            res.append('<div style="background-color: #f2ffe6; padding: 5px; border: 1px solid green; margin: 5px">')  # noqa
-                            res.append('<h5 style="color: green">%s</h5>' % t['result'])  # noqa
+                        res.append(
+                            "<p><strong>Description:</strong> %s</p>" % t["test"]
+                        )  # noqa
+                        if t["result"] == "success":
+                            res.append(
+                                '<div style="background-color: #f2ffe6; padding: 5px; border: 1px solid green; margin: 5px">'
+                            )  # noqa
+                            res.append(
+                                '<h5 style="color: green">%s</h5>' % t["result"]
+                            )  # noqa
                         else:
-                            res.append('<div style="background-color: #ffebe6; padding: 5px; border: 1px solid red; margin: 5px">')  # noqa
-                            res.append('<h5 style="color: red">%s</h5>' % t['result'])  # noqa
+                            res.append(
+                                '<div style="background-color: #ffebe6; padding: 5px; border: 1px solid red; margin: 5px">'
+                            )  # noqa
+                            res.append(
+                                '<h5 style="color: red">%s</h5>' % t["result"]
+                            )  # noqa
                         # res.append('<p>Test: %s</p>' % t['test'].replace('\n', '<br/>'))  # noqa
-                        res.append('<p>Obtained value: %s</p>' % t['value'])
-                        res.append('</div>')
-    return '\n'.join(res)
+                        res.append("<p>Obtained value: %s</p>" % t["value"])
+                        res.append("</div>")
+    return "\n".join(res)
 
 
 def load_plugin(plugin_name):
-    n1, _, n2 = plugin_name.rpartition('.')
+    n1, _, n2 = plugin_name.rpartition(".")
     module = importlib.import_module(n1)
     func = getattr(module, n2)
     return func
