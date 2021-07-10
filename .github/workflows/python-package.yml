@@ -31,6 +31,7 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+        python setup.py install
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -39,4 +40,4 @@ jobs:
         flake8 ./src --count --exit-zero --max-complexity=20 --max-line-length=180 --statistics
     - name: Test with pytest and coverage
       run: |
-        pytest --cov=src/spid_sp_test tests/test_*
+        pytest --cov=spid_sp_test tests/test_*
