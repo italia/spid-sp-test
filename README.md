@@ -7,7 +7,7 @@ spid-sp-test
 [![Downloads](https://pepy.tech/badge/spid-sp-test)](https://pepy.tech/project/spid-sp-test)
 [![Downloads](https://pepy.tech/badge/spid-sp-test/week)](https://pepy.tech/project/spid-sp-test)
 
-spid-sp-test is a SAML2 SPID Service Provider validation tool that can be executed from the command line.
+spid-sp-test is a SAML2 SPID/CIE Service Provider validation tool that can be executed from the command line.
 This tool was born by separating the test library already present in [spid-saml-check](https://github.com/italia/spid-saml-check).
 
 
@@ -16,10 +16,10 @@ Features
 
 spid-sp-test can:
 
-- test a SAML2 SPID Metadata file or http url
-- test a SAML2 SPID AuthnRequest file or or http url
+- test a SAML2 SPID/CIE Metadata file or http url
+- test a SAML2 SPID/CIE AuthnRequest file or or http url
 - test ACS behaviour, how a SP replies to a SAML2 Response
-- dump the responses sent to an ACS and the HTML of the SP's response
+- dump the responses sent to an ACS and the HTML of the SP response
 - handle Attributes to send in Responses or test configurations of the Responses via json configuration files
 - configure response template with Jinja2
 - get new test-suite via multiple json files
@@ -55,18 +55,10 @@ Get fake IdP metadata (`--idp-metadata`) and copy it to your SP metadatastore fo
 ````
 spid_sp_test --idp-metadata > /path/to/spid-django/example/spid_config/metadata/spid-sp-test.xml
 ````
-
-If you have to test your service provider that is configured to use a dedicated instance of spid-testenv2, you have to:
-- get the key used by IdP (eg. spid-testenv2/conf/idp.key) and put into this project on spid-sp-test/src/spid_sp_test/idp/private.key
-- get the crt used by IdP (eg. spid-testenv2/conf/idp.crt) and put into this project on spid-sp-test/src/spid_sp_test/idp/public.cert
-- change into this project the spid-sp-test/src/spid_sp_test/idp/settings.py, customizing for example the ```BASE = "http://localhost:8080"``` with your entityID value that can be different from this default value
-- run tests
-
-
 To get spid-sp-test in a CI you have to:
 
-- configure an example project to your application
-- use the spid-sp-test fake idp metadata, configure it in your application and execute the example project, with its development server in background
+- configure an example project in your application
+- register the spid-sp-test fake idp metadata in your SP and execute the example project, with its development server in background
 - launch the spid-sp-test commands
 
 An example of CI [is here](https://github.com/italia/spid-django/blob/6baa2fe54a78c06193ffc5cd3f5c29a43b499232/.github/workflows/python-app.yml#L64)
@@ -137,24 +129,24 @@ Examples with Docker
 
 Before starting you have to obtain the `italia/spid-sp-test` image. You can pull it from Docker Hub
 
-    $ docker pull italia/spid-sp-test:0.5.6
+    $ export SSTVER=0.9.0
+    $ docker pull italia/spid-sp-test:$SSTVER
 
 or build locally
 
-    $ docker build --tag italia/spid-sp-test:0.5.6 .
+    $ docker build --tag italia/spid-sp-test:$SSTVER .
 
 The container working directory is set to `/spid` therefore, local files should be mounted relatively to `/spid` path.
 
     $ docker run -ti --rm \
         -v "$(pwd)/tests/metadata:/spid/mymetadata:ro" \
         -v "$(pwd)/tests/metadata:/spid/dumps:rw" \
-        italia/spid-sp-test:0.5.6 --metadata-url file://mymetadata/spid-django-other.xml
+        italia/spid-sp-test:$SSTVER --metadata-url file://mymetadata/spid-django-other.xml
 
 Test Responses and html dumps
 -----------------------------
 
 By enabling the response dump with the `--html-path HTML_PATH` option, you will get N html files (page of your SP) as follows:
-
 
 - test description, commented
 - SAML Response sent, commented
