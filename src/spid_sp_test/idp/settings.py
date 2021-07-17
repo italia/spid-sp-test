@@ -5,7 +5,7 @@ from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT
 
 
 BASE_DIR = Path(__file__).resolve().parent
-BASE = "http://localhost:8080"
+BASE = "https://localhost:8080"
 
 SAML2_IDP_CONFIG = {
     "entityid": BASE,
