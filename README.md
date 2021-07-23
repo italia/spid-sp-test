@@ -121,8 +121,15 @@ Test a **Shibboleth SP with a SAMLDS (DiscoveryService)**. In this example `targ
 This example works also a Shibboleth IdP-SP proxy/gateway.
 
 ````
-python3 src/spid_sp_test/spid_sp_test --metadata-url https://sp.testunical.it/pymetadata_signed.xml --authn-url "https://sp.testunical.it/Shibboleth.sso/Login?target=https://sp.testunical.it/secure/index.php&entityID=https://localhost:8080" --debug ERROR --extra -tr
+spid_sp_test --metadata-url https://sp.testunical.it/pymetadata_signed.xml --authn-url "https://sp.testunical.it/Shibboleth.sso/Login?target=https://sp.testunical.it/secure/index.php&entityID=https://localhost:8080" --debug ERROR --extra -tr
 ````
+
+Test Satosa-Saml2Spid using its authn plugin and a SP that supports idp hinting
+
+````
+spid_sp_test --metadata-url https://localhost:10000/spidSaml2/metadata --authn-url "http://sp1.testunical.it:8000/saml2/login/?idp=https://localhost:10000/Saml2IDP/metadata&next=/saml2/echo_attributes&idphint=https%253A%252F%252Flocalhost%253A8080" -ap spid_sp_test.plugins.authn_request.SatosaSaml2Spid --extra -tr
+````
+
 
 Examples with Docker
 --------------------

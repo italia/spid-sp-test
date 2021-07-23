@@ -137,7 +137,7 @@ def parse_pem(cert):
     return result
 
 
-def samlreq_from_htmlform(html_content):
+def saml_from_htmlform(html_content):
     tree = html.fromstring(html_content)
     for elem in tree.xpath("//form"):
         form = elem.attrib
@@ -145,6 +145,8 @@ def samlreq_from_htmlform(html_content):
         for i in inputs:
             if i.attrib["name"] == "SAMLRequest":
                 form["SAMLRequest"] = i.attrib["value"]
+            elif i.attrib["name"] == "SAMLResponse":
+                form["SAMLResponse"] = i.attrib["value"]
             elif i.attrib["name"] == "RelayState":
                 form["RelayState"] = i.attrib["value"]
         return form

@@ -285,7 +285,8 @@ if __name__ == '__main__':
             production=args.production,
             html_path=html_path if args.html_path else None,
             no_send_response = args.no_send_response,
-            authn_plugin=args.authn_plugin
+            authn_plugin = args.authn_plugin,
+            requests_session = authn_check.authn_request['requests_session']
         )
 
         if args.html_path:

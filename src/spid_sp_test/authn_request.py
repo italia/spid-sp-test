@@ -17,7 +17,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from lxml import etree
 from spid_sp_test.utils import (
     del_ns,
-    samlreq_from_htmlform,
+    saml_from_htmlform,
     decode_authn_req_http_redirect,
 )
 from spid_sp_test.idp.settings import BASE as idp_eid, SAML2_IDP_CONFIG
@@ -38,9 +38,69 @@ from .utils import load_plugin
 logger = logging.getLogger(__name__)
 
 
+def build_authn_post_data(
+                            request:requests,
+                            authn_request,
+                            authn_request_str:str,
+                            authn_request_url:str
+    ):
+    # HTTP POST
+    authn_request_str = request.content.decode() if request else authn_request_str
+    form_dict = saml_from_htmlform(authn_request_str)
+    data = dict()
+    if form_dict:
+        data["action"] = form_dict["action"]
+        data["method"] = form_dict["method"]
+        data["SAMLRequest"] = form_dict["SAMLRequest"]
+        data["SAMLRequest_xml"] = base64.b64decode(
+            form_dict["SAMLRequest"].encode()
+        )
+        data["RelayState"] = form_dict["RelayState"]
+    elif ":AuthnRequest " in authn_request_str:
+        data = {
+            "SAMLRequest_xml": authn_request_str.encode(),
+            "SAMLRequest": base64.b64encode(authn_request),
+            "RelayState": "/",
+        }
+    else:
+        raise SAMLRequestNotFound(f"{authn_request_str}")
+    return data
+
+
+def build_authn_redirect_data(
+                                request:requests,
+                                authn_request,
+                                authn_request_str:str,
+                                authn_request_url:str
+    ):
+    # HTTP-REDIRECT
+    redirect = request.headers["Location"] if request else authn_request_str
+    q_args = urllib.parse.splitquery(redirect)[1]
+    authn_request = dict(urllib.parse.parse_qsl(q_args))
+
+    if not authn_request.get("SAMLRequest"):
+        logger.critical(
+            "\nHTTP-REDIRECT without any SAMLRequest in. "
+            "Is this SP behind a Proxy or is there any "
+            f"DiscoveryService enabled? {authn_request}"
+        )
+        sys.exit(1)
+    data = dict()
+    data["SAMLRequest_redirect"] = redirect
+    data["SAMLRequest"] = authn_request["SAMLRequest"]
+    data["SAMLRequest_xml"] = decode_authn_req_http_redirect(
+        authn_request["SAMLRequest"]
+    ).encode()
+    data["RelayState"] = authn_request.get("RelayState")
+    data["SigAlg"] = authn_request["SigAlg"]
+    data["Signature"] = authn_request["Signature"]
+    return data
+
+
 def get_authn_request(
-    authn_request_url: str, verify_ssl: bool = False, authn_plugin: str = None
-):
+        authn_request_url: str, verify_ssl: bool = False,
+        authn_plugin: str = None, requests_session = None
+    ):
     """
     Detects the auth request url, if http/xml file or html file
     """
@@ -48,13 +108,18 @@ def get_authn_request(
     request = None
     binding = "post" or "redirect"
     authn_request_str = None
-    requests_session = None
+    authn_request = ""
 
     # eg: auth_plugin = 'that.package.module.Class'
-    requests_session = requests.Session()
+    requests_session = requests_session or requests.Session()
     if authn_plugin:
         func = load_plugin(authn_plugin)
-        authn_request_url = func(requests_session, authn_request_url).request()
+        _ar = func(requests_session, authn_request_url).request()
+        # if authn plugins made all the things ...
+        if isinstance(_ar, dict):
+            return _ar
+        else:
+            authn_request_url = _ar
 
     if authn_request_url[0:7] == "file://":
         authn_request = open(authn_request_url[7:], "rb").read().strip().strip(b"\n")
@@ -82,54 +147,21 @@ def get_authn_request(
         else:
             binding = "post"
 
-    if binding == "redirect":
-        # HTTP-REDIRECT
-        redirect = request.headers["Location"] if request else authn_request_str
-        q_args = urllib.parse.splitquery(redirect)[1]
-        authn_request = dict(urllib.parse.parse_qsl(q_args))
-
-        if not authn_request.get("SAMLRequest"):
-            logger.critical(
-                "\nHTTP-REDIRECT without any SAMLRequest in. "
-                "Is this SP behind a Proxy or is there any "
-                f"DiscoveryService enabled? {authn_request}"
-            )
-            sys.exit(1)
-
-        data["SAMLRequest_redirect"] = redirect
-        data["SAMLRequest"] = authn_request["SAMLRequest"]
-        data["SAMLRequest_xml"] = decode_authn_req_http_redirect(
-            authn_request["SAMLRequest"]
-        ).encode()
-        data["RelayState"] = authn_request.get("RelayState")
-        data["SigAlg"] = authn_request["SigAlg"]
-        data["Signature"] = authn_request["Signature"]
-
-    elif binding == "post":
-        # HTTP POST
-        authn_request_str = request.content.decode() if request else authn_request_str
-        form_dict = samlreq_from_htmlform(authn_request_str)
-        if form_dict:
-            data["action"] = form_dict["action"]
-            data["method"] = form_dict["method"]
-            data["SAMLRequest"] = form_dict["SAMLRequest"]
-            data["SAMLRequest_xml"] = base64.b64decode(
-                form_dict["SAMLRequest"].encode()
-            )
-            data["RelayState"] = form_dict["RelayState"]
-        elif ":AuthnRequest " in authn_request_str:
-            data = {
-                "SAMLRequest_xml": authn_request_str.encode(),
-                "SAMLRequest": base64.b64encode(authn_request),
-                "RelayState": "/",
-            }
-        else:
-            raise SAMLRequestNotFound(f"{authn_request_str}")
+    bdata = {
+        "redirect": build_authn_redirect_data,
+        "post": build_authn_post_data
+    }
+    _func = bdata[binding]
+    if _func:
+        data = _func(
+                request, authn_request,
+                authn_request_str, authn_request_url
+        )
     else:
         raise SAMLRequestNotFound()
 
-    if requests_session:
-        data["requests_session"] = requests_session
+    # if requests_session:
+    data["requests_session"] = requests_session
     return data
 
 
