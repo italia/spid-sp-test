@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '-l', '--list', nargs='*',
-        help='esecute only selected checks',
+        help='execute only selected checks',
         required=False
     )
 
