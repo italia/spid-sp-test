@@ -11,15 +11,15 @@
 <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-<ds:DigestValue>PKEcEiQJDfG1SaQRb+8IVUJWNRVT+bjTD74ihzY95Jc=</ds:DigestValue>
+<ds:DigestValue>uKI9BZlflKJKhOkOIH9V/Kf4+40qblpJxXpI10HWMjg=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue>dO08Nl2cRaXCHgYnnvsXljesk3HHqmXYVeDbAs1HbEUXmMeecCcXw1dxp6GAundx
-3764pTIuuzmPtHTaqyjWiF0kiFmrS51YW4+p7a8riDZdjB5eAIUihtPrWdF3oGYS
-7wkytT/v77LnDpzTtDHyfDCTzZVxchEtjH7GJcjzf06LM8AUlXqvUMEKzVGru/l+
-3+oXnvVbxFac7xFDZM7vHh5EgwgLQMFzpZHmo4TAVtqizp51GrZ84l6c7DHx/8pQ
-19M7zJnr9zoDcCckCq1mBze8tcAz1WyjBESrCdVheo9u4a2kQGNVdhIO6CZH4a2K
-8GyfMjaHIyrvHzt/XsH2MA==</ds:SignatureValue>
+<ds:SignatureValue>FO9gXS0mnOmPOL5lTJExheD+94qSAP7MbjLzTqMCbmG1zAkQ79jQedHz6NLgU8hR
+0vd8RGA4HudCJC7Y3/32G6HC/lSm06M/Z4LafxXFbPUzhMvzcDuukJipCg7nCPko
+vV1UMsdz31Nav664ZoOShfHx5D2MNiod2/HEUN3sLe2CYbBOyNgtL1HJu65qoaTe
+dSlwTol9GQeYagE3SsZAHKPaLfg/GN0n5iIQnBhDXcMTR47wU399efao8iPreqxi
+xT83zWAxefpDkl0hTy1VTu0iJHbWdhgVnmPaicHEzW2yOVjdKuycJ1QAM95Wu27C
+MtBovUxKlQlSLdjg2QvEzQ==</ds:SignatureValue>
 <ds:KeyInfo>
 <ds:X509Data>
 <ds:X509Certificate>MIIEGDCCAwCgAwIBAgIJAOrYj9oLEJCwMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdDAeFw0xOTA0MTExMDAyMDhaFw0yNTAzMDgxMDAyMDhaMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8kJVo+ugRrbbv9xhXCuVrqi4B7/MQzQc62ocwlFFujJNd4m1mXkUHFbgvwhRkQqo2DAmFeHiwCkJT3K1eeXIFhNFFroEzGPzONyekLpjNvmYIs1CFvirGOj0bkEiGaKEs+/umzGjxIhy5JQlqXE96y1+Izp2QhJimDK0/KNij8I1bzxseP0Ygc4SFveKS+7QO+PrLzWklEWGMs4DM5Zc3VRK7g4LWPWZhKdImC1rnS+/lEmHSvHisdVp/DJtbSrZwSYTRvTTz5IZDSq4kAzrDfpj16h7b3t3nFGc8UoY2Ro4tRZ3ahJ2r3b79yK6C5phY7CAANuW3gDdhVjiBNYs0CAwEAAaOByjCBxzAdBgNVHQ4EFgQU3/7kV2tbdFtphbSA4LH7+w8SkcwwgZcGA1UdIwSBjzCBjIAU3/7kV2tbdFtphbSA4LH7+w8SkcyhaaRnMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdIIJAOrYj9oLEJCwMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAJNFqXg/V3aimJKUmUaqmQEEoSc3qvXFITvT5f5bKw9yk/NVhR6wndL+z/24h1OdRqs76blgH8k116qWNkkDtt0AlSjQOx5qvFYh1UviOjNdRI4WkYONSw+vuavcx+fB6O5JDHNmMhMySKTnmRqTkyhjrch7zaFIWUSV7hsBuxpqmrWDoLWdXbV3eFH3mINA5AoIY/m0bZtzZ7YNgiFWzxQgekpxd0vcTseMnCcXnsAlctdir0FoCZztxMuZjlBjwLTtM6Ry3/48LMM8Z+lw7NMciKLLTGQyU8XmKKSSOh0dGh5Lrlt5GxIIJkH81C0YimWebz8464QPL3RbLnTKg+c=</ds:X509Certificate>
@@ -58,7 +58,7 @@
     <md:ContactPerson contactType="other" spid:entityType="spid:aggregator">
         <md:Extensions>
             <spid:IPACode>IPA</spid:IPACode>
-            <spid:VATNumber>00000000000</spid:VATNumber>
+            <spid:VATNumber>IT00000000000</spid:VATNumber>
             <spid:FiscalCode>00000000000</spid:FiscalCode>
             <spid:PublicServicesFullOperator/>
         </md:Extensions>

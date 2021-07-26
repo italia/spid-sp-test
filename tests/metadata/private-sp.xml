@@ -63,7 +63,7 @@
   <md:ContactPerson contactType="other">
     <md:Extensions>
       <spid:VATNumber
-        xmlns:spid="https://spid.gov.it/saml-extensions">00000000000
+        xmlns:spid="https://spid.gov.it/saml-extensions">IT00000000000
       </spid:VATNumber>
       <spid:Private
         xmlns:spid="https://spid.gov.it/saml-extensions"/>

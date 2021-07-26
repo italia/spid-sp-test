@@ -3,6 +3,7 @@ import re
 from lxml import etree
 
 from .constants import EMAIL_REGEXP
+from .constants import ISO3166_CODES
 from .indicepa import get_indicepa_by_ipacode
 
 
@@ -180,6 +181,10 @@ class SpidSpMetadataCheckPublic(object):
             self._assertTrue(
                 vats[0].text,
                 "The VATNumber element MUST have a value",
+            )
+            self._assertTrue(
+                (vats[0].text[:2] in ISO3166_CODES),
+                "The VATNumber element MUST start with a valid ISO3166 Code",
             )
 
         fcs = self.doc.xpath("//ContactPerson/Extensions/FiscalCode")

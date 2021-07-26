@@ -86,7 +86,7 @@
     </md:Organization>
     <md:ContactPerson contactType="other" spid:entityType="spid:aggregator">
         <md:Extensions>
-            <spid:VATNumber>000000000000</spid:VATNumber>
+            <spid:VATNumber>IT000000000000</spid:VATNumber>
             <spid:PublicServicesFullAggregator/>
         </md:Extensions>
         <md:Company>Aggregator</md:Company>

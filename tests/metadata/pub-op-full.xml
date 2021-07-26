@@ -56,7 +56,7 @@
     <md:ContactPerson contactType="other" spid:entityType="spid:aggregator">
         <md:Extensions>
             <spid:IPACode>IPA</spid:IPACode>
-            <spid:VATNumber>00000000000</spid:VATNumber>
+            <spid:VATNumber>IT00000000000</spid:VATNumber>
             <spid:FiscalCode>00000000000</spid:FiscalCode>
             <spid:PublicServicesFullOperator/>
         </md:Extensions>

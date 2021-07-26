@@ -6,6 +6,7 @@ CMD = "python3 src/spid_sp_test/spid_sp_test --metadata-url file://tests/{} --ex
 
 def run_cmd(mfname) -> int:
     cmd = CMD.format(mfname)
+    print(cmd)
     return os.system(cmd)
 
 

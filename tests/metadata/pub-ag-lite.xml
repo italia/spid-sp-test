@@ -59,7 +59,7 @@
   </md:Organization>
   <md:ContactPerson contactType="other" spid:entityType="spid:aggregator">
     <md:Extensions>
-      <spid:VATNumber>00000000000</spid:VATNumber>
+      <spid:VATNumber>IT00000000000</spid:VATNumber>
       <spid:FiscalCode>00000000000</spid:FiscalCode>
       <spid:PublicServicesLightAggregator/>
       <spid:KeyDescriptor use="spid:validation">
