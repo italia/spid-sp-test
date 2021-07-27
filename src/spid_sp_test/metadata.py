@@ -660,8 +660,8 @@ class SpidSpMetadataCheck(
                     if ename == "OrganizationURL" and self.production:
                         OrganizationURLvalue = element.text.strip()
                         if not (
-                            OrganizationURLvalue.startswith("http://"
-                            ) or OrganizationURLvalue.startswith("https://")
+                            OrganizationURLvalue.startswith("http://")
+                            or OrganizationURLvalue.startswith("https://")
                         ):
                             OrganizationURLvalue = f"https://{OrganizationURLvalue}"
                         self._assertIsValidHttpUrl(

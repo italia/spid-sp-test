@@ -70,9 +70,8 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
                 self._assertTrue(
                     (
-                        datetime.datetime.strptime(
-                            sign_cert[3], "%b %d %H:%M:%S %Y"
-                        ) >= datetime.datetime.now()
+                        datetime.datetime.strptime(sign_cert[3], "%b %d %H:%M:%S %Y")
+                        >= datetime.datetime.now()
                     ),
                     f"The certificate #{i} is expired. It was valid till {sign_cert[3]}",
                     **error_kwargs,
