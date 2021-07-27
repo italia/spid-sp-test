@@ -232,13 +232,16 @@ if __name__ == '__main__':
     parser.add_argument(
         '-rb', '--request-body',
         required=False, type=json.loads,
-        help="eg: {'idp': 'https://localhost:8080'}"
+        help='eg: {"idp": "https://localhost:8080"}'
     )
 
     parser.add_argument(
         '-rct', '--request-content-type',
         required=False, default='data',
-        help="python requests' defaults arguments: data or json"
+        help=("python requests' defaults arguments: data or json. "
+              "'data' means application/x-www-form-urlencoded "
+              "'json' means application/json"
+        )
     )
 
     args = parser.parse_args()
