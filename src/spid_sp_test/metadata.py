@@ -595,7 +595,7 @@ class SpidSpMetadataCheck(
                     ra.get("Name"),
                     allowed_attributes,
                     f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element MUST be valid',
-                    description=f"one of [{', '.join(constants.SPID_ATTRIBUTES)}] - TR pag. 20 and AV n.6",
+                    description=f"one of [{', '.join(allowed_attributes)}] - TR pag. 20 and AV n.6",
                 )
 
             al = acs.xpath("RequestedAttribute/@Name")
