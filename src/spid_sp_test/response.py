@@ -154,8 +154,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
     def do_authnrequest(self):
         self.authn_request_data = get_authn_request(
-            self.authn_request_url, authn_plugin=self.authn_plugin,
-            requests_session = self.requests_session
+            self.authn_request_url,
+            authn_plugin=self.authn_plugin,
+            requests_session=self.requests_session,
         )
         self.authnreq_etree = etree.fromstring(
             self.authn_request_data["SAMLRequest_xml"]
@@ -188,7 +189,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             "SessionIndex": saml_rnd_id(),
             "Issuer": self.issuer,
             "Audience": self.authnreq_issuer,
-            "AuthnContextClassRef": self.acr or settings.DEFAULT_RESPONSE["AuthnContextClassRef"],
+            "AuthnContextClassRef": self.acr
+            or settings.DEFAULT_RESPONSE["AuthnContextClassRef"],
             "IssueInstantMillis": now.strftime("%Y-%m-%dT%H:%M:%S.%f"),
         }
         self.relay_state = self.kwargs.get("relay_state")
@@ -303,7 +305,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             "SAMLResponse": base64.b64encode(xmlstr.encode()),
         }
         url = self.authnreq_attrs.get("AssertionConsumerURL", self.acs_url)
-        ua = self.requests_session # self.authn_request_data["requests_session"]
+        ua = self.requests_session  # self.authn_request_data["requests_session"]
         if self.authn_plugin:
             func = load_plugin(self.authn_plugin)
             res = func(ua, self.authn_request_url).response(url, data)

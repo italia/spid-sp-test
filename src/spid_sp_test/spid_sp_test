@@ -223,6 +223,27 @@ if __name__ == '__main__':
         help="use a custom plugin for authn requests, eg: for proxies/gateways"
     )
 
+    parser.add_argument(
+        '-rm', '--request-method',
+        required=False, default='GET',
+        help="GET or POST"
+    )
+
+    parser.add_argument(
+        '-rb', '--request-body',
+        required=False, type=json.loads,
+        help='eg: {"idp": "https://localhost:8080"}'
+    )
+
+    parser.add_argument(
+        '-rct', '--request-content-type',
+        required=False, default='data',
+        help=("python requests' defaults arguments: data or json. "
+              "'data' means application/x-www-form-urlencoded "
+              "'json' means application/json"
+        )
+    )
+
     args = parser.parse_args()
     logging.basicConfig(level=getattr(logging, args.debug))
 
@@ -259,10 +280,13 @@ if __name__ == '__main__':
     # authn request
     if args.authn_url:
         data_ac = dict(
-            metadata=metadata_check.metadata,
-            authn_request_url=args.authn_url,
-            production=args.production,
-            authn_plugin=args.authn_plugin
+            metadata = metadata_check.metadata,
+            authn_request_url = args.authn_url,
+            production = args.production,
+            authn_plugin = args.authn_plugin,
+            request_method = args.request_method,
+            request_body = args.request_body,
+            request_content_type = args.request_content_type
         )
         authn_check = SpidSpAuthnReqCheck(**data_ac)
         selective_run(authn_check, profile, args.list)
