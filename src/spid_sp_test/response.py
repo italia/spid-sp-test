@@ -147,6 +147,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.authn_plugin = kwargs.get("authn_plugin")
         self.requests_session = kwargs.get("requests_session")
 
+        self.request_method = kwargs.get("request_method")
+        self.request_body = kwargs.get("request_body")
+        self.request_content_type = kwargs.get("request_content_type")
+
     def get_acr(self):
         _acr = self.authnreq_etree.xpath("//RequestedAuthnContext/AuthnContextClassRef")
         if _acr:
@@ -157,6 +161,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             self.authn_request_url,
             authn_plugin=self.authn_plugin,
             requests_session=self.requests_session,
+            request_method=self.request_method,
+            request_body=self.request_body,
+            request_content_type=self.request_content_type,
         )
         self.authnreq_etree = etree.fromstring(
             self.authn_request_data["SAMLRequest_xml"]

@@ -310,7 +310,10 @@ if __name__ == '__main__':
             html_path=html_path if args.html_path else None,
             no_send_response = args.no_send_response,
             authn_plugin = args.authn_plugin,
-            requests_session = authn_check.authn_request['requests_session']
+            requests_session = authn_check.authn_request['requests_session'],
+            request_method = args.request_method,
+            request_body = args.request_body,
+            request_content_type = args.request_content_type
         )
 
         if args.html_path:

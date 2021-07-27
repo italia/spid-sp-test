@@ -207,7 +207,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 authn_plugin=authn_plugin,
                 request_method=request_method,
                 request_body=request_body,
-                request_content_type="data",
+                request_content_type=request_content_type,
             )
         except binascii.Error as exp:
             _msg = "[2.0.0] Base64 decode of AuthnRequest MUST be correct"
