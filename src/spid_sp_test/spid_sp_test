@@ -231,7 +231,7 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '-rb', '--request-body',
-        required=False,
+        required=False, type=json.loads,
         help="eg: {'idp': 'https://localhost:8080'}"
     )
 
