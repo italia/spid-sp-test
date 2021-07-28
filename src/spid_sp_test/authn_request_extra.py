@@ -51,6 +51,19 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
         return self.is_ok(f"{self.__class__.__name__}.test_AuthnRequest_extra")
 
 
+    def test_authnrequest_no_newlines(self):
+        self._assertFalse(
+            re.match(r"^[\t\n\s\r\ ]*", self.authn_request_decoded),
+            (
+                "The XML of authn request should not "
+                "contains newlines at the beginning."
+            ),
+            description=self.metadata[0:10],
+            level="warning",
+        )
+        return self.is_ok(f"{self.__class__.__name__}.test_authnrequest_no_newlines")
+
+
     def test_profile_spid_sp(self):
         super().test_profile_spid_sp()
         self.test_AuthnRequest_SPID_extra()
