@@ -12,6 +12,7 @@ from spid_sp_test import BASE_DIR
 from spid_sp_test.metadata import SpidSpMetadataCheck
 from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
 from spid_sp_test.authn_request import SpidSpAuthnReqCheck
+from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
 from spid_sp_test.html_report import render_html_report
 from spid_sp_test.response import SpidSpResponseCheck
 from spid_sp_test.utils import get_xmlsec1_bin
@@ -277,6 +278,10 @@ if __name__ == '__main__':
 
     # authn request
     if args.authn_url:
+        if args.extra:
+            _cls = SpidSpAuthnReqCheckExtra
+        else:
+            _cls = SpidSpAuthnReqCheck
         data_ac = dict(
             metadata = metadata_check.metadata,
             authn_request_url = args.authn_url,
@@ -286,7 +291,7 @@ if __name__ == '__main__':
             request_body = args.request_body,
             request_content_type = args.request_content_type
         )
-        authn_check = SpidSpAuthnReqCheck(**data_ac)
+        authn_check = _cls(**data_ac)
         selective_run(authn_check, profile, args.list)
         tests_done.append(authn_check)
 
