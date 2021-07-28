@@ -23,13 +23,13 @@ class AbstractSpidCheck(object):
         res = {self.category: {self.__class__.__name__: self.results}}
         return res
 
-    def is_ok(self, msg, method=None):
+    def is_ok(self, msg):
         if not self.error_counter:
-            self.handle_result(
-                "info",
-                msg,
-                method = method or msg
-            )
+            # self.handle_result(
+                # "info",
+                # msg,
+                # method = method or msg
+            # )
             return True
         else:
             self.error_counter = 0

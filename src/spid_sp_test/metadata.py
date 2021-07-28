@@ -101,11 +101,15 @@ class SpidSpMetadataCheck(
                     method = _method
                 )
         os.chdir(_orig_pos)
-        return self.is_ok(msg, _method)
+        if not self.errors:
+            self._assertTrue(
+                True, _method, description=msg, method=_method
+            )
+        return self.is_ok(_method)
 
     def test_EntityDescriptor(self):
         entity_desc = self.doc.xpath("//EntityDescriptor")
-
+        desc = [etree.tostring(ent).decode()[:128] for ent in entity_desc if entity_desc]
         _method = f"{self.__class__.__name__}.test_EntityDescriptor"
         _data = dict(
             references = ["TR pag. 19"],
@@ -113,15 +117,15 @@ class SpidSpMetadataCheck(
         )
 
         self._assertTrue(
-            self.doc.attrib.get("entityID"),
-            "The entityID attribute MUST be present",
-            description = self.doc.attrib, **_data
+            len(entity_desc) == 1,
+            "Only one EntityDescriptor element MUST be present",
+            description=desc, **_data
         )
 
         self._assertTrue(
-            len(entity_desc) == 1,
-            "Only one EntityDescriptor element MUST be present",
-            description=self.doc.attrib.get("entityID"), **_data
+            self.doc.attrib.get("entityID"),
+            "The entityID attribute MUST be present",
+            description = self.doc.attrib, **_data
         )
 
         self._assertTrue(
@@ -142,11 +146,11 @@ class SpidSpMetadataCheck(
                 **_data
             )
 
-        return self.is_ok("Metadata Entity Descriptor tests", _method)
+        return self.is_ok(_method)
 
     def test_SPSSODescriptor(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor")
-        desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
+        desc = [etree.tostring(ent).decode()[:128] for ent in spsso if spsso]
 
         _method = f"{self.__class__.__name__}.test_SPSSODescriptor"
         _data = dict(
@@ -160,11 +164,11 @@ class SpidSpMetadataCheck(
             "Only one SPSSODescriptor element MUST be present",
             **_data,
         )
-        return self.is_ok("SPSSODescriptor tests", _method)
+        return self.is_ok(_method)
 
     def test_SPSSODescriptor_SPID(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor")
-        desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
+        desc = [etree.tostring(ent).decode()[:128] for ent in spsso if spsso]
         _method = f"{self.__class__.__name__}.test_SPSSODescriptor_SPID"
         _data = dict(
             references = ["TR pag. 20"],
@@ -193,22 +197,28 @@ class SpidSpMetadataCheck(
                     **_data,
                 )
 
-        return self.is_ok("SPSSODescriptor_SPID tests", _method)
+        return self.is_ok(_method)
 
     def test_NameIDFormat_Transient(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor/NameIDFormat")
         desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
-        error_kwargs = dict(description=desc) if desc else {}
+
+        _method = f"{self.__class__.__name__}.test_NameIDFormat_Transient"
+        _data = dict(
+            references = ["TR pag. ..."],
+            method = _method,
+            description=desc
+        )
 
         if spsso:
             _rule = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
             self._assertTrue(
                 (spsso[0].text == _rule),
-                f"The NameIDFormat MUST {_rule}",
-                **error_kwargs,
+                f"The NameIDFormat MUST be {_rule}",
+                **_data,
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_NameIDFormat_SPID")
+        return self.is_ok(_method)
 
     def test_xmldsig(self):
         """Verify the SP metadata signature"""
@@ -225,8 +235,12 @@ class SpidSpMetadataCheck(
         ]
         cmd = " ".join(xmlsec_cmd)
         is_valid = True
-        msg = "the metadata signature MUST be valid - TR pag. 19"
+        msg = "the metadata signature MUST be valid"
 
+        _data = dict(
+            references = ["TR pag. 19"],
+            method = f"{self.__class__.__name__}.test_xmldsig"
+        )
         try:
             subprocess.run(
                 cmd,
@@ -249,13 +263,16 @@ class SpidSpMetadataCheck(
                 )
                 lines.append(stdout)
             _msg = "\n".join(lines)
-            self.handle_result("error", msg, description="Description", traceback=_msg)
+            self.handle_result(
+                "error", msg, description="Description", traceback=_msg,
+                **_data
+            )
             return
 
         xmlsec_cmd_string = " ".join(xmlsec_cmd)
-        _msg = f"{self.__class__.__name__}.test_xmldsig: OK"
-        self.handle_result("info", _msg, description=f"`{xmlsec_cmd_string}`")
-        return is_valid
+        self.handle_result(
+            "info", msg, description=f"{xmlsec_cmd_string}", **_data
+        )
 
     def test_Signature(self):
         """Test the compliance of Signature element"""
