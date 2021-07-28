@@ -292,9 +292,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         return status, status_code
 
     def dump_html_response(self, fname, description, result, content):
-        url = self.authnreq_attrs.get("AssertionConsumerServiceURL", "")
         try:
-            content = html_absolute_paths(content, url)
+            content = html_absolute_paths(content, self.acs_url)
         except Exception as e:
             logger.critical(
                 f"Something went wrong making absolute links in html content: {e}"
