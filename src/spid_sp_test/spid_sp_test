@@ -319,7 +319,6 @@ if __name__ == '__main__':
         tests_done.append(response_check)
 
     if args.response_html_dumps:
-        os.makedirs(html_path, exist_ok=True)
         print(f"\nSAML Response html dumps are at {html_path}\n")
 
     # OUTPUT - REPORT
@@ -338,7 +337,7 @@ if __name__ == '__main__':
             with open(args.report_output_file, 'w') as f:
                 f.write(output)
         elif args.report_format == 'html':
-            output_folder = args.report_output_file or os.path.join(BASE_DIR, 'html')
+            output_folder = args.report_output_file or os.path.join('.', 'html')
             render_html_report(data['test']['sp'],
                                output_folder = output_folder,
                                display_name = args.metadata_url)

@@ -5,6 +5,7 @@ import json
 import logging
 import random
 import requests
+import os
 import sys
 import string
 
@@ -301,6 +302,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         content = content.decode() if isinstance(content, bytes) else content
         head = f"<!-- {description} -->\n\n" f"<!-- {result} -->\n\n"
+        os.makedirs(self.html_path, exist_ok=True)
         with open(f"{self.html_path}/{fname}.html", "w") as f:
             f.write(head)
             f.write(content)
