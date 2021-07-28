@@ -349,7 +349,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 )
                 sys.exit(1)
 
-            if not self.no_send_response:
+            if self.no_send_response:
+                print(f"<!-- {test_display_desc} -->\n{result}")
+
+            else:
                 res = self.send_response(result)
                 status, status_msg = self.check_response(
                     res,
@@ -363,8 +366,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                         result,
                         res.content.decode(),
                     )
-            else:
-                print(f"<!-- {test_display_desc} -->\n{result}")
+
             # reset session
             self.requests_session = requests.Session()
 

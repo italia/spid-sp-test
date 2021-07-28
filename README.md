@@ -70,8 +70,13 @@ Examples
 Run `spid_sp_test -h` for inline documentation.
 
 ````
-usage: spid_sp_test [-h] [--metadata-url METADATA_URL] [--idp-metadata] [-l [LIST [LIST ...]]] [--extra] [--authn-url AUTHN_URL] [-tr] [-nsr] [-tp TEMPLATE_PATH] [-tn [TEST_NAMES [TEST_NAMES ...]]]
-                    [-tj [TEST_JSONS [TEST_JSONS ...]]] [-aj ATTR_JSON] [-report] [-o O] [-d {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-xp XMLSEC_PATH] [--production] [--html-path HTML_PATH] [--exit-zero]
+usage: spid_sp_test [-h] [--metadata-url METADATA_URL] [--idp-metadata] [-l [LIST [LIST ...]]] [--extra] [--authn-url AUTHN_URL] [-tr] [-nsr]
+                    [-tp TEMPLATE_PATH] [-tn [TEST_NAMES [TEST_NAMES ...]]] [-tj [TEST_JSONS [TEST_JSONS ...]]] [-aj ATTR_JSON]
+                    [-o REPORT_OUTPUT_FILE] [-rf {json,html}] [-d {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-xp XMLSEC_PATH] [--production]
+                    [--response-html-dumps RESPONSE_HTML_DUMPS] [--exit-zero]
+                    [-pr {saml2-sp,spid-sp-public,spid-sp-private,spid-sp-ag-public-full,spid-sp-ag-public-lite,spid-sp-op-public-full,spid-sp-op-public-lite,cie-sp-public,cie-sp-private}]
+                    [-ap AUTHN_PLUGIN] [-rm REQUEST_METHOD] [-rb REQUEST_BODY] [-rct REQUEST_CONTENT_TYPE]
+
 
 src/spid_sp_test/spid_sp_test -h for help
 ````
@@ -98,7 +103,7 @@ spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http
 
 JSON report, add `-o filename.json` to write to a file, `-rf html -o html_report/` to export to a HTML page
 ````
-spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=https://localhost:8080 --extra --debug CRITICAL -json
+spid_sp_test --metadata-url http://localhost:8000/spid/metadata --authn-url http://localhost:8000/spid/login/?idp=https://localhost:8080 --extra -rf json
 ````
 
 Given a metadata file and a authn file (see `tests/metadata` and `tests/authn` for example) export all the test response without sending them to SP:
@@ -153,7 +158,7 @@ The container working directory is set to `/spid` therefore, local files should 
 Test Responses and html dumps
 -----------------------------
 
-By enabling the response dump with the `--html-path HTML_PATH` option, you will get N html files (page of your SP) as follows:
+By enabling the response dump with the `--response-html-dumps HTML_PATH` option, you will get N html files (page of your SP) as follows:
 
 - test description, commented
 - SAML Response sent, commented

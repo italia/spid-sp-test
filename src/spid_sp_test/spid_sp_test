@@ -128,7 +128,7 @@ if __name__ == '__main__':
         '-tn', '--test-names',
         action='append', nargs='*',
         required=False,
-        help="response test to be executed, eg: 01 02 03"
+        help="response test to be executed, eg: 1 2 3"
     )
 
     parser.add_argument(
@@ -319,7 +319,7 @@ if __name__ == '__main__':
         tests_done.append(response_check)
 
     if args.response_html_dumps:
-        print(f"\nSAML Response html dumps are at {html_path}\n")
+        print(f"\nSAML Response html dumps are at {args.response_html_dumps}\n")
 
     # OUTPUT - REPORT
     if args.report_output_file or args.report_format:
