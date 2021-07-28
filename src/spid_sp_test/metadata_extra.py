@@ -62,9 +62,8 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 )
 
                 exp = ["rsaEncryption", "id-ecPublicKey"]
-                self._assertIn(
-                    sign_cert[2],
-                    exp,
+                self._assertTrue(
+                    sign_cert[2] in exp,
                     (
                         (
                             f"The key type of certificate #{i} MUST be one of [%s] - TR pag. 19"
@@ -112,13 +111,12 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
             if attr == "protocolSupportEnumeration":
                 a = spsso[0].get(attr)
-                self._assertIsNotNone(
+                self._assertTrue(
                     a, f"The {attr} attribute MUST have a value", **error_kwargs
                 )
 
-                self._assertEqual(
-                    a,
-                    "urn:oasis:names:tc:SAML:2.0:protocol",
+                self._assertTrue(
+                    a == "urn:oasis:names:tc:SAML:2.0:protocol",
                     f"The {attr} attribute MUST be "
                     "urn:oasis:names:tc:SAML:2.0:protocol",
                     **error_kwargs,
@@ -126,14 +124,13 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
             if attr == "WantAssertionsSigned":
                 a = spsso[0].get(attr)
-                self._assertIsNotNone(
+                self._assertTrue(
                     a, f"The {attr} attribute MUST have a value", **error_kwargs
                 )
 
                 if a:
-                    self._assertEqual(
-                        a.lower(),
-                        "true",
+                    self._assertTrue(
+                        a.lower() == "true",
                         f"The {attr} attribute MUST be true",
                         **error_kwargs,
                     )
@@ -152,9 +149,8 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
             for ra in ras:
                 a = ra.get("NameFormat")
                 if a is not None:
-                    self._assertIn(
-                        a,
-                        constants.ALLOWED_FORMATS,
+                    self._assertTrue(
+                        a in constants.ALLOWED_FORMATS,
                         (
                             (
                                 "The NameFormat attribute "

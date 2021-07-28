@@ -21,7 +21,6 @@ class AbstractSpidCheck(object):
 
     def report_to_dict(self):
         res = {self.category: {self.__class__.__name__: self.results}}
-
         return res
 
     def is_ok(self, msg):
@@ -59,7 +58,7 @@ class AbstractSpidCheck(object):
             self.warnings.append(data)
 
     def handle_error(self, error_message, description="", traceback: str = None):
-        getattr(self.logger, "error")(error_message)
+        self.logger.error(error_message)
         self.error_counter += 1
         # here report as json
         value = f"{description}" if not traceback else f"{description}: {traceback }"
@@ -102,60 +101,6 @@ class AbstractSpidCheck(object):
         level: str = "info",
     ):
         self._assert(not check, error_message, description, traceback, level)
-
-    def _assertIsNotNone(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert(check, error_message, description, traceback, level)
-
-    def _assertIn(
-        self,
-        first,
-        second,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert((first in second), error_message, description, traceback, level)
-
-    def _assertGreaterEqual(
-        self,
-        first,
-        second,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert((first >= second), error_message, description, traceback, level)
-
-    def _assertGreater(
-        self,
-        first,
-        second,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert((first > second), error_message, description, traceback, level)
-
-    def _assertEqual(
-        self,
-        first,
-        second,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert((first == second), error_message, description, traceback, level)
 
     def _assertIsValidHttpsUrl(
         self,

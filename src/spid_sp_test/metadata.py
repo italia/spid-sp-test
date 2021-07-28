@@ -151,16 +151,15 @@ class SpidSpMetadataCheck(
             )
 
             a = spsso[0].get(attr)
-            self._assertIsNotNone(
+            self._assertTrue(
                 a,
                 f"The {attr} attribute MUST have a value - TR pag. 20",
                 **error_kwargs,
             )
 
             if attr == "AuthnRequestsSigned" and a:
-                self._assertEqual(
-                    a.lower(),
-                    "true",
+                self._assertTrue(
+                    a.lower() == "true",
                     f"The {attr} attribute MUST be true - TR pag. 20",
                     **error_kwargs,
                 )
@@ -285,9 +284,8 @@ class SpidSpMetadataCheck(
             )
 
             alg = method[0].get("Algorithm")
-            self._assertIn(
-                alg,
-                constants.ALLOWED_XMLDSIG_ALGS,
+            self._assertTrue(
+                alg in constants.ALLOWED_XMLDSIG_ALGS,
                 "The signature algorithm MUST be valid - TR pag. 19",
                 description=f"One of {(', '.join(constants.ALLOWED_XMLDSIG_ALGS))}",
             )
@@ -307,9 +305,8 @@ class SpidSpMetadataCheck(
             )
 
             alg = method[0].get("Algorithm")
-            self._assertIn(
-                alg,
-                constants.ALLOWED_DGST_ALGS,
+            self._assertTrue(
+                alg in constants.ALLOWED_DGST_ALGS,
                 "The digest algorithm MUST be valid - TR pag. 19",
                 description=f"One of {(', '.join(constants.ALLOWED_DGST_ALGS))}",
             )
@@ -321,9 +318,8 @@ class SpidSpMetadataCheck(
         kds = self.doc.xpath(
             "//EntityDescriptor/SPSSODescriptor" '/KeyDescriptor[@use="signing"]'
         )
-        self._assertGreaterEqual(
-            len(kds),
-            1,
+        self._assertTrue(
+            len(kds) >= 1,
             "At least one signing KeyDescriptor MUST be present - TR pag. 19",
         )
 
@@ -332,9 +328,8 @@ class SpidSpMetadataCheck(
 
         for kd in kds:
             certs = kd.xpath("./KeyInfo/X509Data/X509Certificate")
-            self._assertGreaterEqual(
-                len(certs),
-                1,
+            self._assertTrue(
+                len(certs) >= 1,
                 "At least one signing x509 MUST be present - TR pag. 19",
                 **error_kwargs,
             )
@@ -345,9 +340,8 @@ class SpidSpMetadataCheck(
 
         for kd in kds:
             certs = kd.xpath("./KeyInfo/X509Data/X509Certificate")
-            self._assertGreaterEqual(
-                len(certs),
-                1,
+            self._assertTrue(
+                len(certs) >= 1,
                 "At least one encryption x509 MUST be present - TR pag. 19",
                 **error_kwargs,
             )
@@ -359,9 +353,8 @@ class SpidSpMetadataCheck(
         slos = self.doc.xpath(
             "//EntityDescriptor/SPSSODescriptor" "/SingleLogoutService"
         )
-        self._assertGreaterEqual(
-            len(slos),
-            1,
+        self._assertTrue(
+            len(slos) >= 1,
             "One or more SingleLogoutService elements MUST be present - AV n. 3",
         )
 
@@ -377,16 +370,15 @@ class SpidSpMetadataCheck(
                 )
 
                 _attr = slo.get(attr)
-                self._assertIsNotNone(
+                self._assertTrue(
                     _attr,
                     f"The {attr} attribute in SingleLogoutService element MUST have a value",
                     **error_kwargs,
                 )
 
                 if attr == "Binding":
-                    self._assertIn(
-                        _attr,
-                        constants.ALLOWED_SINGLELOGOUT_BINDINGS,
+                    self._assertTrue(
+                        _attr in constants.ALLOWED_SINGLELOGOUT_BINDINGS,
                         (
                             (
                                 "The %s attribute in SingleLogoutService element MUST be one of [%s] - AV n. 3"
@@ -427,9 +419,8 @@ class SpidSpMetadataCheck(
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
         error_kwargs = dict(description=desc) if desc else {}
 
-        self._assertGreaterEqual(
-            len(acss),
-            1,
+        self._assertTrue(
+            len(acss) >= 1,
             "At least one AssertionConsumerService " "MUST be present - TR pag. 20",
         )
 
@@ -441,16 +432,14 @@ class SpidSpMetadataCheck(
                 )
                 _attr = acs.get(attr)
                 if attr == "index":
-                    self._assertGreaterEqual(
-                        int(_attr),
-                        0,
+                    self._assertTrue(
+                        int(_attr) >= 0,
                         f"The {attr} attribute MUST be >= 0 - TR pag. 20",
                         **error_kwargs,
                     )
                 elif attr == "Binding":
-                    self._assertIn(
-                        _attr,
-                        constants.ALLOWED_BINDINGS,
+                    self._assertTrue(
+                        _attr in constants.ALLOWED_BINDINGS,
                         (
                             ("The %s attribute MUST be one of [%s] - TR pag. 20")
                             % (attr, ", ".join(constants.ALLOWED_BINDINGS))
@@ -513,9 +502,8 @@ class SpidSpMetadataCheck(
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
         error_kwargs = dict(description=desc) if desc else {}
 
-        self._assertGreaterEqual(
-            len(acss),
-            1,
+        self._assertTrue(
+            len(acss) >= 1,
             "One or more AttributeConsumingService elements MUST be present - TR pag. 20",
             **error_kwargs,
         )
@@ -538,9 +526,8 @@ class SpidSpMetadataCheck(
             )
 
             idx = int(acs.get("index"))
-            self._assertGreaterEqual(
-                idx,
-                0,
+            self._assertTrue(
+                idx >= 0,
                 "The index attribute in AttributeConsumigService "
                 "element MUST be >= 0 - TR pag. 20",
                 **error_kwargs,
@@ -551,16 +538,15 @@ class SpidSpMetadataCheck(
                 (len(sn) > 0), "The ServiceName element MUST be present", **error_kwargs
             )
             for sns in sn:
-                self._assertIsNotNone(
+                self._assertTrue(
                     sns.text,
                     "The ServiceName element MUST have a value",
                     **error_kwargs,
                 )
 
             ras = acs.xpath("./RequestedAttribute")
-            self._assertGreaterEqual(
-                len(ras),
-                1,
+            self._assertTrue(
+                len(ras) >= 1,
                 "One or more RequestedAttribute elements MUST be present - TR pag. 20",
                 **error_kwargs,
             )
@@ -573,17 +559,15 @@ class SpidSpMetadataCheck(
                     **error_kwargs,
                 )
 
-                self._assertIn(
-                    ra.get("Name"),
-                    allowed_attributes,
+                self._assertTrue(
+                    ra.get("Name") in allowed_attributes,
                     f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element MUST be valid',
                     description=f"one of [{', '.join(allowed_attributes)}] - TR pag. 20 and AV n.6",
                 )
 
             al = acs.xpath("RequestedAttribute/@Name")
-            self._assertEqual(
-                len(al),
-                len(set(al)),
+            self._assertTrue(
+                len(al) == len(set(al)),
                 "AttributeConsumigService MUST not contain duplicated RequestedAttribute - TR pag. 20",
                 **error_kwargs,
             )
@@ -610,9 +594,8 @@ class SpidSpMetadataCheck(
             org = orgs[0]
             for ename in enames:
                 elements = org.xpath(f"./{ename}")
-                self._assertGreater(
-                    len(elements),
-                    0,
+                self._assertTrue(
+                    len(elements) > 0,
                     f"One or more {ename} elements MUST be present - TR pag. 20",
                     **error_kwargs,
                 )
