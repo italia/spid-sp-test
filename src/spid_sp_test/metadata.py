@@ -65,8 +65,10 @@ class SpidSpMetadataCheck(
                 return request.content
 
     def xsd_check(self, xsds_files: list = ["saml-schema-metadata-2.0.xsd"]):
+        _method = f"{self.__class__.__name__}.xsd_check"
         _msg = "Found metadata"
-        self.handle_result("debug", _msg, description=self.metadata.decode())
+        # self.handle_result("debug", _msg, description=self.metadata.decode())
+        logger.debug(self.metadata.decode())
         _orig_pos = os.getcwd()
         os.chdir(self.xsds_files_path)
         metadata = self.metadata.decode()
@@ -77,94 +79,121 @@ class SpidSpMetadataCheck(
                 schema = xmlschema.XMLSchema(schema_file)
                 if not schema.is_valid(metadata):
                     schema.validate(metadata)
-                    self.handle_result("error", " ".join((msg)))
+                    self.handle_result(
+
+                        level = "error",
+                        title = msg,
+                        description = msg,
+                        references = "",
+                        method = _method
+
+                    )
                     # raise Exception('Validation Error')
-                logger.info(" ".join((msg, "-> OK")))
                 break
             except Exception as e:
                 os.chdir(_orig_pos)
                 logger.error(f"{msg}: {e}")
                 self.handle_result(
-                    "error", msg, description="xsd test failed", traceback=f"{e}"
+                    "error",
+                    msg,
+                    description="xsd test failed",
+                    traceback=f"{e}",
+                    method = _method
                 )
         os.chdir(_orig_pos)
-        return self.is_ok(f"{self.__class__.__name__}.xsd_check")
+        return self.is_ok(msg, _method)
 
     def test_EntityDescriptor(self):
         entity_desc = self.doc.xpath("//EntityDescriptor")
 
+        _method = f"{self.__class__.__name__}.test_EntityDescriptor"
+        _data = dict(
+            references = ["TR pag. 19"],
+            method = _method
+        )
+
         self._assertTrue(
             self.doc.attrib.get("entityID"),
-            (
-                f"Missing entityID in {self.doc.attrib}: "
-                "The entityID attribute MUST be present - TR pag. 19"
-            ),
-            description=self.doc.attrib.get("entityID"),
+            "The entityID attribute MUST be present",
+            description = self.doc.attrib, **_data
         )
 
         self._assertTrue(
             len(entity_desc) == 1,
-            "Only one EntityDescriptor element MUST be present - TR pag. 19",
-            description=self.doc.attrib.get("entityID"),
+            "Only one EntityDescriptor element MUST be present",
+            description=self.doc.attrib.get("entityID"), **_data
         )
 
         self._assertTrue(
             entity_desc[0].get("entityID"),
-            "The entityID attribute MUST have a value - TR pag. 19",
-            description=entity_desc[0].get("entityID"),
+            "The entityID attribute MUST have a value",
+            description=entity_desc[0].get("entityID"), **_data
         )
 
         if self.production:
             self._assertIsValidHttpsUrl(
                 self.doc.attrib.get("entityID"),
                 "The entityID attribute MUST be a valid HTTPS url",
+                **_data
             )
             self._assertHttpUrlWithoutPort(
                 self.doc.attrib.get("entityID"),
                 'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"',
+                **_data
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_EntityDescriptor")
+        return self.is_ok("Metadata Entity Descriptor tests", _method)
 
     def test_SPSSODescriptor(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor")
         desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
-        error_kwargs = dict(description=desc) if desc else {}
+
+        _method = f"{self.__class__.__name__}.test_SPSSODescriptor"
+        _data = dict(
+            references = [""],
+            method = _method,
+            description=desc
+        )
 
         self._assertTrue(
             (len(spsso) == 1),
             "Only one SPSSODescriptor element MUST be present",
-            **error_kwargs,
+            **_data,
         )
-        return self.is_ok(f"{self.__class__.__name__}.test_SPSSODescriptor")
+        return self.is_ok("SPSSODescriptor tests", _method)
 
     def test_SPSSODescriptor_SPID(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor")
         desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
-        error_kwargs = dict(description=desc) if desc else {}
+        _method = f"{self.__class__.__name__}.test_SPSSODescriptor_SPID"
+        _data = dict(
+            references = ["TR pag. 20"],
+            method = _method,
+            description=desc
+        )
 
         for attr in ["protocolSupportEnumeration", "AuthnRequestsSigned"]:
             self._assertTrue(
                 (attr in spsso[0].attrib),
-                f"The {attr} attribute MUST be present - TR pag. 20",
-                **error_kwargs,
+                f"The {attr} attribute MUST be present",
+                **_data,
             )
 
             a = spsso[0].get(attr)
             self._assertTrue(
                 a,
-                f"The {attr} attribute MUST have a value - TR pag. 20",
-                **error_kwargs,
+                f"The {attr} attribute MUST have a value",
+                **_data,
             )
 
             if attr == "AuthnRequestsSigned" and a:
                 self._assertTrue(
                     a.lower() == "true",
-                    f"The {attr} attribute MUST be true - TR pag. 20",
-                    **error_kwargs,
+                    f"The {attr} attribute MUST be true",
+                    **_data,
                 )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_SPSSODescriptor_SPID")
+        return self.is_ok("SPSSODescriptor_SPID tests", _method)
 
     def test_NameIDFormat_Transient(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor/NameIDFormat")
