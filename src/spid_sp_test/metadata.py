@@ -1,5 +1,3 @@
-import re
-
 from spid_sp_test.utils import del_ns
 from spid_sp_test import constants
 from spid_sp_test import BASE_DIR, AbstractSpidCheck

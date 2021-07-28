@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 
 from lxml import etree
 from spid_sp_test import constants

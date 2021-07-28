@@ -1,3 +1,5 @@
+import re
+
 from . authn_request import SpidSpAuthnReqCheck
 
 
