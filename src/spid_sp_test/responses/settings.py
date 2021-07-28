@@ -7,7 +7,7 @@ NameIDNameQualifier = SAML2_IDP_CONFIG["entityid"]
 
 ATTRIBUTES_TYPES = {"dateOfBirth": "date", "expirationDate": "date"}
 
-HTTP_STATUS_ERROR_CODES = [400, 401, 403, 500]
+HTTP_STATUS_ERROR_CODES = [400, 401, 403, 422, 500]
 
 ATTRIBUTES = {
     "spidCode": "AGID-001",
