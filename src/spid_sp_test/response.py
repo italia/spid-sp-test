@@ -5,6 +5,7 @@ import json
 import logging
 import random
 import requests
+import os
 import sys
 import string
 
@@ -292,9 +293,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         return status, status_code
 
     def dump_html_response(self, fname, description, result, content):
-        url = self.authnreq_attrs["AssertionConsumerServiceURL"]
         try:
-            content = html_absolute_paths(content, url)
+            content = html_absolute_paths(content, self.acs_url)
         except Exception as e:
             logger.critical(
                 f"Something went wrong making absolute links in html content: {e}"
@@ -302,6 +302,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         content = content.decode() if isinstance(content, bytes) else content
         head = f"<!-- {description} -->\n\n" f"<!-- {result} -->\n\n"
+        os.makedirs(self.html_path, exist_ok=True)
         with open(f"{self.html_path}/{fname}.html", "w") as f:
             f.write(head)
             f.write(content)
@@ -348,7 +349,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 )
                 sys.exit(1)
 
-            if not self.no_send_response:
+            if self.no_send_response:
+                print(f"<!-- {test_display_desc} -->\n{result}")
+
+            else:
                 res = self.send_response(result)
                 status, status_msg = self.check_response(
                     res,
@@ -362,8 +366,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                         result,
                         res.content.decode(),
                     )
-            else:
-                print(f"<!-- {test_display_desc} -->\n{result}")
+
             # reset session
             self.requests_session = requests.Session()
 

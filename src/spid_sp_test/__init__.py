@@ -13,6 +13,7 @@ class AbstractSpidCheck(object):
     def __init__(self, *args, **kwargs):
         self.results = []
         self.errors = []
+        self.warnings = []
         self.logger = logger
         self.error_counter = 0
         self.verify_ssl = kwargs.get("verify_ssl", False)
@@ -49,13 +50,13 @@ class AbstractSpidCheck(object):
         elif level in ("error", "critical"):
             self.handle_error(title, description, traceback)
         elif level == "warning":
-            self.results.append(
-                {
+            data = {
                     "result": "warning",
                     "test": title,
                     "value": value,
-                }
-            )
+            }
+            self.results.append(data)
+            self.warnings.append(data)
 
     def handle_error(self, error_message, description="", traceback: str = None):
         getattr(self.logger, "error")(error_message)

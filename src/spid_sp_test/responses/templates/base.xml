@@ -19,10 +19,10 @@
         Version="2.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     {% endblock AssertionTag %}
+        {% block AssertionIssuer %}<saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">{{Issuer}}</saml:Issuer>{% endblock %}
         {% block assertion_signature %}
         <!-- Assertion Signature here -->
         {% endblock assertion_signature %}
-        {% block AssertionIssuer %}<saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">{{Issuer}}</saml:Issuer>{% endblock %}
         {% block SubjectTag %}
         <saml:Subject>
             {% block SubjectNameID %}
