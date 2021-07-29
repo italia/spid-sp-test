@@ -743,8 +743,8 @@ class SpidSpMetadataCheck(
 
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
-        self.test_Contacts_PubPriv(contact_type="aggregator")
-        self.test_Contacts_PubPriv(contact_type="aggregated")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
 
         # The entityID MUST not contains the query-string part
         self.test_entityid_qs()
@@ -767,8 +767,8 @@ class SpidSpMetadataCheck(
 
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
-        self.test_Contacts_PubPriv(contact_type="aggregator")
-        self.test_Contacts_PubPriv(contact_type="aggregated")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
 
         # TODO
         # If the ContactPerson is of spid:entityType “spid:aggregator” the Extensions element MUST contain the element spid:KeyDescriptor with attribute use “spid:validation”
@@ -783,13 +783,12 @@ class SpidSpMetadataCheck(
         self.test_profile_spid_sp()
 
         self.test_Contacts_VATFC()
-        self.test_extensions_public_private(ext_type="Public")
 
         # The entityID MUST contain the activity code “pub-op-full”
-        self.test_entityid_contains(value="pub-ag-full")
+        self.test_entityid_contains(value="pub-op-full")
 
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
-        self.test_Contacts_PubPriv(contact_type="aggregator")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
 
         # The PublicServicesFullOperator element MUST be present
         self.test_extensions_public_ag(
@@ -808,8 +807,8 @@ class SpidSpMetadataCheck(
 
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
-        self.test_Contacts_PubPriv(contact_type="aggregator")
-        self.test_Contacts_PubPriv(contact_type="aggregated")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
 
         # The PublicServicesLightOperator element MUST be present
         self.test_extensions_public_ag(

@@ -77,6 +77,7 @@
   <md:ContactPerson contactType="other" spid:entityType="spid:aggregated">
     <md:Extensions>
       <spid:IPACode>IPA</spid:IPACode>
+      <spid:Public/>
     </md:Extensions>
     <md:Company>Organizzazione fittizia per il collaudo</md:Company>
   </md:ContactPerson>

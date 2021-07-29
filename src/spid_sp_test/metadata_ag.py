@@ -40,7 +40,7 @@ class SpidSpMetadataCheckAG(object):
         qs = urllib.parse.splitquery(eid)
 
         self._assertFalse(
-            qs,
+            qs[1],
             ("The entityID MUST not contain the query-string part"),
             description=eid,
         )

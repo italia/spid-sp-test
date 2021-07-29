@@ -49,6 +49,8 @@ DEFAULT_RESPONSE = {
     "SessionIndex": "",  # _ffa3114b-f589-417b-8602-4b0275f6bafc
     "AuthnContextClassRef": "https://www.spid.gov.it/SpidL1",
     "Attributes": ATTRIBUTES,
+    "sign_response": True,
+    "sign_assertion": True
 }
 
 

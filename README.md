@@ -187,6 +187,12 @@ spid-sp-test offers the possibility to extend and configure new response tests t
 
 - customize the way to get the SAML2 Authn Request, using plugins wrote by your own. If you're using a IAM Proxy with some OAuth2/OIDC frontends of a custom API, you can write your plugin and use it in the cli arguments, eg: `spid_sp_test --metadata-url https://localhost:8000/spid/metadata --extra  --authn-url https://localhost:8000/spid/login/?idp=https://localhost:8080 --debug INFO -tr --authn-plugin spid_sp_test.plugins.authn_request.Dummy`
 
+- customize entityid and certificates path runtime, using ENV variables. The files MUST be named `private.key` and `public.cert`:
+  ````
+  IDP_ENTITYID=https://your.idp.eid/ IDP_CERT_PATH=../spid-django/example/certificates spid_sp_test --idp-metadata
+  ````
+
+
 Looking at `src/spid_sp_test/responses/settings.py` or `tests/example.test-suite.json`
 we found that every test have a `response` attribute. Each element configured in would overload the
 value that will be rendered in the template. Each template can load these variable from its template context or
