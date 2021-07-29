@@ -732,7 +732,7 @@ class SpidSpMetadataCheck(
             xsds_files=["saml-schema-metadata-2.0.xsd", "spid-invoicing.xsd"]
         )
 
-    def test_profile_spid_ag_public_full(self):
+    def test_profile_spid_sp_ag_public_full(self):
         self.test_profile_spid_sp()
 
         self.test_extensions_public_private(ext_type="Public")
@@ -758,7 +758,7 @@ class SpidSpMetadataCheck(
             must=True,
         )
 
-    def test_profile_spid_ag_public_lite(self):
+    def test_profile_spid_sp_ag_public_lite(self):
         self.test_profile_spid_sp()
         self.test_extensions_public_private(ext_type="Public")
 
@@ -779,7 +779,7 @@ class SpidSpMetadataCheck(
             must=True,
         )
 
-    def test_profile_spid_op_public_full(self):
+    def test_profile_spid_sp_op_public_full(self):
         self.test_profile_spid_sp()
 
         self.test_Contacts_VATFC()
@@ -797,7 +797,7 @@ class SpidSpMetadataCheck(
             must=True,
         )
 
-    def test_profile_spid_op_public_lite(self):
+    def test_profile_spid_sp_op_public_lite(self):
         self.test_profile_spid_sp()
 
         self.test_Contacts_VATFC()
