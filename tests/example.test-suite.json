@@ -1,0 +1,54 @@
+{
+  "1": {
+    "name": "01. Response corretta",
+    "description": "Response corretta. Risultato atteso: Ok",
+    "status_codes": [
+      200
+    ],
+    "path": "base.xml",
+    "response": {}
+  },
+  "2": {
+    "name": "02. Response non firmata",
+    "description": "Response non firmata. Risultato atteso: KO",
+    "status_codes": [
+      400,
+      401,
+      403,
+      422,
+      500
+    ],
+    "path": "case-02.xml",
+    "response": {}
+  },
+  "3": {
+    "name": "03. Response - Assertion non firmata",
+    "description": "Response firmata, Assertion non firmata. (L'assertion deve essere sempre firmata, la response pu\u00f2 essere firmata)",
+    "status_codes": [
+      400,
+      401,
+      403,
+      422,
+      500
+    ],
+    "path": "case-03.xml",
+    "response": {}
+  },
+  "4": {
+    "name": "04. Response - Firma non valida",
+    "description": "Response firmata con certificato diverso da quello registrato su SP. Risultato atteso: KO",
+    "status_codes": [
+      400,
+      401,
+      403,
+      422,
+      500
+    ],
+    "path": "base.xml",
+    "response": {},
+    "sign_credentials": {
+      "certificate": "/home/wert/DEV4/DTD/Spid/spid_sp_test/src/spid_sp_test/responses/certificates/test_public.cert",
+      "privateKey": "/home/wert/DEV4/DTD/Spid/spid_sp_test/src/spid_sp_test/responses/certificates/test_private.key"
+    }
+  }
+}

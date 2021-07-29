@@ -243,6 +243,18 @@ if __name__ == '__main__':
         )
     )
 
+    parser.add_argument(
+        '-prs', '--print-responses-settings',
+        required=False, action="store_true",
+        help='print out the default responses settings'
+    )
+
+    parser.add_argument(
+        '-pas', '--print-attributes-settings',
+        required=False, action="store_true",
+        help='print out the default user attributes used in automatic responses'
+    )
+
     args = parser.parse_args()
     logging.basicConfig(level=getattr(logging, args.debug))
 
@@ -259,6 +271,16 @@ if __name__ == '__main__':
         idp_server = Server(SAML2_IDP_CONFIG)
         idp_metadata = entity_descriptor(idp_server.config)
         print(idp_metadata.to_string().decode())
+        sys.exit(0)
+
+    elif args.print_responses_settings:
+        from spid_sp_test.responses.settings import RESPONSE_TESTS
+        print(json.dumps(RESPONSE_TESTS, indent=2))
+        sys.exit(0)
+
+    elif args.print_attributes_settings:
+        from spid_sp_test.responses.settings import ATTRIBUTES
+        print(json.dumps(ATTRIBUTES, indent=2))
         sys.exit(0)
 
     elif args.metadata_url:
