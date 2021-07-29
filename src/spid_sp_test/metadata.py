@@ -121,7 +121,7 @@ class SpidSpMetadataCheck(
             )
             self._assertHttpUrlWithoutPort(
                 self.doc.attrib.get("entityID"),
-                'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"',
+                'The entityID attribute MUST not contain any custom tcp ports, eg: ":8000"',
             )
 
         return self.is_ok(f"{self.__class__.__name__}.test_EntityDescriptor")
@@ -405,7 +405,7 @@ class SpidSpMetadataCheck(
                     )
                     self._assertHttpUrlWithoutPort(
                         _attr,
-                        'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"',
+                        'The entityID attribute MUST not contain any custom tcp ports, eg: ":8000"',
                     )
                 elif attr == "Location":
                     self._assertIsValidHttpUrl(
@@ -466,7 +466,7 @@ class SpidSpMetadataCheck(
                     )
                     self._assertHttpUrlWithoutPort(
                         _attr,
-                        'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"',
+                        'The entityID attribute MUST not contain any custom tcp ports, eg: ":8000"',
                     )
                 else:
                     pass
@@ -746,7 +746,7 @@ class SpidSpMetadataCheck(
         self.test_Contacts_PubPriv(entity_type="spid:aggregator")
         self.test_Contacts_PubPriv(entity_type="spid:aggregated")
 
-        # The entityID MUST not contains the query-string part
+        # The entityID MUST not contain the query-string part
         self.test_entityid_qs()
 
         # The entityID MUST contain the activity code “pub-ag-full”

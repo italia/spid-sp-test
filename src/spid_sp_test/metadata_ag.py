@@ -32,7 +32,7 @@ class SpidSpMetadataCheckAG(object):
         return self.is_ok(f"{self.__class__.__name__}.test_extensions_public_ag")
 
     def test_entityid_qs(self):
-        """The entityID MUST not contains the query-string part"""
+        """The entityID MUST not contain the query-string part"""
 
         entity_desc = self.doc.xpath("//EntityDescriptor")
         eid = entity_desc[0].get("entityID")
@@ -41,7 +41,7 @@ class SpidSpMetadataCheckAG(object):
 
         self._assertFalse(
             qs[1],
-            ("The entityID MUST not contains the query-string part"),
+            ("The entityID MUST not contain the query-string part"),
             description=eid,
         )
         return self.is_ok(f"{self.__class__.__name__}.test_entityid_qs")
