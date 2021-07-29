@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 
 from lxml import etree
 from spid_sp_test import constants
@@ -14,6 +15,24 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
         super(SpidSpMetadataCheckExtra, self).__init__(*args, **kwargs)
         self.category = "metadata_extra"
+
+    def test_metadata_no_newlines(self):
+        self._assertFalse(
+            re.match(r"^[\t\n\s\r\ ]*", self.metadata),
+            ("The XML of metadata should not " "contains newlines at the beginning."),
+            description=self.metadata[0:10],
+            level="warning",
+        )
+        return self.is_ok(f"{self.__class__.__name__}.test_metadata_no_newlines")
+
+    def test_entityid_match_url(self):
+        self._assertTrue(
+            (self.doc.attrib.get("entityID") == self.metadata_url),
+            f"The EntityID SHOULD be equal to {self.metadata_url}",
+            description=f"{self.doc.attrib.get('entityID')}",
+            level="warning",
+        )
+        return self.is_ok(f"{self.__class__.__name__}.test_entityid_match_url")
 
     def test_Signature_extra(self):
         """Test the compliance of AuthnRequest element"""

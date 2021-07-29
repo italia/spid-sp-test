@@ -12,6 +12,7 @@ from spid_sp_test import BASE_DIR
 from spid_sp_test.metadata import SpidSpMetadataCheck
 from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
 from spid_sp_test.authn_request import SpidSpAuthnReqCheck
+from spid_sp_test.authn_request_extra import SpidSpAuthnReqCheckExtra
 from spid_sp_test.html_report import render_html_report
 from spid_sp_test.response import SpidSpResponseCheck
 from spid_sp_test.utils import get_xmlsec1_bin
@@ -242,6 +243,18 @@ if __name__ == '__main__':
         )
     )
 
+    parser.add_argument(
+        '-prs', '--print-responses-settings',
+        required=False, action="store_true",
+        help='print out the default responses settings'
+    )
+
+    parser.add_argument(
+        '-pas', '--print-attributes-settings',
+        required=False, action="store_true",
+        help='print out the default user attributes used in automatic responses'
+    )
+
     args = parser.parse_args()
     logging.basicConfig(level=getattr(logging, args.debug))
 
@@ -258,6 +271,16 @@ if __name__ == '__main__':
         idp_server = Server(SAML2_IDP_CONFIG)
         idp_metadata = entity_descriptor(idp_server.config)
         print(idp_metadata.to_string().decode())
+        sys.exit(0)
+
+    elif args.print_responses_settings:
+        from spid_sp_test.responses.settings import RESPONSE_TESTS
+        print(json.dumps(RESPONSE_TESTS, indent=2))
+        sys.exit(0)
+
+    elif args.print_attributes_settings:
+        from spid_sp_test.responses.settings import ATTRIBUTES
+        print(json.dumps(ATTRIBUTES, indent=2))
         sys.exit(0)
 
     elif args.metadata_url:
@@ -277,6 +300,10 @@ if __name__ == '__main__':
 
     # authn request
     if args.authn_url:
+        if args.extra:
+            _cls = SpidSpAuthnReqCheckExtra
+        else:
+            _cls = SpidSpAuthnReqCheck
         data_ac = dict(
             metadata = metadata_check.metadata,
             authn_request_url = args.authn_url,
@@ -286,7 +313,7 @@ if __name__ == '__main__':
             request_body = args.request_body,
             request_content_type = args.request_content_type
         )
-        authn_check = SpidSpAuthnReqCheck(**data_ac)
+        authn_check = _cls(**data_ac)
         selective_run(authn_check, profile, args.list)
         tests_done.append(authn_check)
 

@@ -1,0 +1,14 @@
+{
+  "spidCode": "AGID-001",
+  "name": "SpidValidator",
+  "familyName": "AgID",
+  "placeOfBirth": "Roma",
+  "countyOfBirth": "RM",
+  "dateOfBirth": "2000-01-01",
+  "companyName": "Agenzia per l'Italia Digitale",
+  "companyFiscalNumber": "TINIT-GDASDV00A01H501J",
+  "fiscalNumber": "TINIT-GDASDV00A01H501J",
+  "idCard": "CartaIdentit\u00e0 AA00000000 ComuneRoma 2018-01-01 2028-01-01",
+  "mobilePhone": "+393331234567",
+  "email": "spid.tech@agid.gov.it",
+}

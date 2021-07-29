@@ -1,5 +1,3 @@
-import re
-
 from spid_sp_test.utils import del_ns
 from spid_sp_test import constants
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
@@ -92,15 +90,6 @@ class SpidSpMetadataCheck(
         os.chdir(_orig_pos)
         return self.is_ok(f"{self.__class__.__name__}.xsd_check")
 
-    def test_metadata_no_newlines(self):
-        self._assertFalse(
-            re.match(r"^[\t\n\s\r\ ]*", self.metadata),
-            ("The XML of metadata should not " "contains newlines at the beginning."),
-            description=self.metadata[0:10],
-            level="warning",
-        )
-        return self.is_ok(f"{self.__class__.__name__}.test_metadata_no_newlines")
-
     def test_EntityDescriptor(self):
         entity_desc = self.doc.xpath("//EntityDescriptor")
 
@@ -134,13 +123,6 @@ class SpidSpMetadataCheck(
                 self.doc.attrib.get("entityID"),
                 'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"',
             )
-
-        self._assertTrue(
-            (self.doc.attrib.get("entityID") == self.metadata_url),
-            f"The EntityID MUST be equal to {self.metadata_url}",
-            description=f"{self.doc.attrib.get('entityID')}",
-            level="warning",
-        )
 
         return self.is_ok(f"{self.__class__.__name__}.test_EntityDescriptor")
 
