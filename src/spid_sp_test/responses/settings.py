@@ -295,14 +295,14 @@ RESPONSE_TESTS = {
     },
     "30": {
         "name": "30. Response - Attributo Format di Issuer diverso",
-        "description": "L'attributo Format di Issuer deve essere omesso o assumere valore urn:oasis:names:tc:SAML:2.0:nameid-format:entity. In questo test il valore è diverso. Risultato atteso: KO",
+        "description": "L'attributo Format di Issuer della Response deve essere omesso o assumere valore urn:oasis:names:tc:SAML:2.0:nameid-format:entity. In questo test il valore è diverso. Risultato atteso: KO",
         "status_codes": HTTP_STATUS_ERROR_CODES,
         "path": "case-30.xml",
         "response": {},
     },
     "31": {
         "name": "31. Response - Attributo Format di Issuer omesso",
-        "description": "L'attributo Format di Issuer deve essere omesso o assumere valore urn:oasis:names:tc:SAML:2.0:nameid-format:entity. In questo test il valore è omesso. Risultato atteso: Ok",
+        "description": "L'attributo Format di Issuer della Response deve essere omesso o assumere valore urn:oasis:names:tc:SAML:2.0:nameid-format:entity. In questo test il valore è omesso. Risultato atteso: Ok",
         "status_codes": [200],
         "path": "case-31.xml",
         "response": {},
