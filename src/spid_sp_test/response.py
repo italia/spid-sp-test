@@ -199,7 +199,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             "Audience": self.authnreq_issuer,
             "AuthnContextClassRef": self.acr
             or settings.DEFAULT_RESPONSE["AuthnContextClassRef"],
-            "IssueInstantMillis": now.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+            "IssueInstantMillis": now.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
         }
         self.relay_state = self.kwargs.get("relay_state")
 
