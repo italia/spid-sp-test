@@ -4,12 +4,23 @@ from lxml import etree
 
 from .constants import EMAIL_REGEXP
 from .constants import ISO3166_CODES
+from .constants import XML_NAMESPACES
 from .indicepa import get_indicepa_by_ipacode
 
 
 class SpidSpMetadataCheckPublic(object):
-    def test_Contacts_PubPriv(self, contact_type="other"):
-        entity_desc = self.doc.xpath(f'//ContactPerson[@contactType="{contact_type}"]')
+    def test_Contacts_PubPriv(
+                self, contact_type="other", entity_type=""):
+        xpatt = f"//ContactPerson[@contactType='{contact_type}'"
+        if entity_type:
+            xpatt += f" and @spid:entityType='{entity_type}']"
+        else:
+            xpatt += ']'
+
+        entity_desc = self.doc.xpath(
+            xpatt,
+            namespaces=XML_NAMESPACES
+        )
         self._assertTrue(entity_desc, "ContactPerson MUST be present")
 
         if entity_desc:
@@ -30,10 +41,11 @@ class SpidSpMetadataCheckPublic(object):
                 description=entity_desc[0].get("contactType"),
             )
 
-        self._assertTrue(
-            len(entity_desc) == 1,
-            f'Only one ContactPerson element of contactType "{contact_type}" MUST be present',
-        )
+        if not entity_type:
+            self._assertTrue(
+                len(entity_desc) == 1,
+                f'Only one ContactPerson element of contactType "{contact_type}" MUST be present',
+            )
 
         return self.is_ok(f"{self.__class__.__name__}.test_Contacts_PubPriv")
 
