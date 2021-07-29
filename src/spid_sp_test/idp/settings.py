@@ -1,3 +1,5 @@
+import os
+
 from pathlib import Path
 from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT
 
@@ -5,7 +7,8 @@ from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT
 
 
 BASE_DIR = Path(__file__).resolve().parent
-BASE = "https://localhost:8080"
+BASE = os.environ.get("IDP_ENTITYID", "https://localhost:8080")
+CERT_PATH = os.environ.get("IDP_CERT_PATH", BASE_DIR)
 
 SAML2_IDP_CONFIG = {
     "entityid": BASE,
@@ -25,8 +28,8 @@ SAML2_IDP_CONFIG = {
         },
     },
     "debug": 0,
-    "key_file": f"{BASE_DIR}/private.key",
-    "cert_file": f"{BASE_DIR}/public.cert",
+    "key_file": f"{CERT_PATH}/private.key",
+    "cert_file": f"{CERT_PATH}/public.cert",
     # "xmlsec_binary": xmlsec_path,
     "metadata": [],
     # "attribute_map_dir": full_path("attributemaps"),
