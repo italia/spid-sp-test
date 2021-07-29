@@ -167,7 +167,7 @@ if __name__ == '__main__':
         choices=('CRITICAL', 'ERROR',
                  'WARNING', 'INFO', 'DEBUG'),
         default='INFO',
-        help="Debug level, see python logging"
+        help="Debug level, see python logging; defaults to INFO if omitted"
     )
 
     parser.add_argument(
@@ -213,7 +213,7 @@ if __name__ == '__main__':
             'cie-sp-public',
             'cie-sp-private',
         ),
-        help="which profile to check"
+        help="which profile to check; defaults to spid-sp-public if omitted"
     )
 
     parser.add_argument(
@@ -225,21 +225,21 @@ if __name__ == '__main__':
     parser.add_argument(
         '-rm', '--request-method',
         required=False, default='GET',
-        help="GET or POST"
+        help="HTTP method to use when requesting authn-url e.g. GET or POST; defaults to GET if omitted"
     )
 
     parser.add_argument(
         '-rb', '--request-body',
         required=False, type=json.loads,
-        help='eg: {"idp": "https://localhost:8080"}'
+        help='key-value pairs payload to submit in the HTTP request body when requesting authn-url; e.g.: {"idp": "https://localhost:8080"}'
     )
 
     parser.add_argument(
         '-rct', '--request-content-type',
         required=False, default='data',
-        help=("python requests' defaults arguments: data or json. "
-              "'data' means application/x-www-form-urlencoded "
-              "'json' means application/json"
+        help=("python requests' defaults arguments: data or json; "
+              "use 'data' for application/x-www-form-urlencoded; "
+              "use 'json' for application/json; defaults to data if omitted"
         )
     )
 
