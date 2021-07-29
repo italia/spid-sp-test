@@ -200,6 +200,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             "AuthnContextClassRef": self.acr
             or settings.DEFAULT_RESPONSE["AuthnContextClassRef"],
             "IssueInstantMillis": now.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "sign_response": settings.DEFAULT_RESPONSE["sign_response"],
+            "sign_assertion": settings.DEFAULT_RESPONSE["sign_assertion"]
         }
         self.relay_state = self.kwargs.get("relay_state")
 
