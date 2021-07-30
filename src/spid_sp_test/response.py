@@ -22,6 +22,7 @@ from spid_sp_test.responses import settings
 from spid_sp_test.utils import del_ns
 from tempfile import NamedTemporaryFile
 
+from .constants import NOSESINDEX_ACRS
 from .utils import get_xmlsec1_bin, html_absolute_paths
 from .utils import load_plugin
 
@@ -180,6 +181,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         self.acr = self.get_acr()
 
+        if self.acr in NOSESINDEX_ACRS:
+            _session_index = None
+        else:
+            _session_index = saml_rnd_id()
+
         self.response_attrs = {
             "ResponseID": saml_rnd_id(),
             "AuthnRequestID": self.authnreq_attrs["ID"],
@@ -194,7 +200,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             "NameID": "that-transient-opaque-value",
             "AssertionID": saml_rnd_id(),
             "AuthnIstant": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "SessionIndex": saml_rnd_id(),
+            "SessionIndex": _session_index,
             "Issuer": self.issuer,
             "Audience": self.authnreq_issuer,
             "AuthnContextClassRef": self.acr

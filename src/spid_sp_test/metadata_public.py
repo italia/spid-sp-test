@@ -233,24 +233,33 @@ class SpidSpMetadataCheckPublic(object):
             )
 
         # the following elements MUST be present
-        for ele in attrs:
-            ctype = self.doc.xpath(f"//ContactPerson/Extensions/{ele}")
+        contacts = self.doc.xpath("//ContactPerson")
+        for contact in contacts:
+            for ele in attrs:
+                ctype = contact.xpath(f"Extensions/{ele}")
 
-            self._assertTrue(
-                ctype,
-                f"{ele} element MUST be present",
-            )
+                # some special conditions ...
+                if (
+                        contact.attrib['contactType'] == 'technical'
+                        and ele == "IPACode"
+                ):
+                    continue
 
-            # is <= because already protected with the previous check
-            self._assertTrue(
-                (len(ctype) <= 1),
-                f"only one {ele} element MUST be present",
-            )
-
-            if ctype:
                 self._assertTrue(
-                    ctype[0].text,
-                    f"The {ele} element MUST have a value",
+                    ctype,
+                    f"{ele} element MUST be present",
                 )
+
+                # is <= because already protected with the previous check
+                self._assertTrue(
+                    (len(ctype) <= 1),
+                    f"only one {ele} element MUST be present",
+                )
+
+                if ctype:
+                    self._assertTrue(
+                        ctype[0].text,
+                        f"The {ele} element MUST have a value",
+                    )
 
         return self.is_ok(f"{self.__class__.__name__}.test_extensions_cie")
