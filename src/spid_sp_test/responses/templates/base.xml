@@ -60,7 +60,7 @@
         {% block AuthnStatement %}
         <saml:AuthnStatement
             AuthnInstant="{{AuthnIstant}}"
-            SessionIndex="{{SessionIndex}}" >
+            {% if SessionIndex %}SessionIndex="{{SessionIndex}}" {% endif %}>
             {% block AuthnContext %}
             <saml:AuthnContext>
                 <saml:AuthnContextClassRef>{{AuthnContextClassRef}}</saml:AuthnContextClassRef>
