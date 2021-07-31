@@ -401,7 +401,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             value = req.get(attr)
             if attr == "ID":
-                self._assertIsNotNone(
+                self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value - TR pag. 8 ",
                     **error_kwargs,
@@ -409,15 +409,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             if attr == "Version":
                 exp = "2.0"
-                self._assertEqual(
-                    value,
-                    exp,
+                self._assertTrue(
+                    value == exp,
                     f"The {attr} attribute MUST be {exp} - TR pag. 8 ",
                     **error_kwargs,
                 )
 
             if attr == "IssueInstant":
-                self._assertIsNotNone(
+                self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value - TR pag. 8 ",
                     **error_kwargs,
@@ -429,7 +428,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 )
 
             if attr == "Destination":
-                self._assertIsNotNone(
+                self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value - TR pag. 8 ",
                     **error_kwargs,
@@ -514,14 +513,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 description=acss_desc,
             )
 
-            self._assertIsNotNone(
+            self._assertTrue(
                 value,
                 f"The {attr} attribute MUST have a value- TR pag. 8 ",
                 **error_kwargs,
             )
-            self._assertGreaterEqual(
-                int(value),
-                0,
+            self._assertTrue(
+                int(value) >= 0,
                 f"The {attr} attribute MUST be >= 0 - TR pag. 8 and pag. 20",
                 **error_kwargs,
             )
@@ -541,7 +539,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 )
 
                 value = req.get(attr)
-                self._assertIsNotNone(
+                self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value - TR pag. 8 ",
                     **error_kwargs,
@@ -566,9 +564,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
                 if attr == "ProtocolBinding":
                     exp = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-                    self._assertEqual(
-                        value,
-                        exp,
+                    self._assertTrue(
+                        value == exp,
                         f"The {attr} attribute MUST be {exp} - TR pag. 8 ",
                         **error_kwargs,
                     )
@@ -585,14 +582,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 availableattributeindexes.append(index)
 
             value = req.get(attr)
-            self._assertIsNotNone(
+            self._assertTrue(
                 value,
                 f"The {attr} attribute MUST have a value - TR pag. 8",
                 **error_kwargs,
             )
-            self._assertGreaterEqual(
-                int(value),
-                0,
+            self._assertTrue(
+                int(value) >= 0,
                 f"The {attr} attribute MUST be >= 0 - TR pag. 8 and pag. 20",
                 **error_kwargs,
             )
@@ -613,9 +609,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         error_kwargs = dict(description=desc) if desc else {}
 
         if len(subj) > 1:
-            self._assertEqual(
-                len(subj),
-                1,
+            self._assertTrue(
+                len(subj) == 1,
                 "Only one Subject element can be present - TR pag. 9",
                 **error_kwargs,
             )
@@ -623,9 +618,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         if len(subj) == 1:
             subj = subj[0]
             name_id = subj.xpath("./NameID")
-            self._assertEqual(
-                len(name_id),
-                1,
+            self._assertTrue(
+                len(name_id) == 1,
                 "One NameID element in Subject element MUST be present - TR pag. 9",
                 **error_kwargs,
             )
@@ -638,8 +632,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 )
 
                 value = name_id.get(attr)
-
-                self._assertIsNotNone(
+                self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value - TR pag. 9",
                     **error_kwargs,
@@ -647,9 +640,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
                 if attr == "Format":
                     exp = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
-                    self._assertEqual(
-                        value,
-                        exp,
+                    self._assertTrue(
+                        value == exp,
                         f"The {attr} attribute MUST be {exp} - TR pag. 9",
                         **error_kwargs,
                     )
@@ -673,15 +665,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         else:
             e = e[0]
 
-        self._assertIsNotNone(
+        self._assertTrue(
             e.text, "The Issuer element MUST have a value - TR pag. 9", **error_kwargs
         )
 
         entitydescriptor = self.md.xpath("//EntityDescriptor")
         entityid = entitydescriptor[0].get("entityID")
-        self._assertEqual(
-            e.text,
-            entityid,
+        self._assertTrue(
+            e.text == entityid,
             "The Issuer's value MUST be equal to entityID - TR pag. 9",
             **error_kwargs,
         )
@@ -695,7 +686,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             value = e.get(attr)
 
-            self._assertIsNotNone(
+            self._assertTrue(
                 value,
                 f"The {attr} attribute MUST have a value - TR pag. 9",
                 **error_kwargs,
@@ -703,9 +694,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             if attr == "Format":
                 exp = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity"
-                self._assertEqual(
-                    value,
-                    exp,
+                self._assertTrue(
+                    value == exp,
                     f"The {attr} attribute MUST be {exp} - TR pag. 9",
                     **error_kwargs,
                 )
@@ -745,15 +735,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         value = e.get(attr)
 
-        self._assertIsNotNone(
-            value, f"The {attr} attribute MUST have a value - TR pag. 9", **error_kwargs
+        self._assertTrue(
+            value,
+            f"The {attr} attribute MUST have a value - TR pag. 9",
+            **error_kwargs
         )
 
         if attr == "Format":
             exp = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
-            self._assertEqual(
-                value,
-                exp,
+            self._assertTrue(
+                value == exp,
                 f"The {attr} attribute MUST be {exp} - TR pag. 9",
                 **error_kwargs,
             )
@@ -767,9 +758,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         error_kwargs = dict(description=desc) if desc else {}
 
         if len(e) > 1:
-            self._assertEqual(
-                len(1),
-                1,
+            self._assertTrue(
+                len(1) == 1,
                 "Only one Conditions element is allowed - TR pag. 9",
                 **error_kwargs,
             )
@@ -785,7 +775,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
                 value = e.get(attr)
 
-                self._assertIsNotNone(
+                self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value - TR pag. 9",
                     **error_kwargs,
@@ -806,15 +796,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         desc = [etree.tostring(ent).decode() for ent in e if e]
         error_kwargs = dict(description=desc) if desc else {}
 
-        self._assertEqual(
-            len(e),
-            1,
+        self._assertTrue(
+            len(e) == 1,
             "Only one RequestedAuthnContext element MUST be present - TR pag. 9",
             **error_kwargs,
         )
         if e:
             e = e[0]
-
             attr = "Comparison"
             self._assertTrue(
                 (attr in e.attrib),
@@ -823,31 +811,29 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             )
 
             value = e.get(attr)
-            self._assertIsNotNone(
+            self._assertTrue(
                 value,
                 f"The {attr} attribute MUST have a value - TR pag. 10",
                 **error_kwargs,
             )
 
             allowed = ["exact", "minimum", "better", "maximum"]
-            self._assertIn(
-                value,
-                allowed,
+            self._assertTrue(
+                value in allowed,
                 "Attribute not valid - TR pag. 10",
                 description=f"The {attr} attribute MUST be one of [{', '.join(allowed)}]",
             )
 
             acr = e.xpath("./AuthnContextClassRef")
-            self._assertEqual(
-                len(acr),
-                1,
+            self._assertTrue(
+                len(acr) == 1,
                 "Only one AuthnContexClassRef element MUST be present - TR pag. 9",
                 description=[etree.tostring(_acr).decode() for _acr in acr],
             )
 
             if acr:
                 acr = acr[0]
-                self._assertIsNotNone(
+                self._assertTrue(
                     acr.text,
                     "The AuthnContexClassRef element MUST have a value - TR pag. 9",
                     description=etree.tostring(acr),
@@ -890,9 +876,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             )
 
             alg = method[0].get("Algorithm")
-            self._assertIn(
-                alg,
-                constants.ALLOWED_XMLDSIG_ALGS,
+            self._assertTrue(
+                alg in constants.ALLOWED_XMLDSIG_ALGS,
                 "The signature algorithm MUST be valid - TR pag. 10",
                 description=f"One of {', '.join(constants.ALLOWED_XMLDSIG_ALGS)}",
             )  # noqa
@@ -912,9 +897,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             )
 
             alg = method[0].get("Algorithm")
-            self._assertIn(
-                alg,
-                constants.ALLOWED_DGST_ALGS,
+            self._assertTrue(
+                alg in constants.ALLOWED_DGST_ALGS,
                 (
                     ("The digest algorithm MUST be one of [%s] - TR pag. 10")
                     % (", ".join(constants.ALLOWED_DGST_ALGS))
