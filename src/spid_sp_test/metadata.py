@@ -241,6 +241,7 @@ class SpidSpMetadataCheck(
             references = ["TR pag. 19"],
             method = f"{self.__class__.__name__}.test_xmldsig"
         )
+
         try:
             subprocess.run(
                 cmd,
@@ -264,7 +265,7 @@ class SpidSpMetadataCheck(
                 lines.append(stdout)
             _msg = "\n".join(lines)
             self.handle_result(
-                "error", msg, description="Description", traceback=_msg,
+                "error", _msg, description="Description", traceback=_msg,
                 **_data
             )
             return
@@ -276,41 +277,52 @@ class SpidSpMetadataCheck(
 
     def test_Signature(self):
         """Test the compliance of Signature element"""
+        _method = f"{self.__class__.__name__}.test_Signature"
         sign = self.doc.xpath("//EntityDescriptor/Signature")
         desc = [etree.tostring(ent).decode() for ent in sign if sign]
-        error_kwargs = dict(description=desc) if desc else {}
+
+        _data = dict(
+            description = desc or "",
+            references = ["TR pag. 19"],
+            method = f"{self.__class__.__name__}.test_Signature"
+        )
+
         self._assertTrue(
             (len(sign) > 0),
-            "The Signature element MUST be present - TR pag. 19",
-            **error_kwargs,
+            "The Signature element MUST be present",
+            **_data,
         )
 
         error_kwargs = dict(description=desc, traceback="")
         if not sign:
             self.handle_result(
                 "error",
-                "The SignatureMethod element MUST be present - TR pag. 19",
-                **error_kwargs,
+                "The SignatureMethod element MUST be present",
+                **_data,
             )
             self.handle_result(
                 "error",
-                "The Algorithm attribute MUST be present in SignatureMethod element - TR pag. 19",
-                **error_kwargs,
+                "The Algorithm attribute MUST be present in SignatureMethod element",
+                **_data,
             )
             self.handle_result(
                 "error",
-                "The signature algorithm MUST be valid - TR pag. 19",
+                "The signature algorithm MUST be valid",
                 description=f"Must be one of [{', '.join(constants.ALLOWED_XMLDSIG_ALGS)}]",
+                **_data
             )
             self.handle_result(
                 "error",
-                "The Algorithm attribute MUST be present in DigestMethod element - TR pag. 19",
-                **error_kwargs,
+                "The Algorithm attribute MUST be present in DigestMethod element",
+                **_data,
             )
+
+            _data.pop('description')
             self.handle_result(
                 "error",
-                "The digest algorithm MUST be valid - TR pag. 19",
+                "The digest algorithm MUST be valid",
                 description=f"Must be one of [{', '.join(constants.ALLOWED_DGST_ALGS)}]",
+                **_data
             )
         else:
             method = sign[0].xpath("./SignedInfo/SignatureMethod")
@@ -318,46 +330,48 @@ class SpidSpMetadataCheck(
             error_kwargs = dict(description=desc) if desc else {}
             self._assertTrue(
                 (len(method) > 0),
-                "The SignatureMethod element MUST be present - TR pag. 19",
-                **error_kwargs,
+                "The SignatureMethod element MUST be present",
+                **_data,
             )
 
             self._assertTrue(
                 ("Algorithm" in method[0].attrib),
                 "The Algorithm attribute MUST be present "
-                "in SignatureMethod element - TR pag. 19",
-                **error_kwargs,
+                "in SignatureMethod element",
+                **_data,
             )
 
+            _data.pop('description')
             alg = method[0].get("Algorithm")
             self._assertTrue(
                 alg in constants.ALLOWED_XMLDSIG_ALGS,
-                "The signature algorithm MUST be valid - TR pag. 19",
+                "The signature algorithm MUST be valid",
                 description=f"One of {(', '.join(constants.ALLOWED_XMLDSIG_ALGS))}",
+                **_data
             )
 
             method = sign[0].xpath("./SignedInfo/Reference/DigestMethod")
             self._assertTrue(
                 (len(method) == 1),
-                "The DigestMethod element MUST be present - TR pag. 19",
-                **error_kwargs,
+                "The DigestMethod element MUST be present",
+                **_data,
             )
 
             self._assertTrue(
                 ("Algorithm" in method[0].attrib),
-                "The Algorithm attribute MUST be present "
-                "in DigestMethod element - TR pag. 19",
-                **error_kwargs,
+                "The Algorithm attribute MUST be present in DigestMethod element",
+                **_data,
             )
 
             alg = method[0].get("Algorithm")
             self._assertTrue(
                 alg in constants.ALLOWED_DGST_ALGS,
-                "The digest algorithm MUST be valid - TR pag. 19",
+                "The digest algorithm MUST be valid",
                 description=f"One of {(', '.join(constants.ALLOWED_DGST_ALGS))}",
+                **_data
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_Signature")
+        return self.is_ok(_method)
 
     def test_KeyDescriptor(self):
         """Test the compliance of KeyDescriptor element(s)"""
