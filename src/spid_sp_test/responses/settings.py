@@ -50,7 +50,7 @@ DEFAULT_RESPONSE = {
     "AuthnContextClassRef": "https://www.spid.gov.it/SpidL1",
     "Attributes": ATTRIBUTES,
     "sign_response": True,
-    "sign_assertion": True
+    "sign_assertion": True,
 }
 
 

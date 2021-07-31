@@ -19,30 +19,32 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
     def test_metadata_no_newlines(self):
         _method = f"{self.__class__.__name__}.test_metadata_no_newlines"
         _data = dict(
-            test_id = "",
-            references = [],
-            method = _method,
+            test_id="",
+            references=[],
+            method=_method,
         )
         self._assertFalse(
             re.match(r"^[\t\n\s\r\ ]*", self.metadata),
             ("The XML of metadata should not " "contains newlines at the beginning."),
             description=self.metadata[0:10],
-            level="warning", **_data
+            level="warning",
+            **_data,
         )
         return self.is_ok(_method)
 
     def test_entityid_match_url(self):
         _method = f"{self.__class__.__name__}.test_entityid_match_url"
         _data = dict(
-            test_id = "",
-            references = [],
-            method = _method,
+            test_id="",
+            references=[],
+            method=_method,
         )
         self._assertTrue(
             (self.doc.attrib.get("entityID") == self.metadata_url),
             f"The EntityID SHOULD be equal to {self.metadata_url}",
             description=f"{self.doc.attrib.get('entityID')}",
-            level="warning", **_data
+            level="warning",
+            **_data,
         )
         return self.is_ok(_method)
 
@@ -54,10 +56,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
         _method = f"{self.__class__.__name__}.test_Signature_extra"
         _data = dict(
-            test_id = "",
-            references = [],
-            method = _method,
-            description = ''.join(desc)[:128]
+            test_id="", references=[], method=_method, description="".join(desc)[:128]
         )
 
         for si in sign:
@@ -121,43 +120,45 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
         _method = f"{self.__class__.__name__}.test_SPSSODescriptor_extra"
         _data = dict(
-            test_id = "",
-            references = [],
-            method = _method,
+            test_id="",
+            references=[],
+            method=_method,
         )
 
         for attr in ["protocolSupportEnumeration", "WantAssertionsSigned"]:
             self._assertTrue(
-                (attr in spsso[0].attrib), f"The {attr} attribute MUST be present",
-                description=spsso[0].attrib, **_data
+                (attr in spsso[0].attrib),
+                f"The {attr} attribute MUST be present",
+                description=spsso[0].attrib,
+                **_data,
             )
 
             if attr == "protocolSupportEnumeration":
                 a = spsso[0].get(attr)
                 self._assertTrue(
-                    a, f"The {attr} attribute MUST have a value",
-                    description=a, **_data
+                    a, f"The {attr} attribute MUST have a value", description=a, **_data
                 )
 
                 self._assertTrue(
                     a == "urn:oasis:names:tc:SAML:2.0:protocol",
                     f"The {attr} attribute MUST be "
                     "urn:oasis:names:tc:SAML:2.0:protocol",
-                    description=a, **_data
+                    description=a,
+                    **_data,
                 )
 
             if attr == "WantAssertionsSigned":
                 a = spsso[0].get(attr)
                 self._assertTrue(
-                    a, f"The {attr} attribute MUST have a value",
-                    description=a, **_data
+                    a, f"The {attr} attribute MUST have a value", description=a, **_data
                 )
 
                 if a:
                     self._assertTrue(
                         a.lower() == "true",
                         f"The {attr} attribute MUST be true",
-                        description=a, **_data
+                        description=a,
+                        **_data,
                     )
         return self.is_ok(_method)
 
@@ -169,10 +170,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
         _method = f"{self.__class__.__name__}.test_AttributeConsumingService_extra"
         _data = dict(
-            test_id = "",
-            references = [],
-            method = _method,
-            description = ''.join(desc)[:128]
+            test_id="", references=[], method=_method, description="".join(desc)[:128]
         )
 
         for acs in acss:
@@ -199,15 +197,10 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         desc = [etree.tostring(ent).decode() for ent in orgs if orgs]
         _method = f"{self.__class__.__name__}.test_Organization_extra"
         _data = dict(
-            test_id = "",
-            references = [],
-            method = _method,
-            description = ''.join(desc)[:128]
+            test_id="", references=[], method=_method, description="".join(desc)[:128]
         )
 
-        self._assertTrue(
-            (len(orgs) == 1),
-            "An Organization MUST be present", **_data)
+        self._assertTrue((len(orgs) == 1), "An Organization MUST be present", **_data)
 
         if orgs:
             org = orgs[0]

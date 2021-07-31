@@ -26,9 +26,9 @@ class AbstractSpidCheck(object):
     def is_ok(self, msg):
         if not self.error_counter:
             # self.handle_result(
-                # "info",
-                # msg,
-                # method = method or msg
+            # "info",
+            # msg,
+            # method = method or msg
             # )
             return True
         else:
@@ -36,8 +36,14 @@ class AbstractSpidCheck(object):
             return False
 
     def handle_result(
-        self, level: str, title: str, description: str = "", traceback: str = None,
-        references: list = [], method: str = "", test_id: str = ""
+        self,
+        level: str,
+        title: str,
+        description: str = "",
+        traceback: str = None,
+        references: list = [],
+        method: str = "",
+        test_id: str = "",
     ):
         msg = f"{title}"
         getattr(self.logger, level, "debug")(f"{method}: {msg}")
@@ -48,7 +54,7 @@ class AbstractSpidCheck(object):
             "test": title,
             "value": value.decode() if isinstance(value, bytes) else value,
             "references": references,
-            "method": method
+            "method": method,
         }
 
         if level not in ("error", "debug", "critical", "warning"):
@@ -62,8 +68,15 @@ class AbstractSpidCheck(object):
             self.results.append(data)
             self.warnings.append(data)
 
-    def handle_error(self, error_message, description="", traceback: str = None,
-                     references: list = [], method: str = "", test_id: str = ""):
+    def handle_error(
+        self,
+        error_message,
+        description="",
+        traceback: str = None,
+        references: list = [],
+        method: str = "",
+        test_id: str = "",
+    ):
         self.logger.error(error_message)
         self.error_counter += 1
         # here report as json
@@ -74,7 +87,7 @@ class AbstractSpidCheck(object):
             "test": error_message,
             "value": value.decode() if isinstance(value, bytes) else value,
             "references": references,
-            "method": method
+            "method": method,
         }
         self.errors.append(data)
         self.results.append(data)
@@ -86,15 +99,13 @@ class AbstractSpidCheck(object):
         description="",
         traceback: str = None,
         level: str = "info",
-        **kwargs
+        **kwargs,
     ):
         if not check and level != "warning":
             self.handle_error(error_message, description, traceback, **kwargs)
         else:
             # level = "info" if level in ("warning",) else level
-            self.handle_result(
-                level, error_message, description, traceback, **kwargs
-            )
+            self.handle_result(level, error_message, description, traceback, **kwargs)
 
     def _assertTrue(self, *args, **kwargs):
         self._assert(*args, **kwargs)
@@ -102,26 +113,16 @@ class AbstractSpidCheck(object):
     def _assertFalse(self, check, *args, **kwargs):
         self._assert(not check, *args, **kwargs)
 
-    def _assertIsValidHttpsUrl(
-        self, check, *args, **kwargs
-    ):
-        self._assert(
-            re.match("https://", check if check else ""), *args, **kwargs
-        )
+    def _assertIsValidHttpsUrl(self, check, *args, **kwargs):
+        self._assert(re.match("https://", check if check else ""), *args, **kwargs)
 
-    def _assertHttpUrlWithoutPort(
-        self, check, *args, **kwargs
-    ):
+    def _assertHttpUrlWithoutPort(self, check, *args, **kwargs):
         self._assert(
             re.match(HTTP_NO_PORT_REGEX, check if check else ""), *args, **kwargs
         )
 
-    def _assertIsValidHttpUrl(
-        self, check, *args, **kwargs
-    ):
-        self._assert(
-            re.match("https?://", check if check else ""), *args, **kwargs
-        )
+    def _assertIsValidHttpUrl(self, check, *args, **kwargs):
+        self._assert(re.match("https?://", check if check else ""), *args, **kwargs)
 
     # maybe useful .. one day ?!
     # idp_server = self.idp()

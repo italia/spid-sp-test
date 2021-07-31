@@ -212,7 +212,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             logger.critical(_msg + f": {exp}")
             _method = f"{self.__class__.__name__}.test_xmldsig-pre"
             self._assertTrue(
-                False, _msg, test_id=["2.0.0"], description=exp, method = _method
+                False, _msg, test_id=["2.0.0"], description=exp, method=_method
             )
             self.is_ok(_method)
             raise exp
@@ -260,9 +260,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         """Test if the XSD validates and if the signature is valid"""
         _method = f"{self.__class__.__name__}.test_xsd"
         _data = dict(
-            test_id = "",
-            references = [],
-            method = _method,
+            test_id="",
+            references=[],
+            method=_method,
         )
         _orig_pos = os.getcwd()
         os.chdir(self.xsds_files_path)
@@ -278,7 +278,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             logger.info(" ".join((msg)))
         except Exception as e:
             os.chdir(_orig_pos)
-            self.handle_result("error", msg, description=e, method=_method)
+            self.handle_result("error", msg, description=e, **_data)
         os.chdir(_orig_pos)
 
         return self.is_ok(_method)
@@ -292,10 +292,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         desc = certs
         _method = f"{self.__class__.__name__}.test_xmldsig"
         _data = dict(
-            test_id = "",
-            references = [],
-            method = _method,
-            description = ''.join(desc)[:128]
+            test_id="", references=[], method=_method, description="".join(desc)[:128]
         )
         msg = (
             "The AuthnRequest MUST validate against XSD "
@@ -365,7 +362,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                             f"-signature {signature} {payload_file.name}"
                         )
                         exit_msg = subprocess.getoutput(ver_cmd)
-                        error_kwargs["description"] = exit_msg
+                        _data["description"] = exit_msg
                         if "Verified OK" in exit_msg:
                             is_valid = True
                         else:
@@ -384,20 +381,17 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 if is_valid:
                     break
 
-        self._assertTrue(
-            is_valid, "AuthnRequest Signature validation failed", **_data
-        )
+        self._assertTrue(is_valid, "AuthnRequest Signature validation failed", **_data)
         return self.is_ok(_method)
-
 
     def test_AuthnRequest(self):
         """Test the compliance of AuthnRequest element"""
         req = self.doc.xpath("/AuthnRequest")
         _method = f"{self.__class__.__name__}.test_AuthnRequest"
         _data = dict(
-            test_id = "",
-            references = ["TR pag. 8"],
-            method = _method,
+            test_id="",
+            references=["TR pag. 8"],
+            method=_method,
         )
 
         self._assertTrue(
@@ -412,7 +406,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertTrue(
                 (attr in req.attrib),
                 f"The {attr} attribute MUST be present",
-                description=attr, **_data,
+                description=attr,
+                **_data,
             )
 
             value = req.get(attr)
@@ -420,7 +415,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value",
-                    description = value, **_data,
+                    description=value,
+                    **_data,
                 )
 
             if attr == "Version":
@@ -428,26 +424,30 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertTrue(
                     value == exp,
                     f"The {attr} attribute MUST be {exp}",
-                    description = value, **_data,
+                    description=value,
+                    **_data,
                 )
 
             if attr == "IssueInstant":
                 self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value",
-                    description = value, **_data,
+                    description=value,
+                    **_data,
                 )
                 self._assertTrue(
                     bool(constants.UTC_STRING.search(value)),
                     f"The {attr} attribute MUST be a valid UTC string",
-                    description = value, **_data,
+                    description=value,
+                    **_data,
                 )
 
             if attr == "Destination":
                 self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value",
-                    description = value, **_data,
+                    description=value,
+                    **_data,
                 )
 
                 allowed_destinations = [
@@ -462,19 +462,22 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     (value in allowed_destinations),
                     "The Destination attribute SHOULD be the address to "
                     "which the request has been sent but can also be the EnityID of IdP (Av. SPID n.11)",
-                    description=value, **_data
+                    description=value,
+                    **_data,
                 )
 
                 if self.production:
                     self._assertIsValidHttpsUrl(
                         value,
                         f"The {attr} attribute MUST be a valid HTTPS url",
-                        description = value, **_data,
+                        description=value,
+                        **_data,
                     )
                     self._assertHttpUrlWithoutPort(
                         value,
                         'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"',
-                        description = value,  **_data
+                        description=value,
+                        **_data,
                     )
 
         self._assertTrue(
@@ -487,13 +490,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
     def test_AuthnRequest_SPID(self):
         """Test the compliance of AuthnRequest element"""
         req = self.doc.xpath("/AuthnRequest")[0]
-
-        req_desc = [etree.tostring(ent).decode() for ent in req if req is not None]
         _method = f"{self.__class__.__name__}.test_AuthnRequest_SPID"
         _data = dict(
-            test_id = "",
-            references = ["TR pag. 8"],
-            method = _method,
+            test_id="",
+            references=["TR pag. 8"],
+            method=_method,
         )
 
         acr = req.xpath("//RequestedAuthnContext/AuthnContextClassRef")
@@ -505,14 +506,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertTrue(
                     ("ForceAuthn" in req.attrib),
                     "The ForceAuthn attribute MUST be present if SPID level > 1",
-                    description=acr_desc, **_data
+                    description=acr_desc,
+                    **_data,
                 )
                 value = req.get("ForceAuthn")
                 if value:
                     self._assertTrue(
                         (value.lower() in constants.BOOLEAN_TRUE),
                         "The ForceAuthn attribute MUST be true or 1 - TR pag. 8 ",
-                        description=value, **_data
+                        description=value,
+                        **_data,
                     )
 
         attr = "AssertionConsumerServiceIndex"
@@ -532,18 +535,21 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertTrue(
                 value in availableassertionindexes,
                 f"The {attr} attribute MUST be equal to an AssertionConsumerService index",
-                description=acss_desc, **_data
+                description=acss_desc,
+                **_data,
             )
 
             self._assertTrue(
                 value,
                 f"The {attr} attribute MUST have a value",
-                description=value, **_data,
+                description=value,
+                **_data,
             )
             self._assertTrue(
                 int(value) >= 0,
                 f"The {attr} attribute MUST be >= 0",
-                description=value, **_data,
+                description=value,
+                **_data,
             )
 
         else:
@@ -557,14 +563,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertTrue(
                     (attr in req.attrib),
                     f"The {attr} attribute MUST be present",
-                    description=req.attrib, **_data,
+                    description=req.attrib,
+                    **_data,
                 )
 
                 value = req.get(attr)
                 self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value",
-                    description=value, **_data,
+                    description=value,
+                    **_data,
                 )
 
                 if attr == "AssertionConsumerServiceURL":
@@ -572,17 +580,20 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         self._assertIsValidHttpsUrl(
                             value,
                             f"The {attr} attribute MUST be a valid HTTPS url",
-                            description=value, **_data,
+                            description=value,
+                            **_data,
                         )
                         self._assertHttpUrlWithoutPort(
                             value,
                             'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"',
-                            description=value, **_data,
+                            description=value,
+                            **_data,
                         )
                     self._assertTrue(
                         value in availableassertionlocations,
                         f"The {attr} attribute MUST be equal to an AssertionConsumerService Location",
-                        description=value, **_data,
+                        description=value,
+                        **_data,
                     )
 
                 if attr == "ProtocolBinding":
@@ -590,7 +601,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     self._assertTrue(
                         value == exp,
                         f"The {attr} attribute MUST be {exp}",
-                        description=value, **_data,
+                        description=value,
+                        **_data,
                     )
 
         attr = "AttributeConsumingServiceIndex"
@@ -608,20 +620,22 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertTrue(
                 value,
                 f"The {attr} attribute MUST have a value",
-                description=value, **_data,
+                description=value,
+                **_data,
             )
             self._assertTrue(
                 int(value) >= 0,
                 f"The {attr} attribute MUST be >= 0",
-                description=value, **_data,
+                description=value,
+                **_data,
             )
             self._assertTrue(
                 value in availableattributeindexes,
                 f"The {attr} attribute MUST be equal to an AttributeConsumingService index",
-                description=value, **_data,
+                description=value,
+                **_data,
             )
         return self.is_ok(_method)
-
 
     def test_Subject(self):
         """Test the compliance of Subject element"""
@@ -631,17 +645,18 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         desc = [etree.tostring(ent).decode() for ent in subj if subj]
         _method = f"{self.__class__.__name__}.test_Subject"
         _data = dict(
-            test_id = "",
-            references = ["TR pag. 9"],
-            method = _method,
-            description = ''.join(desc)[:128]
+            test_id="",
+            references=["TR pag. 9"],
+            method=_method,
+            description="".join(desc)[:128],
         )
 
         if len(subj) > 1:
             self._assertTrue(
                 len(subj) == 1,
                 "Only one Subject element can be present",
-                description=subj, **_data
+                description=subj,
+                **_data,
             )
 
         if len(subj) == 1:
@@ -650,21 +665,24 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertTrue(
                 len(name_id) == 1,
                 "One NameID element in Subject element MUST be present",
-                description=name_id, **_data
+                description=name_id,
+                **_data,
             )
             name_id = name_id[0]
             for attr in ["Format", "NameQualifier"]:
                 self._assertTrue(
                     (attr in name_id.attrib),
                     f"The {attr} attribute MUST be present",
-                    description=name_id.attrib, **_data
+                    description=name_id.attrib,
+                    **_data,
                 )
 
                 value = name_id.get(attr)
                 self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value",
-                    description=value, **_data
+                    description=value,
+                    **_data,
                 )
 
                 if attr == "Format":
@@ -672,7 +690,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     self._assertTrue(
                         value == exp,
                         f"The {attr} attribute MUST be {exp}",
-                        description=value, **_data
+                        description=value,
+                        **_data,
                     )
         return self.is_ok(_method)
 
@@ -683,10 +702,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         desc = [etree.tostring(ent).decode() for ent in e if e]
         _method = f"{self.__class__.__name__}.test_Issuer"
         _data = dict(
-            test_id = "",
-            references = ["TR pag. 9"],
-            method = _method,
-            description = ''.join(desc)[:128]
+            test_id="",
+            references=["TR pag. 9"],
+            method=_method,
+            description="".join(desc)[:128],
         )
 
         self._assertTrue(
@@ -700,24 +719,24 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         else:
             e = e[0]
 
-        self._assertTrue(
-            e.text, "The Issuer element MUST have a value", **_data
-        )
+        self._assertTrue(e.text, "The Issuer element MUST have a value", **_data)
 
         entitydescriptor = self.md.xpath("//EntityDescriptor")
         entityid = entitydescriptor[0].get("entityID")
-        _data.pop('description')
+        _data.pop("description")
         self._assertTrue(
             e.text == entityid,
             "The Issuer's value MUST be equal to entityID",
-            description=e.text, **_data,
+            description=e.text,
+            **_data,
         )
 
         for attr in ["Format", "NameQualifier"]:
             self._assertTrue(
                 (attr in e.attrib),
                 f"The {attr} attribute MUST be present",
-                description=e.attrib, **_data,
+                description=e.attrib,
+                **_data,
             )
 
             value = e.get(attr)
@@ -725,7 +744,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertTrue(
                 value,
                 f"The {attr} attribute MUST have a value",
-                description=value, **_data,
+                description=value,
+                **_data,
             )
 
             if attr == "Format":
@@ -733,7 +753,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertTrue(
                     value == exp,
                     f"The {attr} attribute MUST be {exp}",
-                    description=value, **_data,
+                    description=value,
+                    **_data,
                 )
         return self.is_ok(_method)
 
@@ -745,10 +766,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         desc = [etree.tostring(ent).decode() for ent in e if e]
         _method = f"{self.__class__.__name__}.test_NameIDPolicy"
         _data = dict(
-            test_id = "",
-            references = ["TR pag. 9"],
-            method = _method,
-            description = ''.join(desc)[:128]
+            test_id="",
+            references=["TR pag. 9"],
+            method=_method,
+            description="".join(desc)[:128],
         )
 
         self._assertTrue(
@@ -762,19 +783,21 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         else:
             e = e[0]
 
-        _data.pop('description')
+        _data.pop("description")
         attr = "Format"
         self._assertTrue(
             (attr in e.attrib),
             f"The {attr} attribute MUST be present",
-            description=e.attrib, **_data,
+            description=e.attrib,
+            **_data,
         )
 
         value = e.get(attr)
         self._assertTrue(
             value,
             f"The {attr} attribute MUST have a value",
-            description=value, **_data,
+            description=value,
+            **_data,
         )
 
         if attr == "Format":
@@ -782,14 +805,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertTrue(
                 value == exp,
                 f"The {attr} attribute MUST be {exp}",
-                description=value, **_data,
+                description=value,
+                **_data,
             )
 
-        _data['references'] = ["AV n.5"]
+        _data["references"] = ["AV n.5"]
         self._assertTrue(
             ("AllowCreate" not in e.attrib),
             "The AllowCreate attribute MUST not be present",
-            description=value, **_data
+            description=value,
+            **_data,
         )
         return self.is_ok(_method)
 
@@ -800,17 +825,18 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         desc = [etree.tostring(ent).decode() for ent in e if e]
         _method = f"{self.__class__.__name__}.test_Conditions"
         _data = dict(
-            test_id = "",
-            references = ["TR pag. 9"],
-            method = _method,
-            description = ''.join(desc)[:128]
+            test_id="",
+            references=["TR pag. 9"],
+            method=_method,
+            description="".join(desc)[:128],
         )
 
         if len(e) > 1:
             self._assertTrue(
                 len(1) == 1,
                 "Only one Conditions element is allowed",
-                description=e, **_data,
+                description=e,
+                **_data,
             )
 
         if len(e) == 1:
@@ -819,20 +845,23 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertTrue(
                     (attr in e.attrib),
                     f"The {attr} attribute MUST be present",
-                    description=e, **_data,
+                    description=e,
+                    **_data,
                 )
 
                 value = e.get(attr)
                 self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value",
-                    description=value, **_data,
+                    description=value,
+                    **_data,
                 )
 
                 self._assertTrue(
                     bool(constants.regex.UTC_STRING.search(value)),
                     f"The {attr} attribute MUST have avalid UTC string",
-                    description=value, **_data,
+                    description=value,
+                    **_data,
                 )
         return self.is_ok(_method)
 
@@ -842,15 +871,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         e = self.doc.xpath("//AuthnRequest/RequestedAuthnContext")
         _method = f"{self.__class__.__name__}.test_RequestedAuthnContext"
         _data = dict(
-            test_id = "",
-            references = ["TR pag. 9", "TR pag. 10"],
-            method = _method,
+            test_id="",
+            references=["TR pag. 9", "TR pag. 10"],
+            method=_method,
         )
 
         self._assertTrue(
             len(e) == 1,
             "Only one RequestedAuthnContext element MUST be present",
-            description=[etree.tostring(_val).decode() for _val in e], **_data,
+            description=[etree.tostring(_val).decode() for _val in e],
+            **_data,
         )
         if e:
             e = e[0]
@@ -858,14 +888,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertTrue(
                 (attr in e.attrib),
                 f"The {attr} attribute MUST be present",
-                description=e.attrib, **_data,
+                description=e.attrib,
+                **_data,
             )
 
             value = e.get(attr)
             self._assertTrue(
                 value,
                 f"The {attr} attribute MUST have a value",
-                description=value, **_data
+                description=value,
+                **_data,
             )
 
             allowed = ["exact", "minimum", "better", "maximum"]
@@ -873,7 +905,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 value in allowed,
                 "Attribute not valid",
                 description=f"The {attr} attribute MUST be one of [{', '.join(allowed)}]",
-                **_data
+                **_data,
             )
 
             acr = e.xpath("./AuthnContextClassRef")
@@ -881,7 +913,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 len(acr) == 1,
                 "Only one AuthnContexClassRef element MUST be present",
                 description=[etree.tostring(_acr).decode() for _acr in acr],
-                **_data
+                **_data,
             )
 
             if acr:
@@ -889,13 +921,15 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertTrue(
                     acr.text,
                     "The AuthnContexClassRef element MUST have a value",
-                    description=etree.tostring(acr), **_data
+                    description=etree.tostring(acr),
+                    **_data,
                 )
 
                 self._assertTrue(
                     bool(constants.SPID_LEVEL_ALL.search(acr.text)),
                     "The AuthnContextClassRef element MUST have a valid SPID level",
-                    description=etree.tostring(acr), **_data
+                    description=etree.tostring(acr),
+                    **_data,
                 )
         return self.is_ok(_method)
 
@@ -903,16 +937,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         """Test the compliance of Signature element"""
         _method = f"{self.__class__.__name__}.test_Signature"
         _data = dict(
-            test_id = "",
-            references = ["TR pag. 10"],
-            method = _method,
+            test_id="",
+            references=["TR pag. 10"],
+            method=_method,
         )
 
         if not self.IS_HTTP_REDIRECT:
             sign = self.doc.xpath("//AuthnRequest/Signature")
-
-            desc = [etree.tostring(ent).decode() for ent in sign if sign]
-            error_kwargs = dict(description=desc) if desc else {}
+            # desc = [etree.tostring(ent).decode() for ent in sign if sign]
 
             self._assertTrue(
                 (len(sign) == 1),
@@ -929,8 +961,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             self._assertTrue(
                 ("Algorithm" in method[0].attrib),
-                "The Algorithm attribute MUST be present "
-                "in SignatureMethod element",
+                "The Algorithm attribute MUST be present " "in SignatureMethod element",
                 **_data,
             )
 
@@ -939,7 +970,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 alg in constants.ALLOWED_XMLDSIG_ALGS,
                 "The signature algorithm MUST be valid",
                 description=f"One of {', '.join(constants.ALLOWED_XMLDSIG_ALGS)}",
-                **_data
+                **_data,
             )  # noqa
 
             method = sign[0].xpath("./SignedInfo/Reference/DigestMethod")
@@ -951,8 +982,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             self._assertTrue(
                 ("Algorithm" in method[0].attrib),
-                "The Algorithm attribute MUST be present "
-                "in DigestMethod element",
+                "The Algorithm attribute MUST be present " "in DigestMethod element",
                 **_data,
             )
 
@@ -975,16 +1005,17 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         """Test the compliance of RelayState parameter"""
         _method = f"{self.__class__.__name__}.test_RelayState"
         _data = dict(
-            test_id = "",
-            references = ["TR pag. 14", "TR pag. 15"],
-            method = _method,
+            test_id="",
+            references=["TR pag. 14", "TR pag. 15"],
+            method=_method,
         )
         if ("RelayState" in self.params) and self.params.get("RelayState"):
             relaystate = self.params["RelayState"]
             self._assertTrue(
                 (relaystate.find("http") == -1),
                 "RelayState MUST not be immediately intelligible",
-                description=relaystate, **_data
+                description=relaystate,
+                **_data,
             )
         else:
             self._assertTrue(
