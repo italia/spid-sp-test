@@ -15,6 +15,12 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
 
         # ForceAuthn MUST be true if 'Comparison' is 'minimum' and
         # SPID level is L1
+        _method = f"{self.__class__.__name__}.test_AuthnRequest_SPID_extra"
+        _data = dict(
+            test_id = "",
+            references = [],
+            method = _method,
+        )
 
         req = self.doc.xpath("/AuthnRequest")
         rac = None
@@ -37,23 +43,25 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
                     ("ForceAuthn" in req.attrib),
                     "The ForceAuthn attribute MUST be present "
                     "because of minimum/SpidL2",
-                    description=req.attrib,
+                    description=req.attrib, **_data
                 )
                 self._assertTrue(
                     req.get("ForceAuthn", "").lower() in ("true", 1, "1"),
                     "The ForceAuthn attribute MUST be True "
                     "because of minimum/SpidL2",
-                    description=req.attrib,
+                    description=req.attrib, **_data
                 )
         else:
             self.handle_error(
-                "AuthnRequest or RequestAuthnContext or AuthnContextClassRef missing"
+                "AuthnRequest or RequestAuthnContext or AuthnContextClassRef missing",
+                **_data
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_AuthnRequest_extra")
+        return self.is_ok(_method)
 
 
     def test_authnrequest_no_newlines(self):
+        _method = f"{self.__class__.__name__}.test_authnrequest_no_newlines"
         self._assertFalse(
             re.match(r"^[\t\n\s\r\ ]*", self.authn_request_decoded),
             (
@@ -61,9 +69,9 @@ class SpidSpAuthnReqCheckExtra(SpidSpAuthnReqCheck):
                 "contains newlines at the beginning."
             ),
             description=self.metadata[0:10],
-            level="warning",
+            level="warning", method = _method
         )
-        return self.is_ok(f"{self.__class__.__name__}.test_authnrequest_no_newlines")
+        return self.is_ok(_method)
 
 
     def test_profile_spid_sp(self):

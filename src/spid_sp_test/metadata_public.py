@@ -104,18 +104,19 @@ class SpidSpMetadataCheckPublic(object):
         self._assertTrue(
             email,
             f"The {email_xpath} element MUST be present",
-            description=email, **_data
+            description=[etree.tostring(_val).decode() for _val in email],
+            **_data
         )
         if email:
             self._assertTrue(
                 email[0].text,
                 f"The {email_xpath} element MUST have a value",
-                description=email[0], **_data
+                description=[etree.tostring(_val).decode() for _val in email], **_data
             )
             self._assertTrue(
                 re.match(EMAIL_REGEXP, email[0].text),
                 f"The {email_xpath} element MUST be a valid email address",
-                description=email[0], **_data
+                description=[etree.tostring(_val).decode() for _val in email], **_data
             )
         return self.is_ok(_method)
 
@@ -216,7 +217,7 @@ class SpidSpMetadataCheckPublic(object):
         self._assertTrue(
             (len(vats) <= 1),
             "only one VATNumber element must be present",
-            description=vats, **_data
+            description=[etree.tostring(_vats).decode() for _vats in vats], **_data
         )
         if vats:
             self._assertTrue(
@@ -234,7 +235,7 @@ class SpidSpMetadataCheckPublic(object):
             self._assertTrue(
                 (len(fcs) == 1),
                 "only one FiscalCode element must be present",
-                description=fcs, **_data
+                description=[etree.tostring(_fcs).decode() for _fcs in fcs], **_data
             )
             fc = fcs[0]
             self._assertTrue(

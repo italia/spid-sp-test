@@ -119,40 +119,47 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
     def test_SPSSODescriptor_extra(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor")
 
-        desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
-        error_kwargs = dict(description=desc) if desc else {}
+        _method = f"{self.__class__.__name__}.test_SPSSODescriptor_extra"
+        _data = dict(
+            test_id = "",
+            references = [],
+            method = _method,
+        )
 
         for attr in ["protocolSupportEnumeration", "WantAssertionsSigned"]:
             self._assertTrue(
-                (attr in spsso[0].attrib), f"The {attr} attribute MUST be present"
+                (attr in spsso[0].attrib), f"The {attr} attribute MUST be present",
+                description=spsso[0].attrib, **_data
             )
 
             if attr == "protocolSupportEnumeration":
                 a = spsso[0].get(attr)
                 self._assertTrue(
-                    a, f"The {attr} attribute MUST have a value", **error_kwargs
+                    a, f"The {attr} attribute MUST have a value",
+                    description=a, **_data
                 )
 
                 self._assertTrue(
                     a == "urn:oasis:names:tc:SAML:2.0:protocol",
                     f"The {attr} attribute MUST be "
                     "urn:oasis:names:tc:SAML:2.0:protocol",
-                    **error_kwargs,
+                    description=a, **_data
                 )
 
             if attr == "WantAssertionsSigned":
                 a = spsso[0].get(attr)
                 self._assertTrue(
-                    a, f"The {attr} attribute MUST have a value", **error_kwargs
+                    a, f"The {attr} attribute MUST have a value",
+                    description=a, **_data
                 )
 
                 if a:
                     self._assertTrue(
                         a.lower() == "true",
                         f"The {attr} attribute MUST be true",
-                        **error_kwargs,
+                        description=a, **_data
                     )
-        return self.is_ok(f"{self.__class__.__name__}.test_SPSSODescriptor_extra")
+        return self.is_ok(_method)
 
     def test_AttributeConsumingService_extra(self):
         acss = self.doc.xpath(
@@ -189,8 +196,6 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
     def test_Organization_extra(self):
         orgs = self.doc.xpath("//EntityDescriptor/Organization")
-        self._assertTrue((len(orgs) == 1), "An Organization MUST be present")
-
         desc = [etree.tostring(ent).decode() for ent in orgs if orgs]
         _method = f"{self.__class__.__name__}.test_Organization_extra"
         _data = dict(
@@ -199,6 +204,10 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
             method = _method,
             description = ''.join(desc)[:128]
         )
+
+        self._assertTrue(
+            (len(orgs) == 1),
+            "An Organization MUST be present", **_data)
 
         if orgs:
             org = orgs[0]
