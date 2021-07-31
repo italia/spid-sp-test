@@ -103,42 +103,24 @@ class AbstractSpidCheck(object):
         self._assert(not check, *args, **kwargs)
 
     def _assertIsValidHttpsUrl(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
+        self, check, *args, **kwargs
     ):
         self._assert(
-            re.match("https://", check if check else ""), description, traceback, level
+            re.match("https://", check if check else ""), *args, **kwargs
         )
 
     def _assertHttpUrlWithoutPort(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
+        self, check, *args, **kwargs
     ):
         self._assert(
-            re.match(HTTP_NO_PORT_REGEX, check if check else ""),
-            description,
-            traceback,
-            level,
+            re.match(HTTP_NO_PORT_REGEX, check if check else ""), *args, **kwargs
         )
 
     def _assertIsValidHttpUrl(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
+        self, check, *args, **kwargs
     ):
         self._assert(
-            re.match("https?://", check if check else ""), description, traceback, level
+            re.match("https?://", check if check else ""), *args, **kwargs
         )
 
     # maybe useful .. one day ?!
