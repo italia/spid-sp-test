@@ -558,13 +558,19 @@ class SpidSpMetadataCheck(
             "/AssertionConsumerService"
             '[@isDefault="true"]'
         )
+        _method = f"{self.__class__.__name__}.test_AssertionConsumerService_SPID"
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
-        error_kwargs = dict(description=desc) if desc else {}
+        _data = dict(
+            test_id = "",
+            references = ["TR pag. 20"],
+            method = _method,
+            description = ''.join(desc)[:128]
+        )
 
         self._assertTrue(
             (len(acss) == 1),
-            "Only one default AssertionConsumerService " "MUST be present - TR pag. 20",
-            **error_kwargs,
+            "Only one default AssertionConsumerService MUST be present",
+            **_data,
         )
 
         acss = self.doc.xpath(
@@ -575,95 +581,100 @@ class SpidSpMetadataCheck(
         )
         self._assertTrue(
             (len(acss) == 1),
-            "Must be present the default AssertionConsumerService "
-            "with index = 0 - TR pag. 20",
-            **error_kwargs,
+            "Must be present the default AssertionConsumerService with index = 0",
+            **_data,
         )
-        return self.is_ok(
-            f"{self.__class__.__name__}.test_AssertionConsumerService_SPID"
-        )
+        return self.is_ok(_method)
 
     def test_AttributeConsumingService(self):
         """Test the compliance of AttributeConsumingService element(s)"""
         acss = self.doc.xpath(
             "//EntityDescriptor/SPSSODescriptor" "/AttributeConsumingService"
         )
-
+        _method = f"{self.__class__.__name__}.test_AttributeConsumingService"
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
-        error_kwargs = dict(description=desc) if desc else {}
+        _data = dict(
+            test_id = "",
+            references = ["TR pag. 20"],
+            method = _method,
+            description = ''.join(desc)[:128]
+        )
 
         self._assertTrue(
             len(acss) >= 1,
-            "One or more AttributeConsumingService elements MUST be present - TR pag. 20",
-            **error_kwargs,
+            "One or more AttributeConsumingService elements MUST be present",
+            **_data,
         )
-        return self.is_ok(f"{self.__class__.__name__}.test_AttributeConsumingService")
+        return self.is_ok(_method)
 
     def test_AttributeConsumingService_SPID(
         self, allowed_attributes=constants.SPID_ATTRIBUTES
     ):
         acss = self.doc.xpath(
-            "//EntityDescriptor/SPSSODescriptor" "/AttributeConsumingService"
+            "//EntityDescriptor/SPSSODescriptor/AttributeConsumingService"
         )
-
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
-        error_kwargs = dict(description=desc) if desc else {}
+        _method = f"{self.__class__.__name__}.test_AttributeConsumingService_SPID"
+        _data = dict(
+            test_id = "",
+            references = ["TR pag. 20"],
+            method = _method,
+            description = ''.join(desc)[:128]
+        )
         for acs in acss:
             self._assertTrue(
                 ("index" in acs.attrib),
                 "The index attribute in AttributeConsumigService element MUST be present",
-                **error_kwargs,
+                **_data,
             )
 
             idx = int(acs.get("index"))
             self._assertTrue(
                 idx >= 0,
-                "The index attribute in AttributeConsumigService "
-                "element MUST be >= 0 - TR pag. 20",
-                **error_kwargs,
+                "The index attribute in AttributeConsumigService element MUST be >= 0",
+                **_data,
             )
 
             sn = acs.xpath("./ServiceName")
             self._assertTrue(
-                (len(sn) > 0), "The ServiceName element MUST be present", **error_kwargs
+                (len(sn) > 0), "The ServiceName element MUST be present", **_data
             )
             for sns in sn:
                 self._assertTrue(
                     sns.text,
-                    "The ServiceName element MUST have a value",
-                    **error_kwargs,
+                    "The ServiceName element MUST have a value", **_data,
                 )
 
             ras = acs.xpath("./RequestedAttribute")
             self._assertTrue(
                 len(ras) >= 1,
-                "One or more RequestedAttribute elements MUST be present - TR pag. 20",
-                **error_kwargs,
+                "One or more RequestedAttribute elements MUST be present",
+                **_data,
             )
 
+            _data.pop('description')
             for ra in ras:
                 self._assertTrue(
                     ("Name" in ra.attrib),
                     "The Name attribute in RequestedAttribute element "
-                    "MUST be present - TR pag. 20 and AV n. 6",
-                    **error_kwargs,
+                    "MUST be present",
+                    **_data,
                 )
 
                 self._assertTrue(
                     ra.get("Name") in allowed_attributes,
                     f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element MUST be valid',
-                    description=f"one of [{', '.join(allowed_attributes)}] - TR pag. 20 and AV n.6",
+                    description=f"one of [{', '.join(allowed_attributes)}]",
+                    **_data
                 )
 
             al = acs.xpath("RequestedAttribute/@Name")
             self._assertTrue(
                 len(al) == len(set(al)),
-                "AttributeConsumigService MUST not contain duplicated RequestedAttribute - TR pag. 20",
-                **error_kwargs,
+                "AttributeConsumigService MUST not contain duplicated RequestedAttribute",
+                **_data,
             )
-        return self.is_ok(
-            f"{self.__class__.__name__}.test_AttributeConsumingService_SPID"
-        )
+        return self.is_ok(_method)
 
     def test_Organization(self):
         """Test the compliance of Organization element"""
