@@ -290,7 +290,7 @@ class SpidSpMetadataCheck(
             test_id = "",
             description = ''.join(desc)[:128] or "",
             references = ["TR pag. 19"],
-            method = f"{self.__class__.__name__}.test_Signature"
+            method = _method
         )
 
         self._assertTrue(
@@ -681,11 +681,16 @@ class SpidSpMetadataCheck(
         orgs = self.doc.xpath("//EntityDescriptor/Organization")
 
         desc = [etree.tostring(ent).decode() for ent in orgs if orgs]
-        error_kwargs = dict(description=desc) if desc else {}
+        _method = f"{self.__class__.__name__}.test_Organization"
+        _data = dict(
+            description = desc or "",
+            references = ["TR pag. 20"],
+            method = _method
+        )
 
         self._assertTrue(
             (len(orgs) == 1),
-            "Only one Organization element can be present - TR pag. 20",
+            "Only one Organization element can be present", **_data
         )
 
         enames = ["OrganizationName", "OrganizationDisplayName", "OrganizationURL"]
@@ -697,8 +702,8 @@ class SpidSpMetadataCheck(
                 elements = org.xpath(f"./{ename}")
                 self._assertTrue(
                     len(elements) > 0,
-                    f"One or more {ename} elements MUST be present - TR pag. 20",
-                    **error_kwargs,
+                    f"One or more {ename} elements MUST be present",
+                    **_data,
                 )
 
                 for element in elements:
@@ -707,8 +712,8 @@ class SpidSpMetadataCheck(
                             "{http://www.w3.org/XML/1998/namespace}lang"
                             in element.attrib
                         ),  # noqa
-                        f"The lang attribute in {ename} element MUST be present - TR pag. 20",  # noqa
-                        **error_kwargs,
+                        f"The lang attribute in {ename} element MUST be present",  # noqa
+                        **_data,
                     )
 
                     lang = element.attrib.items()[0][1]
@@ -719,8 +724,7 @@ class SpidSpMetadataCheck(
 
                     self._assertTrue(
                         element.text,
-                        f"The {ename} element MUST have a value - TR pag. 20",
-                        **error_kwargs,
+                        f"The {ename} element MUST have a value", **_data,
                     )
 
                     if ename == "OrganizationURL" and self.production:
@@ -732,8 +736,8 @@ class SpidSpMetadataCheck(
                             OrganizationURLvalue = f"https://{OrganizationURLvalue}"
                         self._assertIsValidHttpUrl(
                             OrganizationURLvalue,
-                            f"The {ename} -element MUST be a valid URL - TR pag. 20",
-                            **error_kwargs,
+                            f"The {ename} -element MUST be a valid URL",
+                            **_data,
                         )
 
             # lang counter check
@@ -745,7 +749,7 @@ class SpidSpMetadataCheck(
                         "The elements OrganizationName, OrganizationDisplayName and OrganizationURL "
                         "MUST have the same number of lang attributes"
                     ),  # noqa
-                    **error_kwargs,
+                    **_data,
                 )
 
             self._assertTrue(
@@ -754,10 +758,10 @@ class SpidSpMetadataCheck(
                     "The elements OrganizationName, OrganizationDisplayName and OrganizationURL "
                     "MUST have at least an it language enabled"
                 ),  # noqa
-                **error_kwargs,
+                **_data,
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_Organization")
+        return self.is_ok(_method)
 
     def test_profile_saml2core(self):
         self.xsd_check(xsds_files=["saml-schema-metadata-2.0.xsd"])
