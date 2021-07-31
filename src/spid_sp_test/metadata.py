@@ -218,7 +218,7 @@ class SpidSpMetadataCheck(
             "--verify",
             "--insecure",
             "--id-attr:ID",
-            "urn:oasis:names:tc:SAML:2.0:metadata:" "EntityDescriptor",
+            "urn:oasis:names:tc:SAML:2.0:metadata:EntityDescriptor",
             tmp_file.name,
         ]
         cmd = " ".join(xmlsec_cmd)

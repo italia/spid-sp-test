@@ -370,16 +370,50 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
                 else:
                     # pyXMLSecurity allows to pass a certificate without store it on a file
-                    backend = CryptoBackendXMLSecurity()
-                    is_valid = backend.validate_signature(
-                        self.authn_request_decoded,
-                        cert_file=cert,
-                        cert_type="pem",
-                        node_name=constants.NODE_NAME,
-                        node_id=None,
+                    # backend = CryptoBackendXMLSecurity()
+                    # is_valid = backend.validate_signature(
+                        # self.authn_request_decoded,
+                        # cert_file=cert,
+                        # cert_type="pem",
+                        # node_name=constants.NODE_NAME,
+                        # node_id=None,
+                    # )
+                    tmp_file = NamedTemporaryFile()
+                    tmp_file.write(self.authn_request_decoded)
+                    tmp_file.seek(0)
+                    cmd = (
+                        'xmlsec1 --verify --insecure --id-attr:ID '
+                        '"urn:oasis:names:tc:SAML:2.0:protocol:AuthnRequest" '
+                        f"{tmp_file.name}"
                     )
-                if is_valid:
-                    break
+                    try:
+                        out = subprocess.run(
+                            cmd,
+                            shell=True,
+                            check=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                        )
+                        if out.returncode == 0:
+                            is_valid = True
+                            break
+                    except subprocess.CalledProcessError as err:
+                        lines = [msg]
+                        if err.stderr:
+                            stderr = "stderr: " + "\nstderr: ".join(
+                                list(filter(None, err.stderr.decode("utf-8").split(r"\n")))
+                            )
+                            lines.append(stderr)
+                        if err.stdout:
+                            stdout = "stdout: " + "\nstdout: ".join(
+                                list(filter(None, err.stdout.decode("utf-8").split(r"\n")))
+                            )
+                            lines.append(stdout)
+                        _msg = "\n".join(lines)
+                        self.handle_result(
+                            "error", _msg, description="Description", traceback=_msg, **_data
+                        )
+                        return
 
         self._assertTrue(is_valid, "AuthnRequest Signature validation failed", **_data)
         return self.is_ok(_method)
