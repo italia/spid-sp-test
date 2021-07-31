@@ -17,30 +17,48 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         self.category = "metadata_extra"
 
     def test_metadata_no_newlines(self):
+        _method = f"{self.__class__.__name__}.test_metadata_no_newlines"
+        _data = dict(
+            test_id = "",
+            references = [],
+            method = _method,
+        )
         self._assertFalse(
             re.match(r"^[\t\n\s\r\ ]*", self.metadata),
             ("The XML of metadata should not " "contains newlines at the beginning."),
             description=self.metadata[0:10],
-            level="warning",
+            level="warning", **_data
         )
-        return self.is_ok(f"{self.__class__.__name__}.test_metadata_no_newlines")
+        return self.is_ok(_method)
 
     def test_entityid_match_url(self):
+        _method = f"{self.__class__.__name__}.test_entityid_match_url"
+        _data = dict(
+            test_id = "",
+            references = [],
+            method = _method,
+        )
         self._assertTrue(
             (self.doc.attrib.get("entityID") == self.metadata_url),
             f"The EntityID SHOULD be equal to {self.metadata_url}",
             description=f"{self.doc.attrib.get('entityID')}",
-            level="warning",
+            level="warning", **_data
         )
-        return self.is_ok(f"{self.__class__.__name__}.test_entityid_match_url")
+        return self.is_ok(_method)
 
     def test_Signature_extra(self):
         """Test the compliance of AuthnRequest element"""
-
         sign = self.doc.xpath("//EntityDescriptor/Signature")
 
         desc = [etree.tostring(ent).decode() for ent in sign if sign]
-        error_kwargs = dict(description=desc) if desc else {}
+
+        _method = f"{self.__class__.__name__}.test_Signature_extra"
+        _data = dict(
+            test_id = "",
+            references = [],
+            method = _method,
+            description = ''.join(desc)[:128]
+        )
 
         for si in sign:
             certs = si.xpath("./KeyInfo/X509Data/X509Certificate")
@@ -58,7 +76,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                             f"weak signature algorithm: {sign_cert[0].lower()}"
                         )
                     ),
-                    **error_kwargs,
+                    **_data,
                 )
 
                 exp = ["rsaEncryption", "id-ecPublicKey"]
@@ -70,7 +88,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                         )
                         % (", ".join(exp))
                     ),
-                    **error_kwargs,
+                    **_data,
                 )
 
                 if sign_cert[2] == "rsaEncryption":
@@ -83,7 +101,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 self._assertTrue(
                     (int(sign_cert[1]) >= exp),
                     f"The key length of certificate #{i} MUST be >= {exp}. Instead it is {sign_cert[1]}",
-                    **error_kwargs,
+                    **_data,
                 )
 
                 self._assertTrue(
@@ -92,11 +110,11 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                         >= datetime.datetime.now()
                     ),
                     f"The certificate #{i} is expired. It was valid till {sign_cert[3]}",
-                    **error_kwargs,
+                    **_data,
                 )
                 os.remove(fname)
 
-        return self.is_ok(f"{self.__class__.__name__}.test_Signature_extra")
+        return self.is_ok(_method)
 
     def test_SPSSODescriptor_extra(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor")
@@ -142,7 +160,13 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         )
 
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
-        error_kwargs = dict(description=desc) if desc else {}
+        _method = f"{self.__class__.__name__}.test_AttributeConsumingService_extra"
+        _data = dict(
+            test_id = "",
+            references = [],
+            method = _method,
+            description = ''.join(desc)[:128]
+        )
 
         for acs in acss:
             ras = acs.xpath("./RequestedAttribute")
@@ -159,18 +183,22 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                             )
                             % (", ".join(constants.ALLOWED_FORMATS))
                         ),
-                        **error_kwargs,
+                        **_data,
                     )
-        return self.is_ok(
-            f"{self.__class__.__name__}.test_AttributeConsumingService_extra"
-        )
+        return self.is_ok(_method)
 
     def test_Organization_extra(self):
         orgs = self.doc.xpath("//EntityDescriptor/Organization")
         self._assertTrue((len(orgs) == 1), "An Organization MUST be present")
 
         desc = [etree.tostring(ent).decode() for ent in orgs if orgs]
-        error_kwargs = dict(description=desc) if desc else {}
+        _method = f"{self.__class__.__name__}.test_Organization_extra"
+        _data = dict(
+            test_id = "",
+            references = [],
+            method = _method,
+            description = ''.join(desc)[:128]
+        )
 
         if orgs:
             org = orgs[0]
@@ -184,9 +212,9 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 self._assertTrue(
                     (len(e) == 1),
                     f"An IT localised Organization {elem} MUST be present",
-                    **error_kwargs,
+                    **_data,
                 )
-            return self.is_ok(f"{self.__class__.__name__}.test_Organization")
+            return self.is_ok(_method)
 
     def test_profile_spid_sp(self):
         super().test_profile_spid_sp()
