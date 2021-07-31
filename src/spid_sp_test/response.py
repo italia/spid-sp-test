@@ -291,13 +291,19 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         return spid_response
 
-    def check_response(self, res, msg: str, attendeds=[]):
+    def check_response(self, res, msg: str, attendeds=[], test_id=""):
         if res.status_code in attendeds:
             status = True
         else:
             status = False
         status_code = f"[http status_code: {res.status_code}]"
-        self._assertTrue(status, f"{msg}: {status_code}")
+        self._assertTrue(
+            status, f"{msg}: {status_code}",
+            method=f"{self.__class__.__name__}.check_response",
+            description = status_code,
+            references = [],
+            test_id = test_id
+        )
         return status, status_code
 
     def dump_html_response(self, fname, description, result, content):
@@ -366,6 +372,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                     res,
                     msg=f"Test [{i}] {test_display_desc}",
                     attendeds=response_obj.conf["status_codes"],
+                    test_id=i
                 )
                 if self.html_path:
                     self.dump_html_response(
