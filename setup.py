@@ -10,7 +10,7 @@ _pkg_name = 'spid_sp_test'
 
 setup(
     name=_pkg_name,
-    version='0.9.9',
+    version='0.9.10',
     description="SAML2 SPID Service Provider validation tool that can be run from the command line",
     long_description=readme(),
     long_description_content_type='text/markdown',
@@ -33,7 +33,6 @@ setup(
                 'pysaml2>=6.5.1',
                 'xmlschema>=1.5.1',
                 'requests>=2.25.1',
-                'pyXMLSecurity>=0.21',
                 'lxml>=4.6.2',
                 'Jinja2>=2.11.3',
                 # 'sslyze>=4.0.4', # todo

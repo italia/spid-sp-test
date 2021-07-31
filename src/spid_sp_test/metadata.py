@@ -65,8 +65,8 @@ class SpidSpMetadataCheck(
                 return request.content
 
     def xsd_check(self, xsds_files: list = ["saml-schema-metadata-2.0.xsd"]):
-        _msg = "Found metadata"
-        self.handle_result("debug", _msg, description=self.metadata.decode())
+        _method = f"{self.__class__.__name__}.xsd_check"
+        logger.debug(self.metadata.decode())
         _orig_pos = os.getcwd()
         os.chdir(self.xsds_files_path)
         metadata = self.metadata.decode()
@@ -77,110 +77,136 @@ class SpidSpMetadataCheck(
                 schema = xmlschema.XMLSchema(schema_file)
                 if not schema.is_valid(metadata):
                     schema.validate(metadata)
-                    self.handle_result("error", " ".join((msg)))
+                    self.handle_result(
+                        level="error",
+                        title=msg,
+                        description=msg,
+                        references="",
+                        method=_method,
+                    )
                     # raise Exception('Validation Error')
-                logger.info(" ".join((msg, "-> OK")))
                 break
             except Exception as e:
                 os.chdir(_orig_pos)
                 logger.error(f"{msg}: {e}")
                 self.handle_result(
-                    "error", msg, description="xsd test failed", traceback=f"{e}"
+                    "error",
+                    msg,
+                    description="xsd test failed",
+                    traceback=f"{e}",
+                    method=_method,
                 )
         os.chdir(_orig_pos)
-        return self.is_ok(f"{self.__class__.__name__}.xsd_check")
+        if not self.errors:
+            self._assertTrue(True, _method, description=msg, method=_method)
+        return self.is_ok(_method)
 
     def test_EntityDescriptor(self):
         entity_desc = self.doc.xpath("//EntityDescriptor")
-
-        self._assertTrue(
-            self.doc.attrib.get("entityID"),
-            (
-                f"Missing entityID in {self.doc.attrib}: "
-                "The entityID attribute MUST be present - TR pag. 19"
-            ),
-            description=self.doc.attrib.get("entityID"),
-        )
+        desc = [
+            etree.tostring(ent).decode()[:128] for ent in entity_desc if entity_desc
+        ]
+        _method = f"{self.__class__.__name__}.test_EntityDescriptor"
+        _data = dict(test_id="", references=["TR pag. 19"], method=_method)
 
         self._assertTrue(
             len(entity_desc) == 1,
-            "Only one EntityDescriptor element MUST be present - TR pag. 19",
-            description=self.doc.attrib.get("entityID"),
+            "Only one EntityDescriptor element MUST be present",
+            description=desc,
+            **_data,
+        )
+
+        self._assertTrue(
+            self.doc.attrib.get("entityID"),
+            "The entityID attribute MUST be present",
+            description=self.doc.attrib,
+            **_data,
         )
 
         self._assertTrue(
             entity_desc[0].get("entityID"),
-            "The entityID attribute MUST have a value - TR pag. 19",
+            "The entityID attribute MUST have a value",
             description=entity_desc[0].get("entityID"),
+            **_data,
         )
 
         if self.production:
             self._assertIsValidHttpsUrl(
                 self.doc.attrib.get("entityID"),
                 "The entityID attribute MUST be a valid HTTPS url",
+                **_data,
             )
             self._assertHttpUrlWithoutPort(
                 self.doc.attrib.get("entityID"),
-                'The entityID attribute MUST not contain any custom tcp ports, eg: ":8000"',
+                'The entityID attribute MUST not contains any custom tcp ports, eg: ":8000"',
+                **_data,
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_EntityDescriptor")
+        return self.is_ok(_method)
 
     def test_SPSSODescriptor(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor")
-        desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
-        error_kwargs = dict(description=desc) if desc else {}
+        desc = [etree.tostring(ent).decode()[:128] for ent in spsso if spsso]
+
+        _method = f"{self.__class__.__name__}.test_SPSSODescriptor"
+        _data = dict(test_id="", references=[""], method=_method, description=desc)
 
         self._assertTrue(
             (len(spsso) == 1),
             "Only one SPSSODescriptor element MUST be present",
-            **error_kwargs,
+            **_data,
         )
-        return self.is_ok(f"{self.__class__.__name__}.test_SPSSODescriptor")
+        return self.is_ok(_method)
 
     def test_SPSSODescriptor_SPID(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor")
-        desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
-        error_kwargs = dict(description=desc) if desc else {}
+        desc = [etree.tostring(ent).decode()[:128] for ent in spsso if spsso]
+        _method = f"{self.__class__.__name__}.test_SPSSODescriptor_SPID"
+        _data = dict(
+            test_id="", references=["TR pag. 20"], method=_method, description=desc
+        )
 
         for attr in ["protocolSupportEnumeration", "AuthnRequestsSigned"]:
             self._assertTrue(
                 (attr in spsso[0].attrib),
-                f"The {attr} attribute MUST be present - TR pag. 20",
-                **error_kwargs,
+                f"The {attr} attribute MUST be present",
+                **_data,
             )
 
             a = spsso[0].get(attr)
-            self._assertIsNotNone(
+            self._assertTrue(
                 a,
-                f"The {attr} attribute MUST have a value - TR pag. 20",
-                **error_kwargs,
+                f"The {attr} attribute MUST have a value",
+                **_data,
             )
 
             if attr == "AuthnRequestsSigned" and a:
-                self._assertEqual(
-                    a.lower(),
-                    "true",
-                    f"The {attr} attribute MUST be true - TR pag. 20",
-                    **error_kwargs,
+                self._assertTrue(
+                    a.lower() == "true",
+                    f"The {attr} attribute MUST be true",
+                    **_data,
                 )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_SPSSODescriptor_SPID")
+        return self.is_ok(_method)
 
     def test_NameIDFormat_Transient(self):
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor/NameIDFormat")
         desc = [etree.tostring(ent).decode() for ent in spsso if spsso]
-        error_kwargs = dict(description=desc) if desc else {}
+
+        _method = f"{self.__class__.__name__}.test_NameIDFormat_Transient"
+        _data = dict(
+            test_id="", references=["TR pag. ..."], method=_method, description=desc
+        )
 
         if spsso:
             _rule = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
             self._assertTrue(
                 (spsso[0].text == _rule),
-                f"The NameIDFormat MUST {_rule}",
-                **error_kwargs,
+                f"The NameIDFormat MUST be {_rule}",
+                **_data,
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_NameIDFormat_SPID")
+        return self.is_ok(_method)
 
     def test_xmldsig(self):
         """Verify the SP metadata signature"""
@@ -192,12 +218,17 @@ class SpidSpMetadataCheck(
             "--verify",
             "--insecure",
             "--id-attr:ID",
-            "urn:oasis:names:tc:SAML:2.0:metadata:" "EntityDescriptor",
+            "urn:oasis:names:tc:SAML:2.0:metadata:EntityDescriptor",
             tmp_file.name,
         ]
         cmd = " ".join(xmlsec_cmd)
-        is_valid = True
-        msg = "the metadata signature MUST be valid - TR pag. 19"
+        msg = "the metadata signature MUST be valid"
+
+        _data = dict(
+            test_id="",
+            references=["TR pag. 19"],
+            method=f"{self.__class__.__name__}.test_xmldsig",
+        )
 
         try:
             subprocess.run(
@@ -208,7 +239,6 @@ class SpidSpMetadataCheck(
                 stderr=subprocess.PIPE,
             )
         except subprocess.CalledProcessError as err:
-            is_valid = False
             lines = [msg]
             if err.stderr:
                 stderr = "stderr: " + "\nstderr: ".join(
@@ -221,122 +251,131 @@ class SpidSpMetadataCheck(
                 )
                 lines.append(stdout)
             _msg = "\n".join(lines)
-            self.handle_result("error", msg, description="Description", traceback=_msg)
+            self.handle_result(
+                "error", _msg, description="Description", traceback=_msg, **_data
+            )
             return
 
         xmlsec_cmd_string = " ".join(xmlsec_cmd)
-        _msg = f"{self.__class__.__name__}.test_xmldsig: OK"
-        self.handle_result("info", _msg, description=f"`{xmlsec_cmd_string}`")
-        return is_valid
+        self.handle_result("info", msg, description=f"{xmlsec_cmd_string}", **_data)
 
     def test_Signature(self):
         """Test the compliance of Signature element"""
+        _method = f"{self.__class__.__name__}.test_Signature"
         sign = self.doc.xpath("//EntityDescriptor/Signature")
         desc = [etree.tostring(ent).decode() for ent in sign if sign]
-        error_kwargs = dict(description=desc) if desc else {}
-        self._assertTrue(
-            (len(sign) > 0),
-            "The Signature element MUST be present - TR pag. 19",
-            **error_kwargs,
+
+        _data = dict(
+            test_id="",
+            description="".join(desc)[:128] or "",
+            references=["TR pag. 19"],
+            method=_method,
         )
 
-        error_kwargs = dict(description=desc, traceback="")
+        self._assertTrue(
+            (len(sign) > 0),
+            "The Signature element MUST be present",
+            **_data,
+        )
+
         if not sign:
             self.handle_result(
                 "error",
-                "The SignatureMethod element MUST be present - TR pag. 19",
-                **error_kwargs,
+                "The SignatureMethod element MUST be present",
+                **_data,
             )
             self.handle_result(
                 "error",
-                "The Algorithm attribute MUST be present in SignatureMethod element - TR pag. 19",
-                **error_kwargs,
+                "The Algorithm attribute MUST be present in SignatureMethod element",
+                **_data,
             )
             self.handle_result(
                 "error",
-                "The signature algorithm MUST be valid - TR pag. 19",
+                "The signature algorithm MUST be valid",
                 description=f"Must be one of [{', '.join(constants.ALLOWED_XMLDSIG_ALGS)}]",
+                **_data,
             )
             self.handle_result(
                 "error",
-                "The Algorithm attribute MUST be present in DigestMethod element - TR pag. 19",
-                **error_kwargs,
+                "The Algorithm attribute MUST be present in DigestMethod element",
+                **_data,
             )
+
+            _data.pop("description")
             self.handle_result(
                 "error",
-                "The digest algorithm MUST be valid - TR pag. 19",
+                "The digest algorithm MUST be valid",
                 description=f"Must be one of [{', '.join(constants.ALLOWED_DGST_ALGS)}]",
+                **_data,
             )
         else:
             method = sign[0].xpath("./SignedInfo/SignatureMethod")
             desc = [etree.tostring(ent).decode() for ent in method if method]
-            error_kwargs = dict(description=desc) if desc else {}
+            _data["description"] = "".join(desc)[:128]
             self._assertTrue(
                 (len(method) > 0),
-                "The SignatureMethod element MUST be present - TR pag. 19",
-                **error_kwargs,
+                "The SignatureMethod element MUST be present",
+                **_data,
             )
 
             self._assertTrue(
                 ("Algorithm" in method[0].attrib),
-                "The Algorithm attribute MUST be present "
-                "in SignatureMethod element - TR pag. 19",
-                **error_kwargs,
+                "The Algorithm attribute MUST be present " "in SignatureMethod element",
+                **_data,
             )
 
+            _data.pop("description")
             alg = method[0].get("Algorithm")
-            self._assertIn(
-                alg,
-                constants.ALLOWED_XMLDSIG_ALGS,
-                "The signature algorithm MUST be valid - TR pag. 19",
+            self._assertTrue(
+                alg in constants.ALLOWED_XMLDSIG_ALGS,
+                "The signature algorithm MUST be valid",
                 description=f"One of {(', '.join(constants.ALLOWED_XMLDSIG_ALGS))}",
+                **_data,
             )
 
             method = sign[0].xpath("./SignedInfo/Reference/DigestMethod")
             self._assertTrue(
                 (len(method) == 1),
-                "The DigestMethod element MUST be present - TR pag. 19",
-                **error_kwargs,
+                "The DigestMethod element MUST be present",
+                **_data,
             )
 
             self._assertTrue(
                 ("Algorithm" in method[0].attrib),
-                "The Algorithm attribute MUST be present "
-                "in DigestMethod element - TR pag. 19",
-                **error_kwargs,
+                "The Algorithm attribute MUST be present in DigestMethod element",
+                **_data,
             )
 
             alg = method[0].get("Algorithm")
-            self._assertIn(
-                alg,
-                constants.ALLOWED_DGST_ALGS,
-                "The digest algorithm MUST be valid - TR pag. 19",
+            self._assertTrue(
+                alg in constants.ALLOWED_DGST_ALGS,
+                "The digest algorithm MUST be valid",
                 description=f"One of {(', '.join(constants.ALLOWED_DGST_ALGS))}",
+                **_data,
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_Signature")
+        return self.is_ok(_method)
 
     def test_KeyDescriptor(self):
         """Test the compliance of KeyDescriptor element(s)"""
+        _method = f"{self.__class__.__name__}.test_KeyDescriptor"
         kds = self.doc.xpath(
             "//EntityDescriptor/SPSSODescriptor" '/KeyDescriptor[@use="signing"]'
         )
-        self._assertGreaterEqual(
-            len(kds),
-            1,
-            "At least one signing KeyDescriptor MUST be present - TR pag. 19",
+        _data = dict(test_id="", references=["TR pag. 19"], method=_method)
+        self._assertTrue(
+            len(kds) >= 1, "At least one signing KeyDescriptor MUST be present", **_data
         )
 
         desc = [etree.tostring(ent).decode() for ent in kds if kds]
-        error_kwargs = dict(description=desc, traceback="")
 
         for kd in kds:
             certs = kd.xpath("./KeyInfo/X509Data/X509Certificate")
-            self._assertGreaterEqual(
-                len(certs),
-                1,
-                "At least one signing x509 MUST be present - TR pag. 19",
-                **error_kwargs,
+            self._assertTrue(
+                len(certs) >= 1,
+                "At least one signing x509 MUST be present",
+                description="".join(desc)[:128] or "",
+                **_data,
             )
 
         kds = self.doc.xpath(
@@ -345,133 +384,142 @@ class SpidSpMetadataCheck(
 
         for kd in kds:
             certs = kd.xpath("./KeyInfo/X509Data/X509Certificate")
-            self._assertGreaterEqual(
-                len(certs),
-                1,
-                "At least one encryption x509 MUST be present - TR pag. 19",
-                **error_kwargs,
+            self._assertTrue(
+                len(certs) >= 1,
+                "At least one encryption x509 MUST be present",
+                **_data,
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_KeyDescriptor")
+        return self.is_ok(_method)
 
     def test_SingleLogoutService(self):
         """Test the compliance of SingleLogoutService element(s)"""
         slos = self.doc.xpath(
             "//EntityDescriptor/SPSSODescriptor" "/SingleLogoutService"
         )
-        self._assertGreaterEqual(
-            len(slos),
-            1,
-            "One or more SingleLogoutService elements MUST be present - AV n. 3",
+        _method = f"{self.__class__.__name__}.test_SingleLogoutService"
+        desc = [etree.tostring(ent).decode() for ent in slos if slos]
+        _data = dict(
+            test_id="",
+            references=["AV n. 3"],
+            method=_method,
+            description="".join(desc)[:128],
         )
 
-        desc = [etree.tostring(ent).decode() for ent in slos if slos]
-        error_kwargs = dict(description=desc)
+        self._assertTrue(
+            len(slos) >= 1,
+            "One or more SingleLogoutService elements MUST be present",
+            **_data,
+        )
 
         for slo in slos:
             for attr in ["Binding", "Location"]:
                 self._assertTrue(
                     (attr in slo.attrib),
-                    f"The {attr} attribute in SingleLogoutService element MUST be present - AV n. 3",
-                    **error_kwargs,
+                    f"The {attr} attribute in SingleLogoutService element MUST be present",
+                    **_data,
                 )
 
                 _attr = slo.get(attr)
-                self._assertIsNotNone(
+                self._assertTrue(
                     _attr,
                     f"The {attr} attribute in SingleLogoutService element MUST have a value",
-                    **error_kwargs,
+                    **_data,
                 )
 
                 if attr == "Binding":
-                    self._assertIn(
-                        _attr,
-                        constants.ALLOWED_SINGLELOGOUT_BINDINGS,
+                    self._assertTrue(
+                        _attr in constants.ALLOWED_SINGLELOGOUT_BINDINGS,
                         (
                             (
-                                "The %s attribute in SingleLogoutService element MUST be one of [%s] - AV n. 3"
+                                "The %s attribute in SingleLogoutService element MUST be one of [%s]"
                             )
                             % (attr, ", ".join(constants.ALLOWED_BINDINGS))  # noqa
                         ),
-                        **error_kwargs,  # noqa
+                        **_data,  # noqa
                     )
                 if attr == "Location" and self.production:
                     self._assertIsValidHttpsUrl(
                         _attr,
                         f"The {attr} attribute "
                         "in SingleLogoutService element "
-                        "MUST be a valid HTTPS URL - AV n. 1 and n. 3",
-                        **error_kwargs,
+                        "MUST be a valid HTTPS URL",
+                        **_data,
                     )
                     self._assertHttpUrlWithoutPort(
                         _attr,
                         'The entityID attribute MUST not contain any custom tcp ports, eg: ":8000"',
+                        **_data,
                     )
                 elif attr == "Location":
                     self._assertIsValidHttpUrl(
                         _attr,
                         f"The {attr} attribute "
                         "in SingleLogoutService element "
-                        "MUST be a valid HTTP URL - AV n. 1 and n. 3",
-                        **error_kwargs,
+                        "MUST be a valid HTTP URL",
+                        **_data,
                     )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_SingleLogoutService")
+        return self.is_ok(_method)
 
     def test_AssertionConsumerService(self):
         """Test the compliance of AssertionConsumerService element(s)"""
         acss = self.doc.xpath(
             "//EntityDescriptor/SPSSODescriptor" "/AssertionConsumerService"
         )
-
+        _method = f"{self.__class__.__name__}.test_AssertionConsumerService"
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
-        error_kwargs = dict(description=desc) if desc else {}
+        _data = dict(
+            test_id="",
+            references=["TR pag. 20"],
+            method=_method,
+            description="".join(desc)[:128],
+        )
 
-        self._assertGreaterEqual(
-            len(acss),
-            1,
-            "At least one AssertionConsumerService " "MUST be present - TR pag. 20",
+        self._assertTrue(
+            len(acss) >= 1,
+            "At least one AssertionConsumerService MUST be present",
+            **_data,
         )
 
         for acs in acss:
             for attr in ["index", "Binding", "Location"]:
                 self._assertTrue(
                     (attr in acs.attrib),
-                    f"The {attr} attribute MUST be present - TR pag. 20",
+                    f"The {attr} attribute MUST be present",
+                    **_data,
                 )
                 _attr = acs.get(attr)
                 if attr == "index":
-                    self._assertGreaterEqual(
-                        int(_attr),
-                        0,
-                        f"The {attr} attribute MUST be >= 0 - TR pag. 20",
-                        **error_kwargs,
+                    self._assertTrue(
+                        int(_attr) >= 0,
+                        f"The {attr} attribute MUST be >= 0",
+                        **_data,
                     )
                 elif attr == "Binding":
-                    self._assertIn(
-                        _attr,
-                        constants.ALLOWED_BINDINGS,
+                    self._assertTrue(
+                        _attr in constants.ALLOWED_BINDINGS,
                         (
-                            ("The %s attribute MUST be one of [%s] - TR pag. 20")
+                            ("The %s attribute MUST be one of [%s]")
                             % (attr, ", ".join(constants.ALLOWED_BINDINGS))
                         ),
-                        **error_kwargs,
+                        **_data,
                     )
                 elif attr == "Location" and self.production:
                     self._assertIsValidHttpsUrl(
                         _attr,
-                        f"The {attr} attribute MUST be a "
-                        "valid HTTPS url - TR pag. 20 and AV n. 1",
-                        **error_kwargs,
+                        f"The {attr} attribute MUST be a valid HTTPS url",
+                        **_data,
                     )
                     self._assertHttpUrlWithoutPort(
                         _attr,
                         'The entityID attribute MUST not contain any custom tcp ports, eg: ":8000"',
+                        **_data,
                     )
                 else:
                     pass
 
-        return self.is_ok(f"{self.__class__.__name__}.test_AssertionConsumerService")
+        return self.is_ok(_method)
 
     def test_AssertionConsumerService_SPID(self):
         acss = self.doc.xpath(
@@ -479,13 +527,19 @@ class SpidSpMetadataCheck(
             "/AssertionConsumerService"
             '[@isDefault="true"]'
         )
+        _method = f"{self.__class__.__name__}.test_AssertionConsumerService_SPID"
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
-        error_kwargs = dict(description=desc) if desc else {}
+        _data = dict(
+            test_id="",
+            references=["TR pag. 20"],
+            method=_method,
+            description="".join(desc)[:128],
+        )
 
         self._assertTrue(
             (len(acss) == 1),
-            "Only one default AssertionConsumerService " "MUST be present - TR pag. 20",
-            **error_kwargs,
+            "Only one default AssertionConsumerService MUST be present",
+            **_data,
         )
 
         acss = self.doc.xpath(
@@ -496,111 +550,120 @@ class SpidSpMetadataCheck(
         )
         self._assertTrue(
             (len(acss) == 1),
-            "Must be present the default AssertionConsumerService "
-            "with index = 0 - TR pag. 20",
-            **error_kwargs,
+            "Must be present the default AssertionConsumerService with index = 0",
+            **_data,
         )
-        return self.is_ok(
-            f"{self.__class__.__name__}.test_AssertionConsumerService_SPID"
-        )
+        return self.is_ok(_method)
 
     def test_AttributeConsumingService(self):
         """Test the compliance of AttributeConsumingService element(s)"""
         acss = self.doc.xpath(
             "//EntityDescriptor/SPSSODescriptor" "/AttributeConsumingService"
         )
-
+        _method = f"{self.__class__.__name__}.test_AttributeConsumingService"
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
-        error_kwargs = dict(description=desc) if desc else {}
-
-        self._assertGreaterEqual(
-            len(acss),
-            1,
-            "One or more AttributeConsumingService elements MUST be present - TR pag. 20",
-            **error_kwargs,
+        _data = dict(
+            test_id="",
+            references=["TR pag. 20"],
+            method=_method,
+            description="".join(desc)[:128],
         )
-        return self.is_ok(f"{self.__class__.__name__}.test_AttributeConsumingService")
+
+        self._assertTrue(
+            len(acss) >= 1,
+            "One or more AttributeConsumingService elements MUST be present",
+            **_data,
+        )
+        return self.is_ok(_method)
 
     def test_AttributeConsumingService_SPID(
         self, allowed_attributes=constants.SPID_ATTRIBUTES
     ):
         acss = self.doc.xpath(
-            "//EntityDescriptor/SPSSODescriptor" "/AttributeConsumingService"
+            "//EntityDescriptor/SPSSODescriptor/AttributeConsumingService"
         )
-
         desc = [etree.tostring(ent).decode() for ent in acss if acss]
-        error_kwargs = dict(description=desc) if desc else {}
+        _method = f"{self.__class__.__name__}.test_AttributeConsumingService_SPID"
+        _data = dict(
+            test_id="",
+            references=["TR pag. 20"],
+            method=_method,
+        )
+        _desc = "".join(desc)[:128]
         for acs in acss:
             self._assertTrue(
                 ("index" in acs.attrib),
                 "The index attribute in AttributeConsumigService element MUST be present",
-                **error_kwargs,
+                description=_desc,
+                **_data,
             )
 
             idx = int(acs.get("index"))
-            self._assertGreaterEqual(
-                idx,
-                0,
-                "The index attribute in AttributeConsumigService "
-                "element MUST be >= 0 - TR pag. 20",
-                **error_kwargs,
+            self._assertTrue(
+                idx >= 0,
+                "The index attribute in AttributeConsumigService element MUST be >= 0",
+                description=_desc,
+                **_data,
             )
 
             sn = acs.xpath("./ServiceName")
             self._assertTrue(
-                (len(sn) > 0), "The ServiceName element MUST be present", **error_kwargs
+                (len(sn) > 0),
+                "The ServiceName element MUST be present",
+                description=_desc,
+                **_data,
             )
             for sns in sn:
-                self._assertIsNotNone(
+                self._assertTrue(
                     sns.text,
                     "The ServiceName element MUST have a value",
-                    **error_kwargs,
+                    description=_desc,
+                    **_data,
                 )
 
             ras = acs.xpath("./RequestedAttribute")
-            self._assertGreaterEqual(
-                len(ras),
-                1,
-                "One or more RequestedAttribute elements MUST be present - TR pag. 20",
-                **error_kwargs,
+            self._assertTrue(
+                len(ras) >= 1,
+                "One or more RequestedAttribute elements MUST be present",
+                description=_desc,
+                **_data,
             )
 
             for ra in ras:
                 self._assertTrue(
                     ("Name" in ra.attrib),
                     "The Name attribute in RequestedAttribute element "
-                    "MUST be present - TR pag. 20 and AV n. 6",
-                    **error_kwargs,
+                    "MUST be present",
+                    description=_desc,
+                    **_data,
                 )
 
-                self._assertIn(
-                    ra.get("Name"),
-                    allowed_attributes,
+                self._assertTrue(
+                    ra.get("Name") in allowed_attributes,
                     f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element MUST be valid',
-                    description=f"one of [{', '.join(allowed_attributes)}] - TR pag. 20 and AV n.6",
+                    description=f"one of [{', '.join(allowed_attributes)}]",
+                    **_data,
                 )
 
             al = acs.xpath("RequestedAttribute/@Name")
-            self._assertEqual(
-                len(al),
-                len(set(al)),
-                "AttributeConsumigService MUST not contain duplicated RequestedAttribute - TR pag. 20",
-                **error_kwargs,
+            self._assertTrue(
+                len(al) == len(set(al)),
+                "AttributeConsumigService MUST not contain duplicated RequestedAttribute",
+                description=_desc,
+                **_data,
             )
-        return self.is_ok(
-            f"{self.__class__.__name__}.test_AttributeConsumingService_SPID"
-        )
+        return self.is_ok(_method)
 
     def test_Organization(self):
         """Test the compliance of Organization element"""
         orgs = self.doc.xpath("//EntityDescriptor/Organization")
 
         desc = [etree.tostring(ent).decode() for ent in orgs if orgs]
-        error_kwargs = dict(description=desc) if desc else {}
+        _method = f"{self.__class__.__name__}.test_Organization"
+        _data = dict(description=desc or "", references=["TR pag. 20"], method=_method)
 
         self._assertTrue(
-            (len(orgs) == 1),
-            "Only one Organization element can be present - TR pag. 20",
+            (len(orgs) == 1), "Only one Organization element can be present", **_data
         )
 
         enames = ["OrganizationName", "OrganizationDisplayName", "OrganizationURL"]
@@ -610,11 +673,10 @@ class SpidSpMetadataCheck(
             org = orgs[0]
             for ename in enames:
                 elements = org.xpath(f"./{ename}")
-                self._assertGreater(
-                    len(elements),
-                    0,
-                    f"One or more {ename} elements MUST be present - TR pag. 20",
-                    **error_kwargs,
+                self._assertTrue(
+                    len(elements) > 0,
+                    f"One or more {ename} elements MUST be present",
+                    **_data,
                 )
 
                 for element in elements:
@@ -623,8 +685,8 @@ class SpidSpMetadataCheck(
                             "{http://www.w3.org/XML/1998/namespace}lang"
                             in element.attrib
                         ),  # noqa
-                        f"The lang attribute in {ename} element MUST be present - TR pag. 20",  # noqa
-                        **error_kwargs,
+                        f"The lang attribute in {ename} element MUST be present",  # noqa
+                        **_data,
                     )
 
                     lang = element.attrib.items()[0][1]
@@ -635,8 +697,8 @@ class SpidSpMetadataCheck(
 
                     self._assertTrue(
                         element.text,
-                        f"The {ename} element MUST have a value - TR pag. 20",
-                        **error_kwargs,
+                        f"The {ename} element MUST have a value",
+                        **_data,
                     )
 
                     if ename == "OrganizationURL" and self.production:
@@ -648,8 +710,8 @@ class SpidSpMetadataCheck(
                             OrganizationURLvalue = f"https://{OrganizationURLvalue}"
                         self._assertIsValidHttpUrl(
                             OrganizationURLvalue,
-                            f"The {ename} -element MUST be a valid URL - TR pag. 20",
-                            **error_kwargs,
+                            f"The {ename} -element MUST be a valid URL",
+                            **_data,
                         )
 
             # lang counter check
@@ -661,7 +723,7 @@ class SpidSpMetadataCheck(
                         "The elements OrganizationName, OrganizationDisplayName and OrganizationURL "
                         "MUST have the same number of lang attributes"
                     ),  # noqa
-                    **error_kwargs,
+                    **_data,
                 )
 
             self._assertTrue(
@@ -670,10 +732,10 @@ class SpidSpMetadataCheck(
                     "The elements OrganizationName, OrganizationDisplayName and OrganizationURL "
                     "MUST have at least an it language enabled"
                 ),  # noqa
-                **error_kwargs,
+                **_data,
             )
 
-        return self.is_ok(f"{self.__class__.__name__}.test_Organization")
+        return self.is_ok(_method)
 
     def test_profile_saml2core(self):
         self.xsd_check(xsds_files=["saml-schema-metadata-2.0.xsd"])

@@ -21,49 +21,74 @@ class AbstractSpidCheck(object):
 
     def report_to_dict(self):
         res = {self.category: {self.__class__.__name__: self.results}}
-
         return res
 
     def is_ok(self, msg):
         if not self.error_counter:
-            self.handle_result("info", f"{msg}")
+            # self.handle_result(
+            # "info",
+            # msg,
+            # method = method or msg
+            # )
             return True
         else:
             self.error_counter = 0
             return False
 
     def handle_result(
-        self, level: str, title: str, description: str = "", traceback: str = None
+        self,
+        level: str,
+        title: str,
+        description: str = "",
+        traceback: str = None,
+        references: list = [],
+        method: str = "",
+        test_id: str = "",
     ):
         msg = f"{title}"
-        getattr(self.logger, level, "debug")(msg)
+        getattr(self.logger, level, "debug")(f"{method}: {msg}")
         value = f"{description}" if not traceback else f"{description}: {traceback }"
+
+        data = {
+            "test_id": test_id,
+            "test": title,
+            "value": value.decode() if isinstance(value, bytes) else value,
+            "references": references,
+            "method": method,
+        }
+
         if level not in ("error", "debug", "critical", "warning"):
             # here report as json
-            self.results.append(
-                {
-                    "result": "success",
-                    "test": title,
-                    # "value": value
-                }
-            )
+            data["result"] = "success"
+            self.results.append(data)
         elif level in ("error", "critical"):
             self.handle_error(title, description, traceback)
         elif level == "warning":
-            data = {
-                    "result": "warning",
-                    "test": title,
-                    "value": value,
-            }
+            data["result"] = "warning"
             self.results.append(data)
             self.warnings.append(data)
 
-    def handle_error(self, error_message, description="", traceback: str = None):
-        getattr(self.logger, "error")(error_message)
+    def handle_error(
+        self,
+        error_message,
+        description="",
+        traceback: str = None,
+        references: list = [],
+        method: str = "",
+        test_id: str = "",
+    ):
+        self.logger.error(error_message)
         self.error_counter += 1
         # here report as json
         value = f"{description}" if not traceback else f"{description}: {traceback }"
-        data = {"result": "failure", "test": error_message, "value": value}
+        data = {
+            "test_id": test_id,
+            "result": "failure",
+            "test": error_message,
+            "value": value.decode() if isinstance(value, bytes) else value,
+            "references": references,
+            "method": method,
+        }
         self.errors.append(data)
         self.results.append(data)
 
@@ -74,127 +99,30 @@ class AbstractSpidCheck(object):
         description="",
         traceback: str = None,
         level: str = "info",
+        **kwargs,
     ):
-        if not check and level == "info":
-            self.handle_error(error_message, description, traceback)
-        elif not check and level == "warning":
-            self.handle_result(level, f"{error_message}", description, traceback)
+        if not check and level != "warning":
+            self.handle_error(error_message, description, traceback, **kwargs)
         else:
-            level = "info" if level in ("warning",) else level
-            self.handle_result(level, f"{error_message}", description, traceback)
+            # level = "info" if level in ("warning",) else level
+            self.handle_result(level, error_message, description, traceback, **kwargs)
 
-    def _assertTrue(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert(check, error_message, description, traceback, level)
+    def _assertTrue(self, *args, **kwargs):
+        self._assert(*args, **kwargs)
 
-    def _assertFalse(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert(not check, error_message, description, traceback, level)
+    def _assertFalse(self, check, *args, **kwargs):
+        self._assert(not check, *args, **kwargs)
 
-    def _assertIsNotNone(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert(check, error_message, description, traceback, level)
+    def _assertIsValidHttpsUrl(self, check, *args, **kwargs):
+        self._assert(re.match("https://", check if check else ""), *args, **kwargs)
 
-    def _assertIn(
-        self,
-        first,
-        second,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert((first in second), error_message, description, traceback, level)
-
-    def _assertGreaterEqual(
-        self,
-        first,
-        second,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert((first >= second), error_message, description, traceback, level)
-
-    def _assertGreater(
-        self,
-        first,
-        second,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert((first > second), error_message, description, traceback, level)
-
-    def _assertEqual(
-        self,
-        first,
-        second,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert((first == second), error_message, description, traceback, level)
-
-    def _assertIsValidHttpsUrl(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
+    def _assertHttpUrlWithoutPort(self, check, *args, **kwargs):
         self._assert(
-            re.match("https://", check if check else ""), description, traceback, level
+            re.match(HTTP_NO_PORT_REGEX, check if check else ""), *args, **kwargs
         )
 
-    def _assertHttpUrlWithoutPort(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert(
-            re.match(HTTP_NO_PORT_REGEX, check if check else ""),
-            description,
-            traceback,
-            level,
-        )
-
-    def _assertIsValidHttpUrl(
-        self,
-        check,
-        error_message,
-        description="",
-        traceback: str = None,
-        level: str = "info",
-    ):
-        self._assert(
-            re.match("https?://", check if check else ""), description, traceback, level
-        )
+    def _assertIsValidHttpUrl(self, check, *args, **kwargs):
+        self._assert(re.match("https?://", check if check else ""), *args, **kwargs)
 
     # maybe useful .. one day ?!
     # idp_server = self.idp()

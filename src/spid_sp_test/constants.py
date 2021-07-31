@@ -418,6 +418,4 @@ ISO3166_CODES = [
     "ZW",
 ]
 
-XML_NAMESPACES = {
-    'spid':'https://spid.gov.it/saml-extensions'
-}
+XML_NAMESPACES = {"spid": "https://spid.gov.it/saml-extensions"}
