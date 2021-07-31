@@ -23,8 +23,6 @@ from spid_sp_test import constants
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
 
 from saml2.server import Server
-from saml2.sigver import CryptoBackendXMLSecurity
-
 # from saml2.sigver import CryptoBackendXmlSec1
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from tempfile import NamedTemporaryFile
@@ -314,78 +312,73 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         else:
             is_valid = False
             for cert in certs:
+                cert_file = NamedTemporaryFile(suffix=".pem")
+                if cert[-1] != "\n":
+                    cert += "\n"
+                cert_file.write(
+                    f"-----BEGIN CERTIFICATE-----\n{cert}-----END CERTIFICATE-----".encode()
+                )
+                cert_file.seek(0)
+
+                pubkey_file = NamedTemporaryFile(suffix=".crt")
+                x509_cert = subprocess.getoutput(
+                    f"openssl x509 -in {cert_file.name} -noout -pubkey"
+                )
+                pubkey_file.write(x509_cert.encode())
+                pubkey_file.seek(0)
+
                 if self.IS_HTTP_REDIRECT:
-                    with NamedTemporaryFile(suffix=".xml") as cert_file:
-                        if cert[-1] != "\n":
-                            cert += "\n"
-                        cert_file.write(
-                            f"-----BEGIN CERTIFICATE-----\n{cert}-----END CERTIFICATE-----".encode()
-                        )
-                        cert_file.seek(0)
-                        _sigalg = self.authn_request.get("SigAlg", "")
-                        quoted_req = urllib.parse.quote_plus(
-                            self.authn_request["SAMLRequest"]
-                        )
-                        quoted_rs = urllib.parse.quote_plus(
-                            self.authn_request.get("RelayState") or ""
-                        )
-                        quoted_sigalg = urllib.parse.quote_plus(_sigalg)
-                        authn_req = (
-                            f"SAMLRequest={quoted_req}&"
-                            f"RelayState={quoted_rs}&"
-                            f"SigAlg={quoted_sigalg}"
-                        )
+                    _sigalg = self.authn_request.get("SigAlg", "")
+                    quoted_req = urllib.parse.quote_plus(
+                        self.authn_request["SAMLRequest"]
+                    )
+                    quoted_rs = urllib.parse.quote_plus(
+                        self.authn_request.get("RelayState") or ""
+                    )
+                    quoted_sigalg = urllib.parse.quote_plus(_sigalg)
+                    authn_req = (
+                        f"SAMLRequest={quoted_req}&"
+                        f"RelayState={quoted_rs}&"
+                        f"SigAlg={quoted_sigalg}"
+                    )
 
-                        payload_file = NamedTemporaryFile(suffix=".xml")
-                        payload_file.write(authn_req.encode())
-                        payload_file.seek(0)
+                    payload_file = NamedTemporaryFile(suffix=".xml")
+                    payload_file.write(authn_req.encode())
+                    payload_file.seek(0)
 
-                        signature_file = NamedTemporaryFile(suffix=".sign")
-                        signature_file.write(
-                            base64.b64decode(self.authn_request["Signature"].encode())
-                        )
-                        signature_file.seek(0)
+                    signature_file = NamedTemporaryFile(suffix=".sign")
+                    signature_file.write(
+                        base64.b64decode(self.authn_request["Signature"].encode())
+                    )
+                    signature_file.seek(0)
 
-                        pubkey_file = NamedTemporaryFile(suffix=".crt")
-                        x509_cert = subprocess.getoutput(
-                            f"openssl x509 -in {cert_file.name} -noout -pubkey"
-                        )
-                        pubkey_file.write(x509_cert.encode())
-                        pubkey_file.seek(0)
+                    dgst = _sigalg.split("-")[-1]
+                    signature = signature_file.name
 
-                        dgst = _sigalg.split("-")[-1]
-                        signature = signature_file.name
-
-                        ver_cmd = (
-                            f"openssl dgst -{dgst} "
-                            f"-verify {pubkey_file.name} "
-                            f"-signature {signature} {payload_file.name}"
-                        )
-                        exit_msg = subprocess.getoutput(ver_cmd)
-                        _data["description"] = exit_msg
-                        if "Verified OK" in exit_msg:
-                            is_valid = True
-                        else:
-                            is_valid = False
+                    ver_cmd = (
+                        f"openssl dgst -{dgst} "
+                        f"-verify {pubkey_file.name} "
+                        f"-signature {signature} {payload_file.name}"
+                    )
+                    exit_msg = subprocess.getoutput(ver_cmd)
+                    _data["description"] = exit_msg
+                    if "Verified OK" in exit_msg:
+                        is_valid = True
+                    else:
+                        is_valid = False
 
                 else:
-                    # pyXMLSecurity allows to pass a certificate without store it on a file
-                    # backend = CryptoBackendXMLSecurity()
-                    # is_valid = backend.validate_signature(
-                        # self.authn_request_decoded,
-                        # cert_file=cert,
-                        # cert_type="pem",
-                        # node_name=constants.NODE_NAME,
-                        # node_id=None,
-                    # )
-                    tmp_file = NamedTemporaryFile()
+                    tmp_file = NamedTemporaryFile(suffix=".xml")
                     tmp_file.write(self.authn_request_decoded)
                     tmp_file.seek(0)
                     cmd = (
                         'xmlsec1 --verify --insecure --id-attr:ID '
                         '"urn:oasis:names:tc:SAML:2.0:protocol:AuthnRequest" '
-                        f"{tmp_file.name}"
+                        # f'--pubkey-cert-pem {cert_file.name} '
+                        f'--pubkey-pem {pubkey_file.name} '
+                        f"{tmp_file.name} "
                     )
+
                     try:
                         out = subprocess.run(
                             cmd,

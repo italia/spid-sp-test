@@ -33,7 +33,6 @@ setup(
                 'pysaml2>=6.5.1',
                 'xmlschema>=1.5.1',
                 'requests>=2.25.1',
-                'pyXMLSecurity>=0.21',
                 'lxml>=4.6.2',
                 'Jinja2>=2.11.3',
                 # 'sslyze>=4.0.4', # todo
