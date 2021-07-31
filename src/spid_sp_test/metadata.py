@@ -619,46 +619,47 @@ class SpidSpMetadataCheck(
             test_id = "",
             references = ["TR pag. 20"],
             method = _method,
-            description = ''.join(desc)[:128]
         )
+        _desc = ''.join(desc)[:128]
         for acs in acss:
             self._assertTrue(
                 ("index" in acs.attrib),
                 "The index attribute in AttributeConsumigService element MUST be present",
-                **_data,
+                description = _desc, **_data,
             )
 
             idx = int(acs.get("index"))
             self._assertTrue(
                 idx >= 0,
                 "The index attribute in AttributeConsumigService element MUST be >= 0",
-                **_data,
+                description = _desc, **_data,
             )
 
             sn = acs.xpath("./ServiceName")
             self._assertTrue(
-                (len(sn) > 0), "The ServiceName element MUST be present", **_data
+                (len(sn) > 0), "The ServiceName element MUST be present",
+                description = _desc, **_data
             )
             for sns in sn:
                 self._assertTrue(
                     sns.text,
-                    "The ServiceName element MUST have a value", **_data,
+                    "The ServiceName element MUST have a value",
+                    description = _desc, **_data,
                 )
 
             ras = acs.xpath("./RequestedAttribute")
             self._assertTrue(
                 len(ras) >= 1,
                 "One or more RequestedAttribute elements MUST be present",
-                **_data,
+                description = _desc, **_data
             )
 
-            _data.pop('description')
             for ra in ras:
                 self._assertTrue(
                     ("Name" in ra.attrib),
                     "The Name attribute in RequestedAttribute element "
                     "MUST be present",
-                    **_data,
+                    description = _desc, **_data,
                 )
 
                 self._assertTrue(
@@ -672,7 +673,7 @@ class SpidSpMetadataCheck(
             self._assertTrue(
                 len(al) == len(set(al)),
                 "AttributeConsumigService MUST not contain duplicated RequestedAttribute",
-                **_data,
+                description = _desc, **_data,
             )
         return self.is_ok(_method)
 
