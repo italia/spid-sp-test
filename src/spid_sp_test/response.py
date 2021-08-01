@@ -203,8 +203,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             "SessionIndex": _session_index,
             "Issuer": self.issuer,
             "Audience": self.authnreq_issuer,
-            "AuthnContextClassRef": self.acr
-            or settings.DEFAULT_RESPONSE["AuthnContextClassRef"],
+            "AuthnContextClassRef": (
+                self.acr or settings.DEFAULT_RESPONSE["AuthnContextClassRef"]
+            ),
             "IssueInstantMillis": now.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
             "sign_response": settings.DEFAULT_RESPONSE["sign_response"],
             "sign_assertion": settings.DEFAULT_RESPONSE["sign_assertion"],
@@ -299,7 +300,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         status_code = f"[http status_code: {res.status_code}]"
         self._assertTrue(
             status,
-            f"{msg}: {status_code}",
+            msg,
             method=f"{self.__class__.__name__}.check_response",
             description=status_code,
             references=[],

@@ -23,6 +23,7 @@ from spid_sp_test import constants
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
 
 from saml2.server import Server
+
 # from saml2.sigver import CryptoBackendXmlSec1
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 from tempfile import NamedTemporaryFile
@@ -372,10 +373,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     tmp_file.write(self.authn_request_decoded)
                     tmp_file.seek(0)
                     cmd = (
-                        'xmlsec1 --verify --insecure --id-attr:ID '
+                        "xmlsec1 --verify --insecure --id-attr:ID "
                         '"urn:oasis:names:tc:SAML:2.0:protocol:AuthnRequest" '
                         # f'--pubkey-cert-pem {cert_file.name} '
-                        f'--pubkey-pem {pubkey_file.name} '
+                        f"--pubkey-pem {pubkey_file.name} "
                         f"{tmp_file.name} "
                     )
 
@@ -394,17 +395,29 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         lines = [msg]
                         if err.stderr:
                             stderr = "stderr: " + "\nstderr: ".join(
-                                list(filter(None, err.stderr.decode("utf-8").split(r"\n")))
+                                list(
+                                    filter(
+                                        None, err.stderr.decode("utf-8").split(r"\n")
+                                    )
+                                )
                             )
                             lines.append(stderr)
                         if err.stdout:
                             stdout = "stdout: " + "\nstdout: ".join(
-                                list(filter(None, err.stdout.decode("utf-8").split(r"\n")))
+                                list(
+                                    filter(
+                                        None, err.stdout.decode("utf-8").split(r"\n")
+                                    )
+                                )
                             )
                             lines.append(stdout)
                         _msg = "\n".join(lines)
                         self.handle_result(
-                            "error", _msg, description="Description", traceback=_msg, **_data
+                            "error",
+                            "AuthnRequest Signature validation failed",
+                            description=_msg,
+                            traceback=_msg,
+                            **_data,
                         )
                         return
 
@@ -633,7 +646,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     )
 
         attr = "AttributeConsumingServiceIndex"
-        if attr in req.attrib:
+        if attr not in req.attrib:
+            self._assertTrue(
+                (attr in req.attrib),
+                f"The {attr} attribute MUST be present",
+                description=req.attrib,
+                **_data,
+            )
+        else:
             availableattributeindexes = []
 
             acss = self.md.xpath(
@@ -685,8 +705,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 description=subj,
                 **_data,
             )
-
-        if len(subj) == 1:
+        # Not shure that this must be checked :)
+        # elif len(subj) < 1:
+            # self._assertTrue(
+                # False,
+                # "The Subject element MUST be present",
+                # **_data,
+            # )
+        elif len(subj) == 1:
             subj = subj[0]
             name_id = subj.xpath("./NameID")
             self._assertTrue(
@@ -742,6 +768,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         )
 
         if not e:
+            self._assertTrue(
+                e,
+                "The Issuer element MUST be present",
+                **_data,
+            )
             return self.is_ok(_method)
         else:
             e = e[0]
@@ -806,6 +837,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         )
 
         if not e:
+            self._assertTrue(
+                e,
+                "The NameIDPolicy element MUST be present",
+                **_data,
+            )
             return self.is_ok(_method)
         else:
             e = e[0]
@@ -865,8 +901,16 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 description=e,
                 **_data,
             )
+        # Not shure that this must be checked :)
+        # elif len(e) < 1:
+            # self._assertTrue(
+                # e,
+                # "The Conditions element MUST be present",
+                # **_data,
+            # )
+            # return self.is_ok(_method)
 
-        if len(e) == 1:
+        elif len(e) == 1:
             e = e[0]
             for attr in ["NotBefore", "NotOnOrAfter"]:
                 self._assertTrue(
@@ -1023,7 +1067,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 **_data,
             )
 
-            # save the grubbed certificate for future alanysis
+            # save the grubbed certificate for future analysis
             # cert = sign[0].xpath('./KeyInfo/X509Data/X509Certificate')[0]
             # dump_pem.dump_request_pem(cert, 'authn', 'signature', DATA_DIR)
         return self.is_ok(_method)

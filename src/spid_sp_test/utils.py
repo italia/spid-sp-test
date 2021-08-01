@@ -225,14 +225,16 @@ def report_to_html(o):
                         )  # noqa
                         if t["result"] == "success":
                             res.append(
-                                '<div style="background-color: #f2ffe6; padding: 5px; border: 1px solid green; margin: 5px">'
+                                '<div style="background-color: #f2ffe6; '
+                                'padding: 5px; border: 1px solid green; margin: 5px">'
                             )  # noqa
                             res.append(
                                 '<h5 style="color: green">%s</h5>' % t["result"]
                             )  # noqa
                         else:
                             res.append(
-                                '<div style="background-color: #ffebe6; padding: 5px; border: 1px solid red; margin: 5px">'
+                                '<div style="background-color: #ffebe6; '
+                                'padding: 5px; border: 1px solid red; margin: 5px">'
                             )  # noqa
                             res.append(
                                 '<h5 style="color: red">%s</h5>' % t["result"]

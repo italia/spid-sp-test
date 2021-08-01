@@ -210,7 +210,7 @@ class SpidSpMetadataCheck(
 
     def test_xmldsig(self):
         """Verify the SP metadata signature"""
-        tmp_file = NamedTemporaryFile()
+        tmp_file = NamedTemporaryFile(suffix=".xml")
         tmp_file.write(self.metadata)
         tmp_file.seek(0)
         xmlsec_cmd = [
@@ -833,7 +833,9 @@ class SpidSpMetadataCheck(
         self.test_Contacts_PubPriv(entity_type="spid:aggregated")
 
         # TODO
-        # If the ContactPerson is of spid:entityType “spid:aggregator” the Extensions element MUST contain the element spid:KeyDescriptor with attribute use “spid:validation”
+        # If the ContactPerson is of spid:entityType “spid:aggregator”
+        # the Extensions element MUST contain the element spid:KeyDescriptor
+        # with attribute use “spid:validation”
 
         # The PublicServicesLightAggregator element MUST be present
         self.test_extensions_public_ag(
