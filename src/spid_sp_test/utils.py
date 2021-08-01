@@ -209,40 +209,6 @@ def html_absolute_paths(html_content, url):
     return html.tostring(q)
 
 
-def report_to_html(o):
-    res = []
-    for h1_title in o.keys():
-        res.append("<h1>%s</h1>" % h1_title)
-        for h2_title in o[h1_title].keys():
-            res.append("<h2>%s</h2>" % h2_title)
-            for h3_title in o[h1_title][h2_title].keys():
-                res.append("<h3>%s</h3>" % h3_title)
-                for test_case in o[h1_title][h2_title][h3_title].keys():
-                    res.append("<h4>%s</h4>" % test_case)
-                    for t in o[h1_title][h2_title][h3_title][test_case]:  # noqa
-                        res.append(
-                            "<p><strong>Description:</strong> %s</p>" % t["test"]
-                        )  # noqa
-                        if t["result"] == "success":
-                            res.append(
-                                '<div style="background-color: #f2ffe6; padding: 5px; border: 1px solid green; margin: 5px">'
-                            )  # noqa
-                            res.append(
-                                '<h5 style="color: green">%s</h5>' % t["result"]
-                            )  # noqa
-                        else:
-                            res.append(
-                                '<div style="background-color: #ffebe6; padding: 5px; border: 1px solid red; margin: 5px">'
-                            )  # noqa
-                            res.append(
-                                '<h5 style="color: red">%s</h5>' % t["result"]
-                            )  # noqa
-                        # res.append('<p>Test: %s</p>' % t['test'].replace('\n', '<br/>'))  # noqa
-                        res.append("<p>Obtained value: %s</p>" % t["value"])
-                        res.append("</div>")
-    return "\n".join(res)
-
-
 def load_plugin(plugin_name):
     n1, _, n2 = plugin_name.rpartition(".")
     module = importlib.import_module(n1)

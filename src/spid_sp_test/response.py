@@ -112,6 +112,14 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.template_path = kwargs.get("template_path", self.template_path)
 
         self.metadata_etree = kwargs.get("metadata_etree")
+        self.requested_attrs_raw = self.metadata_etree.xpath(
+            "//EntityDescriptor/SPSSODescriptor"
+            "/AttributeConsumingService/RequestedAttribute"
+        )
+        self.requested_attrs = [
+            i.attrib["Name"] for i in self.requested_attrs_raw
+        ]
+
         self.acs_url = self.metadata_etree.xpath(
             "//SPSSODescriptor/AssertionConsumerService[@index=0]"
         )[0].attrib["Location"]
@@ -139,7 +147,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             with open(kwargs["attr_json"], "r") as json_data:
                 self.user_attrs = json.loads(json_data.read())
         else:
-            self.user_attrs = settings.ATTRIBUTES
+            # returns ONLY the requested attributes shown in the metadata
+            # otherwise it returns all the attributes (for test purpose)
+            self.user_attrs = {
+                i:settings.ATTRIBUTES[i] for i in self.requested_attrs
+            } or settings.ATTRIBUTES
 
         self.html_path = kwargs.get("html_path")
         self.no_send_response = kwargs.get("no_send_response")
@@ -174,6 +186,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         self.issuer = self.kwargs.get("issuer", SAML2_IDP_CONFIG["entityid"])
         self.authnreq_attrs = self.authnreq_etree.xpath("/AuthnRequest")[0].attrib
+
         self.authnreq_issuer = self.authnreq_etree.xpath("/AuthnRequest/Issuer")[
             0
         ].attrib["NameQualifier"]
@@ -203,8 +216,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             "SessionIndex": _session_index,
             "Issuer": self.issuer,
             "Audience": self.authnreq_issuer,
-            "AuthnContextClassRef": self.acr
-            or settings.DEFAULT_RESPONSE["AuthnContextClassRef"],
+            "AuthnContextClassRef": (
+                self.acr or settings.DEFAULT_RESPONSE["AuthnContextClassRef"]
+            ),
             "IssueInstantMillis": now.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
             "sign_response": settings.DEFAULT_RESPONSE["sign_response"],
             "sign_assertion": settings.DEFAULT_RESPONSE["sign_assertion"],
@@ -299,7 +313,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         status_code = f"[http status_code: {res.status_code}]"
         self._assertTrue(
             status,
-            f"{msg}: {status_code}",
+            msg,
             method=f"{self.__class__.__name__}.check_response",
             description=status_code,
             references=[],

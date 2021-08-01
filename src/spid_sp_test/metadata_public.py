@@ -47,7 +47,7 @@ class SpidSpMetadataCheckPublic(object):
                 len(entity_desc) == 1,
                 "Only one ContactPerson element of contactType "
                 f'"{contact_type}" MUST be present',
-                **_data,
+                test_id = ['1.10.0'], **_data,
             )
 
         return self.is_ok(_method)
@@ -66,7 +66,7 @@ class SpidSpMetadataCheckPublic(object):
                 ext_cnt > 1,
                 "Only one Extensions element inside ContactPerson element MUST be present",
                 description=etree.tostring(cont).decode(),
-                **_data,
+                test_id = ['1.10.1'], **_data,
             )
 
         orgs = self.doc.xpath("//EntityDescriptor/Organization/OrganizationName")
@@ -87,7 +87,7 @@ class SpidSpMetadataCheckPublic(object):
                     company.text == org.text,
                     "If the Company element if present it MUST be equal to OrganizationName",
                     description=(company.text, org.text),
-                    **_data,
+                    test_id = ['1.10.3'], **_data,
                 )
 
         return self.is_ok(_method)
@@ -100,20 +100,20 @@ class SpidSpMetadataCheckPublic(object):
             email,
             f"The {email_xpath} element MUST be present",
             description=[etree.tostring(_val).decode() for _val in email],
-            **_data,
+            test_id = ['1.10.4'], **_data,
         )
         if email:
             self._assertTrue(
                 email[0].text,
                 f"The {email_xpath} element MUST have a value",
                 description=[etree.tostring(_val).decode() for _val in email],
-                **_data,
+                test_id = ['1.10.5'], **_data,
             )
             self._assertTrue(
                 re.match(EMAIL_REGEXP, email[0].text),
                 f"The {email_xpath} element MUST be a valid email address",
                 description=[etree.tostring(_val).decode() for _val in email],
-                **_data,
+                test_id = ['1.10.6'], **_data,
             )
         return self.is_ok(_method)
 
@@ -124,20 +124,21 @@ class SpidSpMetadataCheckPublic(object):
         if phone:
             phone = phone[0].text
             self._assertTrue(
-                phone, f"The {phone_xpath} element MUST have a value", **_data
+                phone, f"The {phone_xpath} element MUST have a value",
+                **_data
             )
             self._assertTrue(
                 (" " not in phone),
                 f"The {phone_xpath} element MUST not contain spaces",
                 description=phone,
-                **_data,
+                test_id = ['1.10.8'], **_data,
             )
             self._assertTrue(
                 (phone[0:3] == "+39"),
                 f'The {phone_xpath} element MUST start with "+39"',
                 description=phone,
                 level="warning",
-                **_data,
+                test_id = ['1.10.9'], **_data,
             )
 
         return self.is_ok(_method)
@@ -148,19 +149,20 @@ class SpidSpMetadataCheckPublic(object):
         _data = dict(references=[""], method=_method)
         if self.production:
             ipacode = self.doc.xpath("//ContactPerson/Extensions/IPACode")
-            self._assertTrue(ipacode, "The IPACode element MUST be present", **_data)
+            self._assertTrue(
+                ipacode, "The IPACode element MUST be present",
+                test_id = ['1.11.0'], **_data
+            )
             if ipacode:
                 ipacode = ipacode[0]
                 self._assertTrue(
-                    ipacode.text, "The IPACode element MUST have a value", **_data
-                )
-                self._assertTrue(
-                    ipacode.text, "The IPACode element MUST have a value", **_data
+                    ipacode.text, "The IPACode element MUST have a value",
+                    test_id = ['1.11.1'], **_data
                 )
                 self._assertTrue(
                     get_indicepa_by_ipacode(ipacode.text)[0] == 1,
                     "The IPACode element MUST have a valid value present on IPA",
-                    **_data,
+                    test_id = ['1.11.2'], **_data,
                 )
 
         return self.is_ok(_method)
@@ -177,16 +179,18 @@ class SpidSpMetadataCheckPublic(object):
             ctype,
             f"Missing ContactPerson/Extensions/{ext_type.title()}, "
             "this element MUST be present",
-            **_data,
+            test_id = ['1.11.7', '1.12.5'], **_data,
         )
         if ctype:
             self._assertFalse(
-                ctype[0].text, f"The {ext_type.title()} element MUST be empty", **_data
+                ctype[0].text, f"The {ext_type.title()} element MUST be empty",
+                test_id = ['1.11.8', '1.12.6'], **_data
             )
 
         ctype = self.doc.xpath(f"//ContactPerson/Extensions/{ext_type_not.title()}")
         self._assertFalse(
-            ctype, f"The {ext_type_not.title()} element MUST not be present", **_data
+            ctype, f"The {ext_type_not.title()} element MUST not be present",
+            test_id = ['1.11.9', '1.12.7'], **_data
         )
         return self.is_ok(_method)
 
@@ -203,7 +207,8 @@ class SpidSpMetadataCheckPublic(object):
         )
         if vats:
             self._assertTrue(
-                vats[0].text, "The VATNumber element MUST have a value", **_data
+                vats[0].text, "The VATNumber element MUST have a value",
+                test_id = ['1.11.4'], **_data
             )
             self._assertTrue(
                 (vats[0].text[:2] in ISO3166_CODES),
@@ -221,7 +226,8 @@ class SpidSpMetadataCheckPublic(object):
             )
             fc = fcs[0]
             self._assertTrue(
-                fc.text, "The FiscalCode element MUST have a value", **_data
+                fc.text, "The FiscalCode element MUST have a value",
+                test_id = ['1.11.6'], **_data
             )
         if private and not len(fcs) and not len(vats):
             self._assertTrue(

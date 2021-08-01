@@ -163,7 +163,7 @@ FICEP_FULL_ATTRIBUTES = [
 ]
 
 NODE_NAME = "urn:oasis:names:tc:SAML:2.0:assertion:Assertion"
-EMAIL_REGEXP = "^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,6}$"
+EMAIL_REGEXP = r"^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,6}$"
 
 
 ISO3166_CODES = [
