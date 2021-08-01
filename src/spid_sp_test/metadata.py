@@ -66,7 +66,7 @@ class SpidSpMetadataCheck(
 
     def xsd_check(self, xsds_files: list = ["saml-schema-metadata-2.0.xsd"]):
         _method = f"{self.__class__.__name__}.xsd_check"
-        test_id = ['1.0.0']
+        test_id = ["1.0.0"]
         logger.debug(self.metadata.decode())
         _orig_pos = os.getcwd()
         os.chdir(self.xsds_files_path)
@@ -84,7 +84,7 @@ class SpidSpMetadataCheck(
                         description=msg,
                         references="",
                         method=_method,
-                        test_id = test_id
+                        test_id=test_id,
                     )
                     # raise Exception('Validation Error')
                 break
@@ -97,7 +97,7 @@ class SpidSpMetadataCheck(
                     description="xsd test failed",
                     traceback=f"{e}",
                     method=_method,
-                    test_id = test_id
+                    test_id=test_id,
                 )
         os.chdir(_orig_pos)
         if not self.errors:
@@ -117,14 +117,16 @@ class SpidSpMetadataCheck(
         self._assertTrue(
             len(entity_desc) == 1,
             "Only one EntityDescriptor element MUST be present",
-            description=desc, test_id = ['1.3.0'],
+            description=desc,
+            test_id=["1.3.0"],
             **_data,
         )
 
         self._assertTrue(
             self.doc.attrib.get("entityID"),
             "The entityID attribute MUST be present",
-            description=self.doc.attrib, test_id = ['1.3.1'],
+            description=self.doc.attrib,
+            test_id=["1.3.1"],
             **_data,
         )
 
@@ -132,7 +134,8 @@ class SpidSpMetadataCheck(
             entity_desc[0].get("entityID"),
             "The entityID attribute MUST have a value",
             description=entity_desc[0].get("entityID"),
-            **_data, test_id = ['1.3.2'],
+            **_data,
+            test_id=["1.3.2"],
         )
 
         if self.production:
@@ -154,7 +157,9 @@ class SpidSpMetadataCheck(
         desc = [etree.tostring(ent).decode()[:128] for ent in spsso if spsso]
 
         _method = f"{self.__class__.__name__}.test_SPSSODescriptor"
-        _data = dict(test_id="", references=[""], method=_method, description=desc)
+        _data = dict(
+            test_id=["1.6.0"], references=[""], method=_method, description=desc
+        )
 
         self._assertTrue(
             (len(spsso) == 1),
@@ -167,14 +172,13 @@ class SpidSpMetadataCheck(
         spsso = self.doc.xpath("//EntityDescriptor/SPSSODescriptor")
         desc = [etree.tostring(ent).decode()[:128] for ent in spsso if spsso]
         _method = f"{self.__class__.__name__}.test_SPSSODescriptor_SPID"
-        _data = dict(
-            test_id="", references=["TR pag. 20"], method=_method, description=desc
-        )
+        _data = dict(references=["TR pag. 20"], method=_method, description=desc)
 
         for attr in ["protocolSupportEnumeration", "AuthnRequestsSigned"]:
             self._assertTrue(
                 (attr in spsso[0].attrib),
                 f"The {attr} attribute MUST be present",
+                test_id=["1.6.1", "1.6.3"],
                 **_data,
             )
 
@@ -182,6 +186,7 @@ class SpidSpMetadataCheck(
             self._assertTrue(
                 a,
                 f"The {attr} attribute MUST have a value",
+                test_id=["1.6.2", "1.6.4"],
                 **_data,
             )
 
@@ -189,6 +194,7 @@ class SpidSpMetadataCheck(
                 self._assertTrue(
                     a.lower() == "true",
                     f"The {attr} attribute MUST be true",
+                    test_id=["1.6.5"],
                     **_data,
                 )
 
@@ -230,7 +236,7 @@ class SpidSpMetadataCheck(
         msg = "the metadata signature MUST be valid"
 
         _data = dict(
-            test_id="",
+            test_id=["1.9.0"],
             references=["TR pag. 19"],
             method=f"{self.__class__.__name__}.test_xmldsig",
         )
@@ -271,7 +277,6 @@ class SpidSpMetadataCheck(
         desc = [etree.tostring(ent).decode() for ent in sign if sign]
 
         _data = dict(
-            test_id="",
             description="".join(desc)[:128] or "",
             references=["TR pag. 19"],
             method=_method,
@@ -280,6 +285,7 @@ class SpidSpMetadataCheck(
         self._assertTrue(
             (len(sign) > 0),
             "The Signature element MUST be present",
+            test_id=["1.7.0"],
             **_data,
         )
 
@@ -287,22 +293,26 @@ class SpidSpMetadataCheck(
             self.handle_result(
                 "error",
                 "The SignatureMethod element MUST be present",
+                test_id=["1.7.1"],
                 **_data,
             )
             self.handle_result(
                 "error",
                 "The Algorithm attribute MUST be present in SignatureMethod element",
+                test_id=["1.7.2"],
                 **_data,
             )
             self.handle_result(
                 "error",
                 "The signature algorithm MUST be valid",
                 description=f"Must be one of [{', '.join(constants.ALLOWED_XMLDSIG_ALGS)}]",
+                test_id=["1.7.3"],
                 **_data,
             )
             self.handle_result(
                 "error",
                 "The Algorithm attribute MUST be present in DigestMethod element",
+                test_id=["1.7.4"],
                 **_data,
             )
 
@@ -311,6 +321,7 @@ class SpidSpMetadataCheck(
                 "error",
                 "The digest algorithm MUST be valid",
                 description=f"Must be one of [{', '.join(constants.ALLOWED_DGST_ALGS)}]",
+                test_id=["1.7.5"],
                 **_data,
             )
         else:
@@ -320,6 +331,7 @@ class SpidSpMetadataCheck(
             self._assertTrue(
                 (len(method) > 0),
                 "The SignatureMethod element MUST be present",
+                test_id=["1.7.1"],
                 **_data,
             )
 
@@ -335,6 +347,7 @@ class SpidSpMetadataCheck(
                 alg in constants.ALLOWED_XMLDSIG_ALGS,
                 "The signature algorithm MUST be valid",
                 description=f"One of {(', '.join(constants.ALLOWED_XMLDSIG_ALGS))}",
+                test_id=["1.7.3"],
                 **_data,
             )
 
@@ -342,12 +355,14 @@ class SpidSpMetadataCheck(
             self._assertTrue(
                 (len(method) == 1),
                 "The DigestMethod element MUST be present",
+                test_id=["1.7.4"],
                 **_data,
             )
 
             self._assertTrue(
                 ("Algorithm" in method[0].attrib),
                 "The Algorithm attribute MUST be present in DigestMethod element",
+                test_id=["1.7.5"],
                 **_data,
             )
 
@@ -356,6 +371,7 @@ class SpidSpMetadataCheck(
                 alg in constants.ALLOWED_DGST_ALGS,
                 "The digest algorithm MUST be valid",
                 description=f"One of {(', '.join(constants.ALLOWED_DGST_ALGS))}",
+                test_id=["1.7.6"],
                 **_data,
             )
 
@@ -369,8 +385,10 @@ class SpidSpMetadataCheck(
         )
         _data = dict(references=["TR pag. 19"], method=_method)
         self._assertTrue(
-            len(kds) >= 1, "At least one signing KeyDescriptor MUST be present",
-            test_id = ['1.4.0'], **_data
+            len(kds) >= 1,
+            "At least one signing KeyDescriptor MUST be present",
+            test_id=["1.4.0"],
+            **_data,
         )
 
         desc = [etree.tostring(ent).decode() for ent in kds if kds]
@@ -381,7 +399,8 @@ class SpidSpMetadataCheck(
                 len(certs) >= 1,
                 "At least one signing x509 MUST be present",
                 description="".join(desc)[:128] or "",
-                test_id = ['1.4.1'], **_data,
+                test_id=["1.4.1"],
+                **_data,
             )
 
         kds = self.doc.xpath(
@@ -393,7 +412,8 @@ class SpidSpMetadataCheck(
             self._assertTrue(
                 len(certs) >= 1,
                 "At least one encryption x509 MUST be present",
-                test_id = ['1.4.2'], **_data,
+                test_id=["1.4.2"],
+                **_data,
             )
 
         return self.is_ok(_method)
@@ -406,7 +426,6 @@ class SpidSpMetadataCheck(
         _method = f"{self.__class__.__name__}.test_SingleLogoutService"
         desc = [etree.tostring(ent).decode() for ent in slos if slos]
         _data = dict(
-            test_id="",
             references=["AV n. 3"],
             method=_method,
             description="".join(desc)[:128],
@@ -415,6 +434,7 @@ class SpidSpMetadataCheck(
         self._assertTrue(
             len(slos) >= 1,
             "One or more SingleLogoutService elements MUST be present",
+            test_id=["1.8.0"],
             **_data,
         )
 
@@ -423,6 +443,7 @@ class SpidSpMetadataCheck(
                 self._assertTrue(
                     (attr in slo.attrib),
                     f"The {attr} attribute in SingleLogoutService element MUST be present",
+                    test_id=["1.8.1", "1.8.4"],
                     **_data,
                 )
 
@@ -430,6 +451,7 @@ class SpidSpMetadataCheck(
                 self._assertTrue(
                     _attr,
                     f"The {attr} attribute in SingleLogoutService element MUST have a value",
+                    test_id=["1.8.2", "1.8.5"],
                     **_data,
                 )
 
@@ -442,6 +464,7 @@ class SpidSpMetadataCheck(
                             )
                             % (attr, ", ".join(constants.ALLOWED_BINDINGS))  # noqa
                         ),
+                        test_id=["1.8.3"],
                         **_data,  # noqa
                     )
                 if attr == "Location" and self.production:
@@ -450,6 +473,7 @@ class SpidSpMetadataCheck(
                         f"The {attr} attribute "
                         "in SingleLogoutService element "
                         "MUST be a valid HTTPS URL",
+                        test_id=["1.8.6"],
                         **_data,
                     )
                     self._assertHttpUrlWithoutPort(
@@ -484,7 +508,8 @@ class SpidSpMetadataCheck(
         self._assertTrue(
             len(acss) >= 1,
             "At least one AssertionConsumerService MUST be present",
-            test_id = ['1.1.0'], **_data,
+            test_id=["1.1.0"],
+            **_data,
         )
 
         for acs in acss:
@@ -492,14 +517,16 @@ class SpidSpMetadataCheck(
                 self._assertTrue(
                     (attr in acs.attrib),
                     f"The {attr} attribute MUST be present",
-                    test_id = ['1.1.1', '1.1.3', '1.1.5'], **_data,
+                    test_id=["1.1.1", "1.1.3", "1.1.5"],
+                    **_data,
                 )
                 _attr = acs.get(attr)
                 if attr == "index":
                     self._assertTrue(
                         int(_attr) >= 0,
                         f"The {attr} attribute MUST be >= 0",
-                        test_id = ['1.1.2'], **_data,
+                        test_id=["1.1.2"],
+                        **_data,
                     )
                 elif attr == "Binding":
                     self._assertTrue(
@@ -508,18 +535,21 @@ class SpidSpMetadataCheck(
                             ("The %s attribute MUST be one of [%s]")
                             % (attr, ", ".join(constants.ALLOWED_BINDINGS))
                         ),
-                        test_id = ['1.1.4'], **_data,
+                        test_id=["1.1.4"],
+                        **_data,
                     )
                 elif attr == "Location" and self.production:
                     self._assertIsValidHttpsUrl(
                         _attr,
                         f"The {attr} attribute MUST be a valid HTTPS url",
-                        test_id = ['1.1.6'], **_data,
+                        test_id=["1.1.6"],
+                        **_data,
                     )
                     self._assertHttpUrlWithoutPort(
                         _attr,
                         'The entityID attribute MUST not contain any custom tcp ports, eg: ":8000"',
-                        test_id = ['1.1.6'], **_data,
+                        test_id=["1.1.6"],
+                        **_data,
                     )
                 else:
                     pass
@@ -543,7 +573,8 @@ class SpidSpMetadataCheck(
         self._assertTrue(
             (len(acss) == 1),
             "Only one default AssertionConsumerService MUST be present",
-            test_id = ['1.1.7'], **_data,
+            test_id=["1.1.7"],
+            **_data,
         )
 
         acss = self.doc.xpath(
@@ -555,7 +586,8 @@ class SpidSpMetadataCheck(
         self._assertTrue(
             (len(acss) == 1),
             "Must be present the default AssertionConsumerService with index = 0",
-            test_id = ['1.1.8'], **_data,
+            test_id=["1.1.8"],
+            **_data,
         )
         return self.is_ok(_method)
 
@@ -575,7 +607,8 @@ class SpidSpMetadataCheck(
         self._assertTrue(
             len(acss) >= 1,
             "One or more AttributeConsumingService elements MUST be present",
-            test_id = ['1.2.0'], **_data,
+            test_id=["1.2.0"],
+            **_data,
         )
         return self.is_ok(_method)
 
@@ -596,41 +629,52 @@ class SpidSpMetadataCheck(
             self._assertTrue(
                 ("index" in acs.attrib),
                 "The index attribute in AttributeConsumigService element MUST be present",
-                description=_desc, test_id = ['1.2.1'], **_data,
+                description=_desc,
+                test_id=["1.2.1"],
+                **_data,
             )
 
             idx = int(acs.get("index"))
             self._assertTrue(
                 idx >= 0,
                 "The index attribute in AttributeConsumigService element MUST be >= 0",
-                description=_desc, test_id = ['1.2.2'], **_data,
+                description=_desc,
+                test_id=["1.2.2"],
+                **_data,
             )
 
             sn = acs.xpath("./ServiceName")
             self._assertTrue(
                 (len(sn) > 0),
                 "The ServiceName element MUST be present",
-                description=_desc, test_id = ['1.2.3'], **_data,
+                description=_desc,
+                test_id=["1.2.3"],
+                **_data,
             )
             for sns in sn:
                 self._assertTrue(
                     sns.text,
                     "The ServiceName element MUST have a value",
-                    description=_desc, test_id = ['1.2.4'], **_data,
+                    description=_desc,
+                    test_id=["1.2.4"],
+                    **_data,
                 )
 
             ras = acs.xpath("./RequestedAttribute")
             self._assertTrue(
                 len(ras) >= 1,
                 "One or more RequestedAttribute elements MUST be present",
-                description=_desc, test_id = ['1.2.5'], **_data,
+                description=_desc,
+                test_id=["1.2.5"],
+                **_data,
             )
 
             for ra in ras:
                 self._assertTrue(
                     ("Name" in ra.attrib),
                     "The Name attribute in RequestedAttribute element "
-                    "MUST be present", test_id = ['1.2.6'],
+                    "MUST be present",
+                    test_id=["1.2.6"],
                     description=_desc,
                     **_data,
                 )
@@ -639,7 +683,8 @@ class SpidSpMetadataCheck(
                     ra.get("Name") in allowed_attributes,
                     f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element MUST be valid',
                     description=f"one of [{', '.join(allowed_attributes)}]",
-                    **_data, test_id = ['1.2.7']
+                    **_data,
+                    test_id=["1.2.7"],
                 )
 
             al = acs.xpath("RequestedAttribute/@Name")
@@ -660,8 +705,10 @@ class SpidSpMetadataCheck(
         _data = dict(description=desc, references=["TR pag. 20"], method=_method)
 
         self._assertTrue(
-            (len(orgs) == 1), "Only one Organization element can be present",
-            test_id = ['1.5.0'], **_data
+            (len(orgs) == 1),
+            "Only one Organization element can be present",
+            test_id=["1.5.0"],
+            **_data,
         )
 
         enames = ["OrganizationName", "OrganizationDisplayName", "OrganizationURL"]
@@ -674,7 +721,8 @@ class SpidSpMetadataCheck(
                 self._assertTrue(
                     len(elements) > 0,
                     f"One or more {ename} elements MUST be present",
-                    test_id = ['1.5.1', '1.5.4'], **_data,
+                    test_id=["1.5.1", "1.5.4"],
+                    **_data,
                 )
 
                 for element in elements:
@@ -684,7 +732,8 @@ class SpidSpMetadataCheck(
                             in element.attrib
                         ),  # noqa
                         f"The lang attribute in {ename} element MUST be present",  # noqa
-                        test_id = ['1.5.2', '1.5.5', '1.5.8'], **_data,
+                        test_id=["1.5.2", "1.5.5", "1.5.8"],
+                        **_data,
                     )
 
                     lang = element.attrib.items()[0][1]
@@ -696,7 +745,8 @@ class SpidSpMetadataCheck(
                     self._assertTrue(
                         element.text,
                         f"The {ename} element MUST have a value",
-                        test_id = ['1.5.3', '1.5.7', '1.5.9'], **_data,
+                        test_id=["1.5.3", "1.5.7", "1.5.9"],
+                        **_data,
                     )
 
                     if ename == "OrganizationURL" and self.production:
@@ -709,7 +759,8 @@ class SpidSpMetadataCheck(
                         self._assertIsValidHttpUrl(
                             OrganizationURLvalue,
                             f"The {ename} element MUST be a valid URL",
-                            test_id = ['1.5.10'], **_data,
+                            test_id=["1.5.10"],
+                            **_data,
                         )
 
             # lang counter check
@@ -721,7 +772,8 @@ class SpidSpMetadataCheck(
                         "The elements OrganizationName, OrganizationDisplayName and OrganizationURL "
                         "MUST have the same number of lang attributes"
                     ),  # noqa
-                    test_id = ['1.5.5', '1.5.8'], **_data,
+                    test_id=["1.5.5", "1.5.8"],
+                    **_data,
                 )
 
             self._assertTrue(

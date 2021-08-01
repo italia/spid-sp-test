@@ -101,12 +101,12 @@ class AbstractSpidCheck(object):
         level: str = "info",
         **kwargs,
     ):
-        if level == 'warning':
+        if level == "warning":
             # overwrite to info is warning doens't happen.
             if check:
                 level = "info"
         elif not check:
-            level = 'error'
+            level = "error"
         self.handle_result(level, error_message, description, traceback, **kwargs)
 
     def _assertTrue(self, *args, **kwargs):

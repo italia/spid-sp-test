@@ -707,11 +707,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             )
         # Not shure that this must be checked :)
         # elif len(subj) < 1:
-            # self._assertTrue(
-                # False,
-                # "The Subject element MUST be present",
-                # **_data,
-            # )
+        # self._assertTrue(
+        # False,
+        # "The Subject element MUST be present",
+        # **_data,
+        # )
         elif len(subj) == 1:
             subj = subj[0]
             name_id = subj.xpath("./NameID")
@@ -903,12 +903,12 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             )
         # Not shure that this must be checked :)
         # elif len(e) < 1:
-            # self._assertTrue(
-                # e,
-                # "The Conditions element MUST be present",
-                # **_data,
-            # )
-            # return self.is_ok(_method)
+        # self._assertTrue(
+        # e,
+        # "The Conditions element MUST be present",
+        # **_data,
+        # )
+        # return self.is_ok(_method)
 
         elif len(e) == 1:
             e = e[0]

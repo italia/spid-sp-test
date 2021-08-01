@@ -120,7 +120,6 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
         _method = f"{self.__class__.__name__}.test_SPSSODescriptor_extra"
         _data = dict(
-            test_id="",
             references=[],
             method=_method,
         )
@@ -130,6 +129,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 (attr in spsso[0].attrib),
                 f"The {attr} attribute MUST be present",
                 description=spsso[0].attrib,
+                test_id=["1.6.1", "1.6.7"],
                 **_data,
             )
 
@@ -144,13 +144,18 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     f"The {attr} attribute MUST be "
                     "urn:oasis:names:tc:SAML:2.0:protocol",
                     description=a,
+                    test_id=["1.6.6"],
                     **_data,
                 )
 
             if attr == "WantAssertionsSigned":
                 a = spsso[0].get(attr)
                 self._assertTrue(
-                    a, f"The {attr} attribute MUST have a value", description=a, **_data
+                    a,
+                    f"The {attr} attribute MUST have a value",
+                    description=a,
+                    **_data,
+                    test_id=["1.6.8"],
                 )
 
                 if a:
@@ -158,6 +163,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                         a.lower() == "true",
                         f"The {attr} attribute MUST be true",
                         description=a,
+                        test_id=["1.6.9"],
                         **_data,
                     )
         return self.is_ok(_method)

@@ -3,7 +3,6 @@ class SpidSpMetadataCheckPrivate(object):
         self.doc.xpath("//ContactPerson")
         _method = f"{self.__class__.__name__}.test_Contacts_Priv"
         _data = dict(
-            test_id="",
             references=[],
             method=_method,
         )
@@ -13,7 +12,7 @@ class SpidSpMetadataCheckPrivate(object):
             ipacode,
             "The IPACode element MUST NOT be present",
             description=ipacode,
-            **_data,
+            test_id = ['1.12.0'], **_data,
         )
 
         exts = self.doc.xpath("//ContactPerson/Extensions/CessionarioCommittente")
@@ -21,7 +20,7 @@ class SpidSpMetadataCheckPrivate(object):
             (len(exts) == 1),
             ("The CessionarioCommittente element MUST be present"),
             description=exts,
-            **_data,
+            test_id = ['1.14.4'], **_data,
         )
 
         if exts:
