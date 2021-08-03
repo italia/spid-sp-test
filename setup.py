@@ -10,7 +10,7 @@ _pkg_name = 'spid_sp_test'
 
 setup(
     name=_pkg_name,
-    version='0.9.11',
+    version='0.9.12',
     description="SAML2 SPID Service Provider validation tool that can be run from the command line",
     long_description=readme(),
     long_description_content_type='text/markdown',

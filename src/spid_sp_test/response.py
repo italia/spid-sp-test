@@ -110,19 +110,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.category = "response"
 
         self.template_path = kwargs.get("template_path", self.template_path)
-
         self.metadata_etree = kwargs.get("metadata_etree")
-        self.requested_attrs_raw = self.metadata_etree.xpath(
-            "//EntityDescriptor/SPSSODescriptor"
-            "/AttributeConsumingService/RequestedAttribute"
-        )
-        self.requested_attrs = [
-            i.attrib["Name"] for i in self.requested_attrs_raw
-        ]
-
-        self.acs_url = self.metadata_etree.xpath(
-            "//SPSSODescriptor/AssertionConsumerService[@index=0]"
-        )[0].attrib["Location"]
 
         self.authn_request_url = kwargs.get("authn_request_url")
         self.authn_request_data = {}
@@ -142,16 +130,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             self.tests.update(settings.RESPONSE_TESTS)
         self.test_names = kwargs.get("test_names") or self.tests.keys()
 
-        # attributes
-        if kwargs.get("attr_json"):
-            with open(kwargs["attr_json"], "r") as json_data:
-                self.user_attrs = json.loads(json_data.read())
-        else:
-            # returns ONLY the requested attributes shown in the metadata
-            # otherwise it returns all the attributes (for test purpose)
-            self.user_attrs = {
-                i:settings.ATTRIBUTES[i] for i in self.requested_attrs
-            } or settings.ATTRIBUTES
+        self.attr_json = kwargs.get("attr_json")
 
         self.html_path = kwargs.get("html_path")
         self.no_send_response = kwargs.get("no_send_response")
@@ -170,6 +149,26 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         if _acr:
             return _acr[0].text
 
+    def load_user_attributes(self):
+        self.requested_attrs_raw = self.metadata_etree.xpath(
+            f"//SPSSODescriptor/AttributeConsumingService[@index={self.acs_index}]"
+            "/RequestedAttribute"
+        )
+        self.requested_attrs = [
+            i.attrib["Name"] for i in self.requested_attrs_raw
+        ]
+
+        # attributes
+        if self.attr_json:
+            with open(self.attr_json, "r") as json_data:
+                self.user_attrs = json.loads(json_data.read())
+        else:
+            # returns ONLY the requested attributes shown in the metadata
+            # otherwise it returns all the attributes (for test purpose)
+            self.user_attrs = {
+                i:settings.ATTRIBUTES[i] for i in self.requested_attrs
+            } or settings.ATTRIBUTES
+
     def do_authnrequest(self):
         self.authn_request_data = get_authn_request(
             self.authn_request_url,
@@ -186,19 +185,22 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         self.issuer = self.kwargs.get("issuer", SAML2_IDP_CONFIG["entityid"])
         self.authnreq_attrs = self.authnreq_etree.xpath("/AuthnRequest")[0].attrib
-
         self.authnreq_issuer = self.authnreq_etree.xpath("/AuthnRequest/Issuer")[
             0
         ].attrib["NameQualifier"]
+
         now = datetime.datetime.utcnow()
 
+        self.acs_index = self.authnreq_attrs.get('AttributeConsumingServiceIndex')
+        self.acs_url = self.metadata_etree.xpath(
+            f"//SPSSODescriptor/AssertionConsumerService[@index={self.acs_index}]"
+        )[0].attrib["Location"]
         self.acr = self.get_acr()
 
         if self.acr in NOSESINDEX_ACRS:
             _session_index = None
         else:
             _session_index = saml_rnd_id()
-
         self.response_attrs = {
             "ResponseID": saml_rnd_id(),
             "AuthnRequestID": self.authnreq_attrs["ID"],
@@ -355,6 +357,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
     def test_profile_spid_sp(self):
         for i in self.test_names:
             self.do_authnrequest()
+            self.load_user_attributes()
             response_obj = self.load_test(test_name=i)
             test_display_desc = response_obj.conf["description"]
             msg = f'Response [{i}] "{test_display_desc}"'
