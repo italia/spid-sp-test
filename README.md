@@ -19,6 +19,7 @@ spid-sp-test can:
 - test a SAML2 SPID/CIE Metadata file or http url
 - test a SAML2 SPID/CIE AuthnRequest file or or http url
 - test ACS behaviour, how a SP replies to a SAML2 Response
+- test many kinds of SP, see [Profiles](#profiles)
 - dump the responses sent to an ACS and the HTML of the SP response
 - handle Attributes to send in Responses or test configurations of the Responses via json configuration files
 - configure response template with Jinja2
@@ -31,7 +32,25 @@ Generally it's:
 - extremely faster in execution time than spid-saml-check
 - extremely easy to setup
 
+
 ![example](gallery/example2.gif)
+
+Profiles
+--------
+
+Each profile loads a set of test. Use `--profile $profile-name`
+ with one of the following profile name:
+
+- **saml2-sp**: Pure SAML2 SP with some best practises
+- **spid-sp-public**: Public Spid SP
+- **spid-sp-private**: Private Spid SP
+- **spid-sp-ag-public-full**: Public Spid SP Aggregatore Full
+- **spid-sp-ag-public-lite**: Public Spid SP Aggregatore Lite
+- **spid-sp-op-public-full**: Public Spid SP Gestore Full
+- **spid-sp-op-public-lite**: Public Spid SP Gestore Lite
+- **cie-sp-public**: Public CIE SP
+- **cie-sp-private**: Private CIE SP
+
 
 Setup
 -----
