@@ -174,15 +174,26 @@ class SpidSpMetadataCheck(
         _method = f"{self.__class__.__name__}.test_SPSSODescriptor_SPID"
         _data = dict(references=["TR pag. 20"], method=_method, description=desc)
 
+        if spsso:
+            _spsso = spsso[0]
+        else:
+            self._assertTrue(
+                False,
+                f"SPSSODescriptor element not found",
+                test_id=[""],
+                **_data,
+            )
+            return self.is_ok(_method)
+
         for attr in ["protocolSupportEnumeration", "AuthnRequestsSigned"]:
             self._assertTrue(
-                (attr in spsso[0].attrib),
+                (attr in _spsso.attrib),
                 f"The {attr} attribute MUST be present",
                 test_id=["1.6.1", "1.6.3"],
                 **_data,
             )
 
-            a = spsso[0].get(attr)
+            a = _spsso.get(attr)
             self._assertTrue(
                 a,
                 f"The {attr} attribute MUST have a value",
@@ -304,19 +315,20 @@ class SpidSpMetadataCheck(
             )
             self.handle_result(
                 "error",
-                "The signature algorithm MUST be valid",
-                description=f"Must be one of [{', '.join(constants.ALLOWED_XMLDSIG_ALGS)}]",
-                test_id=["1.7.3"],
-                **_data,
-            )
-            self.handle_result(
-                "error",
                 "The Algorithm attribute MUST be present in DigestMethod element",
                 test_id=["1.7.4"],
                 **_data,
             )
 
             _data.pop("description")
+            self.handle_result(
+                "error",
+                "The signature algorithm MUST be valid",
+                description=f"Must be one of [{', '.join(constants.ALLOWED_XMLDSIG_ALGS)}]",
+                test_id=["1.7.3"],
+                **_data,
+            )
+
             self.handle_result(
                 "error",
                 "The digest algorithm MUST be valid",
