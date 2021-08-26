@@ -124,6 +124,17 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
             method=_method,
         )
 
+        if spsso:
+            _spsso = spsso[0]
+        else:
+            self._assertTrue(
+                False,
+                f"SPSSODescriptor element not found",
+                test_id=[""],
+                **_data,
+            )
+            return self.is_ok(_method)
+
         for attr in ["protocolSupportEnumeration", "WantAssertionsSigned"]:
             self._assertTrue(
                 (attr in spsso[0].attrib),
