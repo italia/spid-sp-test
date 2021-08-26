@@ -1,5 +1,4 @@
-spid-sp-test
-------------
+# spid-sp-test
 
 ![CI build](https://github.com/italia/spid-sp-test/workflows/spid-sp-test/badge.svg)
 ![License](https://img.shields.io/badge/license-EUPL%201.2-blue)
@@ -10,9 +9,7 @@ spid-sp-test
 spid-sp-test is a SAML2 SPID/CIE Service Provider validation tool that can be executed from the command line.
 This tool was born by separating the test library already present in [spid-saml-check](https://github.com/italia/spid-saml-check).
 
-
-Features
---------
+## Features
 
 spid-sp-test can:
 
@@ -32,14 +29,18 @@ Generally it's:
 - extremely faster in execution time than spid-saml-check
 - extremely easy to setup
 
+### Check metadata
 
-![example](gallery/example2.gif)
+![Command line with metadata checking](gallery/metadata.gif)
 
-Profiles
---------
+### Authentication requests, JSON output
+
+![Command line with more flag demoed](gallery/more-flags.gif)
+
+## Profiles
 
 Each profile loads a set of test. Use `--profile $profile-name`
- with one of the following profile name:
+with one of the following profile name:
 
 - **saml2-sp**: Pure SAML2 SP with some best practises
 - **spid-sp-public**: Public Spid SP
@@ -51,9 +52,7 @@ Each profile loads a set of test. Use `--profile $profile-name`
 - **cie-sp-public**: Public CIE SP
 - **cie-sp-private**: Private CIE SP
 
-
-Setup
------
+## Setup
 
 ````
 apt install libxml2-dev libxmlsec1-dev libxmlsec1-openssl xmlsec1 python3-pip python3-virtualenv
@@ -63,8 +62,7 @@ source env/bin/activate
 pip install spid-sp-test --upgrade --no-cache
 ````
 
-Overview
---------
+## Overview
 
 spid-sp-test can test a SP metadata file, you just have to give the Metadata URL, if http/http or file, eg: `file://path/to/metadata.xml`.
 At the same way it can test an Authentication Request.
@@ -86,8 +84,7 @@ To get spid-sp-test in a CI you have to:
 An example of CI [is here](https://github.com/italia/spid-django/blob/6baa2fe54a78c06193ffc5cd3f5c29a43b499232/.github/workflows/python-app.yml#L64)
 
 
-Examples
---------
+## Examples
 
 Run `spid_sp_test -h` for inline documentation.
 
@@ -141,8 +138,7 @@ spid_sp_test --metadata-url file://tests/metadata/spid-django-other.xml --authn-
 
 ````
 
-Common usages
--------------
+## Common usages
 
 Test a **Shibboleth SP with a SAMLDS (DiscoveryService)**. In this example `target` points to the target service and entityID is the selected IdP.
 This example works also a Shibboleth IdP-SP proxy/gateway.
@@ -158,8 +154,7 @@ spid_sp_test --metadata-url https://localhost:10000/spidSaml2/metadata --authn-u
 ````
 
 
-Examples with Docker
---------------------
+## Examples with Docker
 
 Before starting you have to obtain the `italia/spid-sp-test` image. You can pull it from Docker Hub
 
@@ -177,8 +172,7 @@ The container working directory is set to `/spid` therefore, local files should 
         -v "$(pwd)/tests/metadata:/spid/dumps:rw" \
         italia/spid-sp-test:$SSTVER --metadata-url file://mymetadata/spid-django-other.xml
 
-Test Responses and html dumps
------------------------------
+## Test Responses and html dumps
 
 By enabling the response dump with the `--response-html-dumps HTML_PATH` option, you will get N html files (page of your SP) as follows:
 
@@ -189,8 +183,7 @@ By enabling the response dump with the `--response-html-dumps HTML_PATH` option,
 Here [an example](README.response-example.md) of **1_True.html**, where `1` is the test name and `True` is the status.
 
 
-Extending tests
----------------
+## Extending tests
 
 spid-sp-test offers the possibility to extend and configure new response tests to be performed. The user can:
 
@@ -222,8 +215,7 @@ use which ones was statically defined in it.
 
 Finally you have batteries included and some options as well, at your taste.
 
-Unit tests
-----------
+## Unit tests
 
 That's for developers.
 
@@ -250,16 +242,13 @@ docker run -it --entrypoint /bin/bash italia/spid-sp-test-devenv
 docker run -it -v $(pwd):/tmp/src --entrypoint /bin/bash italia/spid-sp-test-devenv
 ````
 
-Authors
--------
+## Authors
 
 - [Giuseppe De Marco](https://github.com/peppelinux)
 - [Paolo Smiraglia](https://github.com/psmiraglia)
 - [Michele D'Amico](https://github.com/damikael)
 
-
-References
-----------
+## References
 
 TLS/SSL tests
 
