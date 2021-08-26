@@ -129,7 +129,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
         else:
             self._assertTrue(
                 False,
-                f"SPSSODescriptor element not found",
+                "SPSSODescriptor element not found",
                 test_id=[""],
                 **_data,
             )
@@ -137,7 +137,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
         for attr in ["protocolSupportEnumeration", "WantAssertionsSigned"]:
             self._assertTrue(
-                (attr in spsso[0].attrib),
+                (attr in _spsso.attrib),
                 f"The {attr} attribute MUST be present",
                 description=spsso[0].attrib,
                 test_id=["1.6.1", "1.6.7"],
@@ -145,7 +145,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
             )
 
             if attr == "protocolSupportEnumeration":
-                a = spsso[0].get(attr)
+                a = _spsso.get(attr)
                 self._assertTrue(
                     a, f"The {attr} attribute MUST have a value", description=a, **_data
                 )
@@ -160,7 +160,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 )
 
             if attr == "WantAssertionsSigned":
-                a = spsso[0].get(attr)
+                a = _spsso.get(attr)
                 self._assertTrue(
                     a,
                     f"The {attr} attribute MUST have a value",
