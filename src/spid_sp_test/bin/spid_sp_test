@@ -4,11 +4,11 @@ import json
 import logging
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
 
 from saml2.metadata import entity_descriptor
 from saml2.server import Server
-from spid_sp_test import BASE_DIR
+from spid_sp_test import BASE_DIR, __version__
 from spid_sp_test.metadata import SpidSpMetadataCheck
 from spid_sp_test.metadata_extra import SpidSpMetadataCheckExtra
 from spid_sp_test.authn_request import SpidSpAuthnReqCheck
@@ -34,7 +34,7 @@ def selective_run(obj, profile, meth_list):
 
 if __name__ == '__main__':
     _desc = (f'{__file__} -h for help')
-    _epilog = f"""examples:
+    _epilog = f"""spid_sp_test {__version__} usage examples:
         {__file__} --metadata-url file://metadata.xml
         {__file__} --metadata-url http://localhost:8000/spid/metadata --extra
         {__file__} --metadata-url http://localhost:8000/spid/metadata -l test_Organization test_Signature
@@ -255,12 +255,22 @@ if __name__ == '__main__':
         help='print out the default user attributes used in automatic responses'
     )
 
+    parser.add_argument(
+        '-v', '--version',
+        required=False, action="store_true",
+        help='print out spid-sp-test version'
+    )
+
+
     args = parser.parse_args()
     logging.basicConfig(level=getattr(logging, args.debug))
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         sys.exit(1)
+    elif args.version:
+        print(__version__)
+        sys.exit(0)
 
     profile = f"test_profile_{args.profile.replace('-', '_')}"
 
