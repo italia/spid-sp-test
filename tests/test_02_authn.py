@@ -1,6 +1,6 @@
 import os
 
-BASE_CMD = "python3 src/spid_sp_test/spid_sp_test"
+BASE_CMD = "python3 src/spid_sp_test/bin/spid_sp_test"
 BASE_METADATA = "spid-django-other.xml"
 CMD = BASE_CMD + " --extra --metadata-url file://tests/metadata/{} --authn-url file://tests/authn/{} --debug ERROR"
 

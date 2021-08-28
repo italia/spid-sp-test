@@ -1,3 +1,5 @@
+import re
+
 from glob import glob
 from setuptools import setup
 
@@ -8,10 +10,14 @@ def readme():
 _src_folder = 'src'
 _pkg_name = 'spid_sp_test'
 
+with open(f'src/{_pkg_name}/__init__.py', 'r') as fd:
+    VERSION = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
 setup(
     name=_pkg_name,
-    version='0.9.13',
-    description="SAML2 SPID Service Provider validation tool that can be run from the command line",
+    version=VERSION,
+    description="SAML2 SPID/CIE Service Provider validation tool that can be run from the command line",
     long_description=readme(),
     long_description_content_type='text/markdown',
     classifiers=['Development Status :: 5 - Production/Stable',
@@ -21,7 +27,7 @@ setup(
     author='Giuseppe De Marco',
     author_email='giuseppe.demarco@tamdigitale.governo.it',
     license='License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)',
-    scripts=['src/spid_sp_test/spid_sp_test'],
+    scripts=['src/spid_sp_test/bin/spid_sp_test'],
     packages=[f"{_pkg_name}"],
     package_dir={f"{_pkg_name}": f"{_src_folder}/{_pkg_name}"},
 

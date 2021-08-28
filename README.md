@@ -37,6 +37,10 @@ Generally it's:
 
 ![Command line with more flag demoed](gallery/more-flags.gif)
 
+### Full test set with metadata, authn request and responses
+
+![Command line with test responses](gallery/responses.gif)
+
 ## Profiles
 
 Each profile loads a set of test. Use `--profile $profile-name`

@@ -179,7 +179,7 @@ class SpidSpMetadataCheck(
         else:
             self._assertTrue(
                 False,
-                f"SPSSODescriptor element not found",
+                "SPSSODescriptor element not found",
                 test_id=[""],
                 **_data,
             )
