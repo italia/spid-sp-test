@@ -1,7 +1,7 @@
 import os
 
 DIR='metadata'
-CMD = "python3 src/spid_sp_test/spid_sp_test --metadata-url file://tests/{} --extra --debug ERROR"
+CMD = "python3 src/spid_sp_test/bin/spid_sp_test --metadata-url file://tests/{} --extra --debug ERROR"
 
 
 def run_cmd(mfname) -> int:
