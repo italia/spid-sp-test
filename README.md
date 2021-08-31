@@ -154,7 +154,7 @@ spid_sp_test --metadata-url https://sp.testunical.it/pymetadata_signed.xml --aut
 Test Satosa-Saml2Spid using its authn plugin and a SP that supports idp hinting
 
 ````
-spid_sp_test --metadata-url https://localhost:10000/spidSaml2/metadata --authn-url "http://sp1.testunical.it:8000/saml2/login/?idp=https://localhost:10000/Saml2IDP/metadata&next=/saml2/echo_attributes&idphint=https%253A%252F%252Flocalhost%253A8080" -ap spid_sp_test.plugins.authn_request.SatosaSaml2Spid --extra -tr
+spid_sp_test --metadata-url https://localhost:10000/spidSaml2/metadata --authn-url "http://localhost:8000/saml2/login/?idp=https://localhost:10000/Saml2IDP/metadata&next=/saml2/echo_attributes&idphint=https%253A%252F%252Flocalhost%253A8080" -ap spid_sp_test.plugins.authn_request.SatosaSaml2Spid --extra -tr
 ````
 
 
