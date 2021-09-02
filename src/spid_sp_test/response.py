@@ -52,6 +52,7 @@ class SpidSpResponse(object):
         attributes={},
         template_path="./templates",
         status_codes=None,
+        **kwargs
     ):
 
         try:
@@ -74,7 +75,9 @@ class SpidSpResponse(object):
             autoescape=select_autoescape(["xml"]),
         )
         self.template_name = self.conf.get("path", "base.xml")
-        self.private_key = self.conf.get("sign_credentials", {}).get("privateKey")
+        self.private_key = self.conf.get("sign_credentials", {}).get("privateKey") or kwargs.get('private_key')
+        # not used here ... so, commented.
+        # self.public_cert = self.conf.get("sign_credentials", {}).get("certificate")  or kwargs.get('public_cert')
 
     def render_attributes(self, attributes={}):
         """
@@ -119,7 +122,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.crypto_backend = CryptoBackendXmlSec1(
             xmlsec_binary=kwargs.get("xmlsec_binary") or get_xmlsec1_bin()
         )
-        self.private_key_fpath = SAML2_IDP_CONFIG["key_file"]
+        self.private_key_fpath = kwargs.get("key_file") or SAML2_IDP_CONFIG["key_file"]
+        # not used here ... so, commented.
+        # self.public_cert_fpath = kwargs.get("cert_file") or SAML2_IDP_CONFIG["cert_file"]
 
         # tests
         self.tests = {}
@@ -227,13 +232,16 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         }
         self.relay_state = self.kwargs.get("relay_state")
 
-    def sign(self, xmlstr, assertion=True, response=True, key_file=None):
+    def sign(self, xmlstr, assertion=True, response=True, key_file=None, cert_file=None):
         """
         Sign an XML statement.
         """
         signature_node = Template(settings.SIGNATURE_TMPL)
         key_file = key_file or self.private_key_fpath
-        com_list = [self.crypto_backend.xmlsec, "--sign", "--privkey-pem", key_file]
+        _certs = f"{key_file},{cert_file}" if cert_file else f"{key_file}"
+
+        com_list = [self.crypto_backend.xmlsec, "--sign", "--privkey-pem", _certs]
+        logger.debug(' '.join(com_list))
 
         asser_placeholder = "<!-- Assertion Signature here -->"
         if assertion and asser_placeholder in xmlstr:
@@ -363,7 +371,10 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             msg = f'Response [{i}] "{test_display_desc}"'
             xmlstr = response_obj.render(user_attrs=self.user_attrs)
             try:
-                result = self.sign(xmlstr, key_file=response_obj.private_key)
+                result = self.sign(
+                    xmlstr,
+                    key_file=response_obj.private_key,
+                    cert_file=response_obj.response_attrs.get("X509Certificate"))
             except XmlsecError as e:
                 logger.error(f"{msg}: Exception during xmlsec signature ({e})")
                 logger.debug("{xmlstr}")

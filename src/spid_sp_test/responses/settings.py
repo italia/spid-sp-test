@@ -78,6 +78,13 @@ SIGNATURE_TMPL = """
             </ds:Reference>
         </ds:SignedInfo>
         <ds:SignatureValue />
+
+        <ds:KeyInfo>
+            <ds:X509Data>
+                <ds:X509Certificate />
+            </ds:X509Data>
+        </ds:KeyInfo>
+
     </ds:Signature>
 """
 
@@ -127,6 +134,19 @@ RESPONSE_TESTS = {
         "status_codes": HTTP_STATUS_ERROR_CODES,
         "path": "base.xml",
         "response": {},
+        "sign_credentials": {
+            "certificate": f"{BASE_DIR}/certificates/test_public.cert",
+            "privateKey": f"{BASE_DIR}/certificates/test_private.key",
+        },
+    },
+    "5": {
+        "name": "05. Response - Firma non valida con presenza x509 alternativo",
+        "description": "Response firmata con certificato diverso da quello registrato su SP, con x509 presente nella Response. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
         "sign_credentials": {
             "certificate": f"{BASE_DIR}/certificates/test_public.cert",
             "privateKey": f"{BASE_DIR}/certificates/test_private.key",
