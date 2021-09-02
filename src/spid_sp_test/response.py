@@ -74,7 +74,7 @@ class SpidSpResponse(object):
             loader=FileSystemLoader(searchpath=template_path),
             autoescape=select_autoescape(["xml"]),
         )
-        self.template_name = self.conf.get("path", "base.xml")
+        self.template_name = kwargs.get('template_name') or self.conf.get("path", "base.xml")
         self.private_key = self.conf.get("sign_credentials", {}).get("privateKey") or kwargs.get('private_key')
         # not used here ... so, commented.
         # self.public_cert = self.conf.get("sign_credentials", {}).get("certificate")  or kwargs.get('public_cert')
@@ -240,7 +240,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         key_file = key_file or self.private_key_fpath
         _certs = f"{key_file},{cert_file}" if cert_file else f"{key_file}"
 
-        com_list = [self.crypto_backend.xmlsec, "--sign", "--privkey-pem", _certs]
+        com_list = [
+            self.crypto_backend.xmlsec,
+            "--sign", "--privkey-pem", _certs,
+            # "--xxe" # just for XXE check, DON'T use this param in the real wold!
+        ]
         logger.debug(' '.join(com_list))
 
         asser_placeholder = "<!-- Assertion Signature here -->"
@@ -362,6 +366,19 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.logger.debug(msg)
         return res
 
+    def post_xml(self, xml:str, conf:dict = {}):
+        """
+        here just for wrapping attacks
+        """
+        # response dinamyc mods and rewrites (plugins)
+        if conf.get("response_wrappers"):
+            for mod_func in conf["response_wrappers"]:
+                n1, _, n2 = mod_func.rpartition(".")
+                module = importlib.import_module(n1)
+                func = getattr(module, n2)
+                xml = func(xml, conf)
+        return xml
+
     def test_profile_spid_sp(self):
         for i in self.test_names:
             self.do_authnrequest()
@@ -380,6 +397,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 logger.debug("{xmlstr}")
                 break
 
+            result = self.post_xml(result, settings.RESPONSE_TESTS[i])
             logger.debug(result)
 
             if not self.no_send_response and not self.authn_request_data.get(
