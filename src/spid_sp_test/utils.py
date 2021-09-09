@@ -141,14 +141,14 @@ def saml_from_htmlform(html_content):
     tree = html.fromstring(html_content)
     for elem in tree.xpath("//form"):
         form = elem.attrib
-        inputs = elem.xpath("input")
+        inputs = elem.xpath("//input")
         for i in inputs:
-            if i.attrib["name"] == "SAMLRequest":
-                form["SAMLRequest"] = i.attrib["value"]
-            elif i.attrib["name"] == "SAMLResponse":
-                form["SAMLResponse"] = i.attrib["value"]
-            elif i.attrib["name"] == "RelayState":
-                form["RelayState"] = i.attrib["value"]
+            if i.name == "SAMLRequest":
+                form["SAMLRequest"] = i.value
+            elif i.name == "SAMLResponse":
+                form["SAMLResponse"] = i.value
+            elif i.name == "RelayState":
+                form["RelayState"] = i.value
         return form
 
 
