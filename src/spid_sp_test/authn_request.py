@@ -411,11 +411,10 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                                 )
                             )
                             lines.append(stdout)
-                        _msg = "\n".join(lines)
+                        _data["description"] = "\n".join(lines)
                         self.handle_result(
                             "error",
                             "AuthnRequest Signature validation failed",
-                            description=_msg,
                             traceback=_msg,
                             **_data,
                         )
