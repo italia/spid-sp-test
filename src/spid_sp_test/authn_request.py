@@ -415,7 +415,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         self.handle_result(
                             "error",
                             "AuthnRequest Signature validation failed",
-                            traceback=_msg,
                             **_data,
                         )
                         return
