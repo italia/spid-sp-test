@@ -27,7 +27,7 @@ setup(
     author='Giuseppe De Marco',
     author_email='giuseppe.demarco@tamdigitale.governo.it',
     license='License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)',
-    scripts=['src/spid_sp_test/bin/spid_sp_test'],
+    scripts=[f'src/{_pkg_name}/bin/{_pkg_name}'],
     packages=[f"{_pkg_name}"],
     package_dir={f"{_pkg_name}": f"{_src_folder}/{_pkg_name}"},
 

@@ -474,7 +474,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     **_data,
                 )
                 self._assertTrue(
-                    bool(constants.UTC_STRING.search(value)),
+                    bool(constants.UTC_REGEXP.search(value)),
                     f"The {attr} attribute MUST be a valid UTC string",
                     description=value,
                     **_data,
@@ -896,7 +896,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             self._assertTrue(
                 len(1) == 1,
                 "Only one Conditions element is allowed",
-                description=e,
                 **_data,
             )
         # Not shure that this must be checked :)
@@ -910,24 +909,23 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         elif len(e) == 1:
             e = e[0]
+            _data['description'] = e
             for attr in ["NotBefore", "NotOnOrAfter"]:
                 self._assertTrue(
                     (attr in e.attrib),
                     f"The {attr} attribute MUST be present",
-                    description=e,
                     **_data,
                 )
-
                 value = e.get(attr)
+                _data['description'] = value
                 self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value",
-                    description=value,
                     **_data,
                 )
 
                 self._assertTrue(
-                    bool(constants.regex.UTC_STRING.search(value)),
+                    bool(constants.UTC_REGEXP.search(value)),
                     f"The {attr} attribute MUST have avalid UTC string",
                     description=value,
                     **_data,
