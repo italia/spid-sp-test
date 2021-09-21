@@ -923,11 +923,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     f"The {attr} attribute MUST have a value",
                     **_data,
                 )
-
                 self._assertTrue(
                     bool(constants.UTC_REGEXP.search(value)),
                     f"The {attr} attribute MUST have avalid UTC string",
-                    description=value,
                     **_data,
                 )
         return self.is_ok(_method)
