@@ -159,8 +159,9 @@ class SpidSpMetadataCheckPublic(object):
                     ipacode.text, "The IPACode element MUST have a value",
                     test_id = ['1.11.1'], **_data
                 )
+                res = get_indicepa_by_ipacode(ipacode.text)
                 self._assertTrue(
-                    get_indicepa_by_ipacode(ipacode.text)[0] == 1,
+                    not res[1]['errore'] and res[1]['risposta'],
                     "The IPACode element MUST have a valid value present on IPA",
                     test_id = ['1.11.2'], **_data,
                 )
