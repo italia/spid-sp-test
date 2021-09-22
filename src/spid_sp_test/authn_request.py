@@ -314,8 +314,15 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             is_valid = False
             for cert in certs:
                 cert_file = NamedTemporaryFile(suffix=".pem")
+
+                # cert clean up ...
+                for i in (' ', ):
+                    cert = cert.replace(i, '')
                 if cert[-1] != "\n":
                     cert += "\n"
+                if cert[0] == "\n":
+                    cert = cert[1:]
+
                 cert_file.write(
                     f"-----BEGIN CERTIFICATE-----\n{cert}-----END CERTIFICATE-----".encode()
                 )
@@ -379,7 +386,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         f"--pubkey-pem {pubkey_file.name} "
                         f"{tmp_file.name} "
                     )
-
+                    breakpoint()
                     try:
                         out = subprocess.run(
                             cmd,
