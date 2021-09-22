@@ -314,10 +314,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             is_valid = False
             for cert in certs:
                 cert_file = NamedTemporaryFile(suffix=".pem")
-                if cert[-1] != "\n":
-                    cert += "\n"
+
+                # cert clean up ...
+                for i in (' ', ):
+                    cert = cert.replace(i, '')
+                cert = cert.strip('\n')
+
                 cert_file.write(
-                    f"-----BEGIN CERTIFICATE-----\n{cert}-----END CERTIFICATE-----".encode()
+                    f"-----BEGIN CERTIFICATE-----\n{cert}\n-----END CERTIFICATE-----".encode()
                 )
                 cert_file.seek(0)
 
@@ -376,10 +380,13 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         "xmlsec1 --verify --insecure --id-attr:ID "
                         '"urn:oasis:names:tc:SAML:2.0:protocol:AuthnRequest" '
                         # f'--pubkey-cert-pem {cert_file.name} '
+                        # "--X509-skip-strict-checks"
                         f"--pubkey-pem {pubkey_file.name} "
-                        f"{tmp_file.name} "
+                        f"{tmp_file.name}"
                     )
 
+                    logger.debug(f"Running authn request signature validation: {cmd}")
+                    logger.debug(f"{pubkey_file.name}:\n{x509_cert}")
                     try:
                         out = subprocess.run(
                             cmd,
@@ -388,9 +395,11 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
                         )
+
                         if out.returncode == 0:
                             is_valid = True
                             break
+
                     except subprocess.CalledProcessError as err:
                         lines = [msg]
                         if err.stderr:
@@ -411,7 +420,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                                 )
                             )
                             lines.append(stdout)
-                        _data["description"] = "\n".join(lines)
+                        _lines = "\n".join(lines)
+                        _data["description"] = _lines
+                        logger.debug(_lines)
                         self.handle_result(
                             "error",
                             "AuthnRequest Signature validation failed",
@@ -499,7 +510,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 self._assertTrue(
                     (value in allowed_destinations),
                     "The Destination attribute SHOULD be the address to "
-                    "which the request has been sent but can also be the EnityID of IdP (Av. SPID n.11)",
+                    "which the request has been sent but can also be the EntityID of IdP (Av. SPID n.11)",
                     description=value,
                     **_data,
                 )
