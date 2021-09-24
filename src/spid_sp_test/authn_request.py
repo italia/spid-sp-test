@@ -369,8 +369,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     _data["description"] = exit_msg
                     if "Verified OK" in exit_msg:
                         is_valid = True
-                    else:
-                        is_valid = False
 
                 else:
                     tmp_file = NamedTemporaryFile(suffix=".xml")
@@ -423,12 +421,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         _lines = "\n".join(lines)
                         _data["description"] = _lines
                         logger.debug(_lines)
-                        self.handle_result(
-                            "error",
-                            "AuthnRequest Signature validation failed",
-                            **_data,
-                        )
-                        return
 
         self._assertTrue(is_valid, "AuthnRequest Signature validation failed", **_data)
         return self.is_ok(_method)
