@@ -421,8 +421,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                         _lines = "\n".join(lines)
                         _data["description"] = _lines
                         logger.debug(_lines)
-
-        self._assertTrue(is_valid, "AuthnRequest Signature validation failed", **_data)
+        self._assertTrue(is_valid, "AuthnRequest Signature validation", **_data)
         return self.is_ok(_method)
 
     def test_AuthnRequest(self):
