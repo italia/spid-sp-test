@@ -196,15 +196,24 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self.logger = logger
         self.metadata = metadata
+        self.authn_request_url = authn_request_url
+        self.production = production
+        self.authn_plugin = authn_plugin
+        self.request_method = request_method
+        self.request_body = request_body
+        self.request_content_type = request_content_type
+        self.xsds_files = xsds_files or self.xsds_files
+        self.xsds_files_path = xsds_files_path or f"{BASE_DIR}/xsd"
 
+    def load(self):
         try:
             self.authn_request = get_authn_request(
-                authn_request_url,
-                verify_ssl=production,
-                authn_plugin=authn_plugin,
-                request_method=request_method,
-                request_body=request_body,
-                request_content_type=request_content_type,
+                self.authn_request_url,
+                verify_ssl=self.production,
+                authn_plugin=self.authn_plugin,
+                request_method=self.request_method,
+                request_body=self.request_body,
+                request_content_type=self.request_content_type,
             )
         except binascii.Error as exp:
             _msg = "Base64 decode of AuthnRequest MUST be correct"
@@ -225,9 +234,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         self.relay_state = self.authn_request.get("RelayState") or ""
 
-        self.xsds_files = xsds_files or self.xsds_files
-        self.xsds_files_path = xsds_files_path or f"{BASE_DIR}/xsd"
-
         try:
             self.md = etree.fromstring(self.metadata)
             del_ns(self.md)
@@ -239,14 +245,14 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             _method = f"Error parsing AuthnRequest: {self.authn_request_decoded}"
             self.handle_init_errors(
                 method = _method,
-                description = f"{e}"
+                description = f"{e}",
+                traceback=e
             )
 
         # binding detection
         self.IS_HTTP_REDIRECT = self.authn_request.get("Signature")
         # HTTP-REDIRECT params
         self.params = {"RelayState": self.relay_state}
-        self.production = production
 
     def idp(self):
         idp_config = copy.deepcopy(SAML2_IDP_CONFIG)

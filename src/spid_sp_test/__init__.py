@@ -7,7 +7,7 @@ from .constants import HTTP_NO_PORT_REGEX
 
 
 BASE_DIR = Path(__file__).resolve().parent
-__version__ = "0.9.21"
+__version__ = "0.9.22"
 __name__ = "spid_sp_test"
 logger = logging.getLogger(__name__)
 
@@ -139,7 +139,7 @@ class AbstractSpidCheck(object):
             test_id=[],
         )
         self.is_ok(method)
-        sys.exit(1)
+        raise Exception(traceback)
 
     # maybe useful .. one day ?!
     # idp_server = self.idp()

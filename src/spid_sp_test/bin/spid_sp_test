@@ -301,7 +301,12 @@ if __name__ == '__main__':
         data_md = dict(metadata_url=args.metadata_url,
                        production=args.production)
         metadata_check = _cls(**data_md)
-        selective_run(metadata_check, profile, args.list)
+        try:
+            metadata_check.load()
+            selective_run(metadata_check, profile, args.list)
+        except Exception as e:
+            logger.critical(f"Errors occourred during Check, {_cls}: {e}")
+            args.authn_url = 0
         tests_done.append(metadata_check)
 
     else:
@@ -324,7 +329,12 @@ if __name__ == '__main__':
             request_content_type = args.request_content_type
         )
         authn_check = _cls(**data_ac)
-        selective_run(authn_check, profile, args.list)
+        try:
+            authn_check.load()
+            selective_run(authn_check, profile, args.list)
+        except Exception as e:
+            logger.critical(f"Errors occourred during Check, {_cls}: {e}")
+            args.test_response = 0
         tests_done.append(authn_check)
 
     # Responses
