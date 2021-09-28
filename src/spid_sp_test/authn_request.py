@@ -228,12 +228,19 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f"{BASE_DIR}/xsd"
 
-        self.md = etree.fromstring(self.metadata)
-        del_ns(self.md)
+        try:
+            self.md = etree.fromstring(self.metadata)
+            del_ns(self.md)
 
-        self.doc = etree.fromstring(self.authn_request_decoded)
-        # clean up namespace (otherwise xpath doesn't work ...)
-        del_ns(self.doc)
+            self.doc = etree.fromstring(self.authn_request_decoded)
+            # clean up namespace (otherwise xpath doesn't work ...)
+            del_ns(self.doc)
+        except Exception as e:
+            _method = f"Error parsing AuthnRequest: {self.authn_request_decoded}"
+            self.handle_init_errors(
+                method = _method,
+                description = f"{e}"
+            )
 
         # binding detection
         self.IS_HTTP_REDIRECT = self.authn_request.get("Signature")

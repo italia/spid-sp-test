@@ -46,7 +46,14 @@ class SpidSpMetadataCheck(
         self.metadata = self.get(metadata_url)
         self.xsds_files_path = xsds_files_path or f"{BASE_DIR}/xsd"
 
-        self.doc = etree.fromstring(self.metadata)
+        try:
+            self.doc = etree.fromstring(self.metadata)
+        except Exception as e:
+            _method = f"Error parsing Metadata: {self.metadata_url}"
+            self.handle_init_errors(
+                method = _method,
+                description = f"{e}"
+            )
         # clean up namespace (otherwise xpath doesn't work ...)
         del_ns(self.doc)
 
@@ -94,7 +101,7 @@ class SpidSpMetadataCheck(
                 self._assertTrue(
                     False,
                     msg,
-                    description="xsd test failed",
+                    description=f"{e}",
                     traceback=f"{e}",
                     method=_method,
                     test_id=test_id,

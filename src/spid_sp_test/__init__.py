@@ -1,12 +1,13 @@
 import logging
 import re
+import sys
 
 from pathlib import Path
 from .constants import HTTP_NO_PORT_REGEX
 
 
 BASE_DIR = Path(__file__).resolve().parent
-__version__ = "0.9.20"
+__version__ = "0.9.21"
 __name__ = "spid_sp_test"
 logger = logging.getLogger(__name__)
 
@@ -127,6 +128,18 @@ class AbstractSpidCheck(object):
 
     def _assertIsValidHttpUrl(self, check, *args, **kwargs):
         self._assert(re.match("https?://", check if check else ""), *args, **kwargs)
+
+    def handle_init_errors(self, method, description, traceback=""):
+        self._assertTrue(
+            False,
+            method,
+            description=description,
+            traceback=traceback,
+            method=method,
+            test_id=[],
+        )
+        self.is_ok(method)
+        sys.exit(1)
 
     # maybe useful .. one day ?!
     # idp_server = self.idp()
