@@ -139,8 +139,9 @@ class SpidSpMetadataCheck(
             **_data,
         )
 
+        eid_value = entity_desc[0].get("entityID")
         self._assertTrue(
-            entity_desc[0].get("entityID"),
+            eid_value not in (None, ""),
             "The entityID attribute MUST have a value",
             description=entity_desc[0].get("entityID"),
             **_data,
