@@ -1,7 +1,4 @@
 # .coveragerc to control coverage.py
 [coverage:run]
-omit =
-    */distutils/*
-    tests/*
-    */site-packages/*
-    */env/*
+include =
+    spid_sp_test

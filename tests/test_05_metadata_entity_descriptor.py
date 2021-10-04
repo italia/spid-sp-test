@@ -2,7 +2,6 @@ import pytest
 
 from . import get_md_check
 from . import load_metadata
-from tempfile import NamedTemporaryFile
 
 
 def test_metadata_xsd():
@@ -64,7 +63,7 @@ def test_metadata_entity_descriptor_ok():
 
 
 def test_metadata_entity_descriptor_absent():
-    metadata = b""""""
+    metadata = b""
     with pytest.raises(Exception):
         md = load_metadata(metadata)
 
@@ -80,7 +79,6 @@ def test_metadata_entity_descriptor_unvalued_eid():
     metadata = b"""<md:EntityDescriptor xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:spid="https://spid.gov.it/saml-extensions" entityID="" ID="id-SKWJbXNIQ9Za23Xkk"></md:EntityDescriptor>"""
     md = load_metadata(metadata)
     md.test_EntityDescriptor()
-    assert md.errors
     assert md.errors[0]['test'] == 'The entityID attribute MUST be present'
 
 
@@ -89,5 +87,4 @@ def test_metadata_entity_descriptor_no_eid():
     ID="id-SKWJbXNIQ9Za23Xkk"></md:EntityDescriptor>"""
     md = load_metadata(metadata)
     md.test_EntityDescriptor()
-    assert md.errors
     assert md.errors[1]['test'] == "The entityID attribute MUST have a value"
