@@ -40,4 +40,4 @@ jobs:
         flake8 ./src --count --exit-zero --max-complexity=20 --max-line-length=180 --statistics
     - name: Test with pytest and coverage
       run: |
-        pytest --cov=spid_sp_test tests/test_*
+        pytest -v --cov=spid_sp_test --cov-report term tests/
