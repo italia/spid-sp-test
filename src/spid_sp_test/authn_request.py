@@ -181,7 +181,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self,
         metadata,
         authn_request_url: str = None,
-        authn_request: dict = {},
         xsds_files: list = None,
         xsds_files_path: str = None,
         production: bool = False,
@@ -323,117 +322,117 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 ),
             )
             return self.is_ok(_method)
-        else:
-            is_valid = False
-            for cert in certs:
-                cert_file = NamedTemporaryFile(suffix=".pem")
 
-                # cert clean up ...
-                for i in (' ', ):
-                    cert = cert.replace(i, '')
-                cert = cert.strip('\n')
+        is_valid = False
+        for cert in certs:
+            cert_file = NamedTemporaryFile(suffix=".pem")
 
-                cert_file.write(
-                    f"-----BEGIN CERTIFICATE-----\n{cert}\n-----END CERTIFICATE-----".encode()
+            # cert clean up ...
+            for i in (' ', ):
+                cert = cert.replace(i, '')
+            cert = cert.strip('\n')
+
+            cert_file.write(
+                f"-----BEGIN CERTIFICATE-----\n{cert}\n-----END CERTIFICATE-----".encode()
+            )
+            cert_file.seek(0)
+
+            pubkey_file = NamedTemporaryFile(suffix=".crt")
+            x509_cert = subprocess.getoutput(
+                f"openssl x509 -in {cert_file.name} -noout -pubkey"
+            )
+            pubkey_file.write(x509_cert.encode())
+            pubkey_file.seek(0)
+
+            if self.IS_HTTP_REDIRECT:
+                _sigalg = self.authn_request.get("SigAlg", "")
+                quoted_req = urllib.parse.quote_plus(
+                    self.authn_request["SAMLRequest"]
                 )
-                cert_file.seek(0)
-
-                pubkey_file = NamedTemporaryFile(suffix=".crt")
-                x509_cert = subprocess.getoutput(
-                    f"openssl x509 -in {cert_file.name} -noout -pubkey"
+                quoted_rs = urllib.parse.quote_plus(
+                    self.authn_request.get("RelayState") or ""
                 )
-                pubkey_file.write(x509_cert.encode())
-                pubkey_file.seek(0)
+                quoted_sigalg = urllib.parse.quote_plus(_sigalg)
+                authn_req = (
+                    f"SAMLRequest={quoted_req}&"
+                    f"RelayState={quoted_rs}&"
+                    f"SigAlg={quoted_sigalg}"
+                )
 
-                if self.IS_HTTP_REDIRECT:
-                    _sigalg = self.authn_request.get("SigAlg", "")
-                    quoted_req = urllib.parse.quote_plus(
-                        self.authn_request["SAMLRequest"]
-                    )
-                    quoted_rs = urllib.parse.quote_plus(
-                        self.authn_request.get("RelayState") or ""
-                    )
-                    quoted_sigalg = urllib.parse.quote_plus(_sigalg)
-                    authn_req = (
-                        f"SAMLRequest={quoted_req}&"
-                        f"RelayState={quoted_rs}&"
-                        f"SigAlg={quoted_sigalg}"
+                payload_file = NamedTemporaryFile(suffix=".xml")
+                payload_file.write(authn_req.encode())
+                payload_file.seek(0)
+
+                signature_file = NamedTemporaryFile(suffix=".sign")
+                signature_file.write(
+                    base64.b64decode(self.authn_request["Signature"].encode())
+                )
+                signature_file.seek(0)
+
+                dgst = _sigalg.split("-")[-1]
+                signature = signature_file.name
+
+                ver_cmd = (
+                    f"openssl dgst -{dgst} "
+                    f"-verify {pubkey_file.name} "
+                    f"-signature {signature} {payload_file.name}"
+                )
+                exit_msg = subprocess.getoutput(ver_cmd)
+                _data["description"] = exit_msg
+                if "Verified OK" in exit_msg:
+                    is_valid = True
+
+            else:
+                tmp_file = NamedTemporaryFile(suffix=".xml")
+                tmp_file.write(self.authn_request_decoded)
+                tmp_file.seek(0)
+                cmd = (
+                    "xmlsec1 --verify --insecure --id-attr:ID "
+                    '"urn:oasis:names:tc:SAML:2.0:protocol:AuthnRequest" '
+                    # f'--pubkey-cert-pem {cert_file.name} '
+                    # "--X509-skip-strict-checks"
+                    f"--pubkey-pem {pubkey_file.name} "
+                    f"{tmp_file.name}"
+                )
+
+                logger.debug(f"Running authn request signature validation: {cmd}")
+                logger.debug(f"{pubkey_file.name}:\n{x509_cert}")
+                try:
+                    out = subprocess.run(
+                        cmd,
+                        shell=True,
+                        check=True,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
                     )
 
-                    payload_file = NamedTemporaryFile(suffix=".xml")
-                    payload_file.write(authn_req.encode())
-                    payload_file.seek(0)
-
-                    signature_file = NamedTemporaryFile(suffix=".sign")
-                    signature_file.write(
-                        base64.b64decode(self.authn_request["Signature"].encode())
-                    )
-                    signature_file.seek(0)
-
-                    dgst = _sigalg.split("-")[-1]
-                    signature = signature_file.name
-
-                    ver_cmd = (
-                        f"openssl dgst -{dgst} "
-                        f"-verify {pubkey_file.name} "
-                        f"-signature {signature} {payload_file.name}"
-                    )
-                    exit_msg = subprocess.getoutput(ver_cmd)
-                    _data["description"] = exit_msg
-                    if "Verified OK" in exit_msg:
+                    if out.returncode == 0:
                         is_valid = True
+                        break
 
-                else:
-                    tmp_file = NamedTemporaryFile(suffix=".xml")
-                    tmp_file.write(self.authn_request_decoded)
-                    tmp_file.seek(0)
-                    cmd = (
-                        "xmlsec1 --verify --insecure --id-attr:ID "
-                        '"urn:oasis:names:tc:SAML:2.0:protocol:AuthnRequest" '
-                        # f'--pubkey-cert-pem {cert_file.name} '
-                        # "--X509-skip-strict-checks"
-                        f"--pubkey-pem {pubkey_file.name} "
-                        f"{tmp_file.name}"
-                    )
-
-                    logger.debug(f"Running authn request signature validation: {cmd}")
-                    logger.debug(f"{pubkey_file.name}:\n{x509_cert}")
-                    try:
-                        out = subprocess.run(
-                            cmd,
-                            shell=True,
-                            check=True,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
+                except subprocess.CalledProcessError as err:
+                    lines = [msg]
+                    if err.stderr:
+                        stderr = "stderr: " + "\nstderr: ".join(
+                            list(
+                                filter(
+                                    None, err.stderr.decode().split(r"\n")
+                                )
+                            )
                         )
-
-                        if out.returncode == 0:
-                            is_valid = True
-                            break
-
-                    except subprocess.CalledProcessError as err:
-                        lines = [msg]
-                        if err.stderr:
-                            stderr = "stderr: " + "\nstderr: ".join(
-                                list(
-                                    filter(
-                                        None, err.stderr.decode("utf-8").split(r"\n")
-                                    )
+                        lines.append(stderr)
+                    if err.stdout:
+                        stdout = "stdout: " + "\nstdout: ".join(
+                            list(
+                                filter(
+                                    None, err.stdout.decode().split(r"\n")
                                 )
                             )
-                            lines.append(stderr)
-                        if err.stdout:
-                            stdout = "stdout: " + "\nstdout: ".join(
-                                list(
-                                    filter(
-                                        None, err.stdout.decode("utf-8").split(r"\n")
-                                    )
-                                )
-                            )
-                            lines.append(stdout)
-                        _lines = "\n".join(lines)
-                        _data["description"] = _lines
-                        logger.debug(_lines)
+                        )
+                        lines.append(stdout)
+                    _lines = "\n".join(lines)
+                    _data["description"] = _lines
+                    logger.debug(_lines)
         self._assertTrue(is_valid, "AuthnRequest Signature validation", **_data)
         return self.is_ok(_method)
 
