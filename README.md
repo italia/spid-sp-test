@@ -211,7 +211,6 @@ spid-sp-test offers the possibility to extend and configure new response tests t
   IDP_ENTITYID=https://your.idp.eid/ IDP_CERT_PATH=../spid-django/example/certificates spid_sp_test --idp-metadata
   ````
 
-
 Looking at `src/spid_sp_test/responses/settings.py` or `tests/example.test-suite.json`
 we found that every test have a `response` attribute. Each element configured in would overload the
 value that will be rendered in the template. Each template can load these variable from its template context or
@@ -225,7 +224,7 @@ That's for developers.
 
 ````
 pip install requirements-dev.txt
-pytest --cov=src/spid_sp_test tests/test_*
+pytest -v --cov=spid_sp_test --cov-report term  tests/
 ````
 
 If you need a docker, you can do:
