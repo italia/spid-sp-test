@@ -8,7 +8,7 @@ def dynamic_acr(check: SpidSpResponseCheck, response_obj: SpidSpResponse, **kwar
         try:
             level_sp = int(check.get_acr()[-1])
             level_idp = int(check.response_attrs["AuthnContextClassRef"][-1])
-            if level_idp > level_sp:
+            if level_idp >= level_sp:
                 response_obj.conf["status_codes"] = [200]
         except Exception:
             pass
