@@ -152,10 +152,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
     def get_acr_comparison(self):
         _acr = self.authnreq_etree.xpath("//RequestedAuthnContext")
         if _acr:
-            try:
-                return _acr[0].attrib['Comparison']
-            except KeyError:
-                return "minimum"
+            return _acr[0].attrib.get("Comparison", "minimum")
 
     def load_user_attributes(self):
         self.requested_attrs_raw = self.metadata_etree.xpath(
