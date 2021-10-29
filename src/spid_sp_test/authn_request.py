@@ -3,6 +3,7 @@ import binascii
 import copy
 import logging
 import os
+import re
 import requests
 import xmlschema
 import sys
@@ -330,7 +331,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             # cert clean up ...
             for i in (' ', ):
                 cert = cert.replace(i, '')
-            cert = cert.strip('\n')
+            cert = re.sub(r'[\n\t\s]', '', cert)
 
             cert_file.write(
                 f"-----BEGIN CERTIFICATE-----\n{cert}\n-----END CERTIFICATE-----".encode()
