@@ -149,6 +149,11 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         if _acr:
             return _acr[0].text
 
+    def get_acr_comparison(self):
+        _acr = self.authnreq_etree.xpath("//RequestedAuthnContext")
+        if _acr:
+            return _acr[0].attrib.get("Comparison", "minimum")
+
     def load_user_attributes(self):
         self.requested_attrs_raw = self.metadata_etree.xpath(
             f"//SPSSODescriptor/AttributeConsumingService[@index={self.acs_index}]"
