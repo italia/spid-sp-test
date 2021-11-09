@@ -179,10 +179,10 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--production', '-p',
-                        action="store_true",
-                        default=False,
-                        help=("execute tests for system in production, "
-                              "eg: https and TLS quality")
+        action="store_true",
+        default=False,
+        help=("execute tests for system in production, "
+              "eg: https and TLS quality")
     )
 
     parser.add_argument(
@@ -256,6 +256,12 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
+        '--xsds-files-path', '--xfp',
+        required=False,
+        help="path where xsd files are"
+    )
+
+    parser.add_argument(
         '-v', '--version',
         required=False, action="store_true",
         help='print out spid-sp-test version'
@@ -299,7 +305,8 @@ if __name__ == '__main__':
         else:
             _cls = SpidSpMetadataCheck
         data_md = dict(metadata_url=args.metadata_url,
-                       production=args.production)
+                       production=args.production,
+                       xsds_files_path=args.xsds_files_path)
         metadata_check = _cls(**data_md)
         try:
             metadata_check.load()
@@ -358,7 +365,8 @@ if __name__ == '__main__':
             requests_session = authn_check.authn_request['requests_session'],
             request_method = args.request_method,
             request_body = args.request_body,
-            request_content_type = args.request_content_type
+            request_content_type = args.request_content_type,
+            xsds_files_path=args.xsds_files_path
         )
 
         response_check = SpidSpResponseCheck(**data_tr)

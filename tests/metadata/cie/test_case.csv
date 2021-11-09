@@ -1,0 +1,95 @@
+ID,Controlli previsti nel manuale tecnico,,Tipologia di controllo (XSD/Applicativo)
+1,Il file dei metadata deve essere validato con il relativo schema xsd SAML v.2 https://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd,Il file dei metadata deve essere validato con il relativo schema xsd SAML v.2 https://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd,XSD
+2,Deve essere presente il tag <EntityDescriptor> come elemento radice,Deve essere presente il tag <EntityDescriptor> come elemento radice,XSD
+2.1,,"Deve essere presente il namespace CIE così valorizzato: xmlns:cie=""https://www.cartaidentita.interno.gov.it/saml-extensions"" nel tag <EntityDescriptor>",XSD
+2.2a,,L'attributo EntityId deve essere univoco rispetto a tutti i metadata già federati nell'IDP,Applicativo
+2.2b,,L'attributo EntityId deve essere univoco rispetto a tutti i metadata già federati nell'IDP,Applicativo
+3,il tag <Signature> obbligatorio,il tag <Signature> obbligatorio,XSD
+3.1,,"Verificare che il certificato X509  non contenga le seguenti informazioni:
+• name (OID 2.5.4.41),
+• surname (OID 2.5.4.42),
+• initials (OID 2.5.4.43),
+• generationQualifier (OID 2.5.4.44),
+• familyInformation (OID 2.5.4.64),
+• pseudonym (OID 2.5.4.65).",Applicativo
+3.2,,Verificare che il certificato X509 sia valido,Applicativo
+3.3,,Verificare che l'algoritmo di Hash utilizzato sia SHA256 o superiore,Applicativo
+3.4,,Verificare che l'algoritmo RSA utilizzi chiavi di lunghezza pari a 1024 bit o superiore,Applicativo
+3.5,,Verificare che la firma sia valida,Applicativo
+4,<SPSSODescriptor> obbligatorio,<SPSSODescriptor> obbligatorio,XSD
+4.1,<SPSSODescriptor> con cardinalità pari a uno,<SPSSODescriptor> con cardinalità pari a uno,XSD
+4.2,,L'attributo AuthnRequestsSigned obbligatorio,XSD
+4.3,,L'attributo AuthnRequestsSigned valorizzato con TRUE,XSD
+4.4,,L'attributo WantAssertionsSigned obbligatorio,XSD
+4.5,,L'attributo WantAssertionsSigned valorizzato con TRUE,XSD
+4.6,,L'attributo protocolSupportEnumeration valorizzato con urn:oasis:names:tc:SAML:2.0:protocol,XSD
+4.7,,L'elemento <KeyDescriptor> obbligatorio,XSD
+4.8a,,"Almeno un attributo ""use"" dell'elemento <KeyDescriptor> deve avere valorizzato con ""signing""",XSD
+4.8b,,"Almeno un attributo ""use"" dell'elemento <KeyDescriptor> deve avere valorizzato con ""signing""",XSD
+4.9a,,"L'elemento <SingleLogoutService> obbligatorio, almeno 1 con binding redirect",XSD
+4.9b,,"L'elemento <SingleLogoutService> obbligatorio, almeno 1 con binding redirect",XSD
+4.10,,"L'elemento <SingleLogoutService> deve contenere l'attributo binding valorizzato alternativamente con la stringa:
+- ""urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"" 
+- ""urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"" ",XSD
+4.11,,L'attributo location presente in ogni istanza dell'elemento <SingleLogoutService> deve contenere un URL HTTPS valido,Applicativo
+4.12,,"La cardinalità dell'elemento <NameIDFormat>, facoltativo, non deve essere maggiore di 1",XSD
+4.13,,"L'elemento <NameIDFormat>, se presente, deve essere valorizzato con ""urn:oasis:names:tc:SAML:2.0:nameid-format:transient""",XSD
+4.14,,L'elemento <AssertionConsumingService> obbligatorio,XSD
+4.15,,"L'elemento <AssertionConsumerService> deve contenere l'attributo binding valorizzato alternativamente con la stringa:
+- ""urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"" 
+- ""urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"" ",XSD
+4.16,,L'attributo location presente in ogni istanza dell'elemento <AssertionConsumerService> deve contenere un URL HTTPS valido,Applicativo
+4.17a,,Una sola istanza di <AssertionConsumerService> deve avere l'attributo isDefault valorizzato con True,XSD
+4.17b,,Una sola istanza di <AssertionConsumingService> deve avere l'attributo isDefault valorizzato con True,XSD
+4.18,,"L'attributo index >= 0, deve essere diverso per ogni istanza di <AssertionConsumerService>",Applicativo
+4.19,,L'elemento <AttributeConsumingService> obbligatorio,XSD
+4.20,,"L'attributo index >= 0, deve essere diverso per ogni istanza di <AttributeConsumingService>",Applicativo
+4.21,,"L'elemento <ServiceName> presente nell'elemento <AttributeConsumingService> deve essere un UUID v.4 valido formattato come di seguito
+""urn:uuid:86eabbc2-6023-4f8d-a7dc-22401f5ac4fe""",XSD
+4.22,,"L'elemento <AttributeConsumingService> deve contenere da 1 a 4 occorrenze di <RequestedAttribute> con attributo Name (di tipo xsd:String) valorizzato con uno dei seguenti modi: ""name"", ""familyName"", ""dateOfBirth"" e ""fiscalCode""",XSD
+5,L'elemento <Organization> obbligatorio ,L'elemento <Organization> obbligatorio ,XSD
+5.1,,"L'elemento <OrganizationName> deve essere valorizzato con il nome completo del SP, così come compare nei pubblici registri, con il corretto uso di maiuscole, minuscole, accenti e altri segni diacritici
+ovvero 
+valorizzato come il nome del SP inserito in fase di richiesta di adesione tramite il portale",Applicativo
+5.2,,L'elemento <OrganizationURL> deve contenere un URL valido,Applicativo
+6,L'elemento <ContactPerson> obbligatorio,L'elemento <ContactPerson> obbligatorio,XSD
+6.1,L'elemento <ContactPerson> presente con cardinalità massima pari a 2,L'elemento <ContactPerson> presente con cardinalità massima pari a 2,XSD
+6.2,,"L'attributo contactType in una delle istanze dell'elemento <ContactPerson>  deve essere valorizzato con ""administrative""",XSD
+6.3a,,"Se l'elemento <ContactPerson>  è presente in cardinalità pari a 2, l'attributo contactType di ogni elemento deve essere valorizzato rispettivamente con ""administrative"" e ""technical""",XSD
+6.3b,,"Se l'elemento <ContactPerson>  è presente in cardinalità pari a 2, l'attributo contactType di ogni elemento deve essere valorizzato rispettivamente con ""administrative"" e ""technical""",
+6.3c,,"Se l'elemento <ContactPerson>  è presente in cardinalità pari a 2, l'attributo contactType di ogni elemento deve essere valorizzato rispettivamente con ""administrative"" e ""technical""",
+6.3d,,"Se l'elemento <ContactPerson>  è presente in cardinalità pari a 2, l'attributo contactType di ogni elemento deve essere valorizzato rispettivamente con ""administrative"" e ""technical""",
+6.3e,,"Se l'elemento <ContactPerson>  è presente in cardinalità pari a 2, l'attributo contactType di ogni elemento deve essere valorizzato rispettivamente con ""administrative"" e ""technical""",
+6.4,,In ogni istanza presente di <ContactPerson> deve essere presente un elemento <Extensions>,XSD
+6.5,,L'elemento <Extensions> in ogni istanza presente di <ContactPerson> deve contenere alternativamente gli elementi figli <cie:Public/> o <cie:Private/>.,XSD
+6.6a,,"In caso di presenza del tag <cie:Public/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:IPACode> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.6b,,"In caso di presenza del tag <cie:Public/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:IPACode> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.7a,,"In caso di presenza del tag <cie:Public/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:Municipality> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.7b,,"In caso di presenza del tag <cie:Public/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:Municipality> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.8a,,"In caso di presenza del tag <cie:Public/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:Country> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.8b,,"In caso di presenza del tag <cie:Public/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:Country> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.9a,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:VATNumber> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.9b,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:VATNumber> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.10a,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:FiscalCode> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.10b,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:FiscalCode> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.11a,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:NACE2Code> con cardinalità almeno pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.11b,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:NACE2Code> con cardinalità almeno pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.12a,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:Municipality> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.12b,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:Municipality> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.13a,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:Country> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.13b,,"In caso di presenza del tag <cie:Private/> nell'elemento <Extensions> del tag <ContactPerson>, deve essere presente l'elemento <cie:Country> con cardinalità pari a 1 allo stesso livello (i.e. come figli di <Extensions>)",XSD
+6.14a,,L'elemento <Company> deve essere presente con cardinalità 1,XSD
+6.14b,,L'elemento <Company> deve essere presente con cardinalità 1,XSD
+6.15a,,L'elemento <EmailAddress> deve essere presente con cardinalità 1,XSD
+6.15b,,L'elemento <EmailAddress> deve essere presente con cardinalità 1,XSD
+6.16,,<cie:IPACode> valorizzato con il codice IPA così come risultante dall'`Indice PA https://www.indicepa.gov.it ovvero valorizzato come il codice IPA inserito in fase di richiesta di adesione tramite il portale,Applicativo
+6.17,,<cie:IPACategory> valorizzato con la sua Categoria IPA https://www.indicepa.gov.it/public-services/docs-read-service.php?dstype=FS&filename=Categorie_Amministrazioni.pdf,Applicativo
+6.18,,"<cie:VATNumber> valorizzato nel modo seguente: ""codice ISO 3166-1 α2 del Paese di appartenenza""+P.IVA (necessario controllo formale sulla P.IVA) ovvero valorizzato come la P.IVA inserita in fase di richiesta di adesione tramite il portale",Applicativo
+6.19,,<cie:FiscalCode> valorizzato con il codice fiscale. Necessario un controllo formale sulla validità  ovvero valorizzato come il CF inserito in fase di richiesta di adesione tramite il portale,Applicativo
+6.20,,"<cie:NACE2Code> valorizzato con il codice ATECO https://www.istat.it/it/archivio/17888#valori; in caso di soggetti esteri (pubblici e privati), è valorizzato con il codice NACE (rev. 2) https://ec.europa.eu/eurostat/ramon/nomenclatures/index.cfm ",Applicativo
+6.21,,"<cie:Municipality> valorizzato con il codice ISTAT del Comune (tutto in maiuscole) https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.xls; nel caso di soggetti esteri, è valorizzato con lo Zip code della sede legale ",Applicativo
+6.22,,<cie:Province> valorizzato con la sigla automobilistica della Provincia (tutta in maiuscole) ,Applicativo
+6.23,,<cie:Country> valorizzato con il codice ISO 3166-1 α2 del Paese   ,Applicativo
+6.24,,<Company> deve essere valorizzato come il nome del soggetto cui si riferisce l'elemento <ContactPerson> indicato nella richiesta di adesione.,Applicativo
+6.25,,<EmailAddress> deve essere contenere un indirizzo email valido ovvero valorizzato come l'indirizzo email del soggetto cui si riferisce l'elemento <ContactPerson> indicato nella richiesta di adesione,Applicativo
+6.26,,"<md:TelephoneNumber>, se presente, deve essere valorizzato con il numero di telefono (dotato di prefisso internazionale, senza spazi) del  soggetto cui si riferisce l'elemento <ContactPerson> ovvero valorizzato come il numero di telefono inserito in fase di richiesta di adesione tramite il portale",Applicativo

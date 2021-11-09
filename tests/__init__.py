@@ -59,11 +59,6 @@ UNSIGNED_AUTHNREQ = b"""<samlp:AuthnRequest xmlns:ds="http://www.w3.org/2000/09/
 """
 
 
-
-
-
-
-
 def get_md_check(metadata_url, **kwargs):
     md = SpidSpMetadataCheckExtra(metadata_url=metadata_url, **kwargs)
     md.load()

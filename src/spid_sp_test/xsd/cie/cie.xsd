@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="https://www.cartaidentita.interno.gov.it/saml-extensions"
+	xmlns:cie="https://www.cartaidentita.interno.gov.it/saml-extensions"
+	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="substitution"
+	version="2.0">
+
+	<complexType name="ContactPersonSPExtensionType">
+		<sequence>
+			<choice>
+				<group ref="cie:PublicGroup" maxOccurs="1"/>
+				<group ref="cie:PrivateGroup" maxOccurs="1"/>
+			</choice>
+			<element ref="cie:Municipality" minOccurs="1" maxOccurs="1"/>
+			<element ref="cie:Province" minOccurs="0" maxOccurs="1"/>
+			<element ref="cie:Country" minOccurs="0" maxOccurs="1"/>
+			<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<group name="PublicGroup">
+		<sequence>
+			<element ref="cie:Public"/>
+			<element ref="cie:IPACode" minOccurs="1"/>
+			<element ref="cie:IPACategory" minOccurs="0"/>
+		</sequence>
+	</group>
+	<group name="PrivateGroup">
+		<sequence>
+			<element ref="cie:Private"/>
+			<element ref="cie:VATNumber" minOccurs="0"/>
+			<element ref="cie:FiscalCode" minOccurs="0" />
+			<element ref="cie:NACE2Code" minOccurs="0" />
+		</sequence>
+	</group>
+		
+	<element name="Public"/>
+	<element name="Private"/>
+
+	<element name="IPACode" type="string"/>
+	<element name="IPACategory" type="string"/>
+
+	<element name="VATNumber" type="string"/>
+	<element name="FiscalCode" type="string"/>
+	<element name="NACE2Code" type="string"/>
+
+	<element name="Municipality" type="string"/>
+	<element name="Province" type="string" />
+	<element name="Country" type="string" />
+	
+	<simpleType name="SingleLogoutServiceBindingType">
+   		<restriction base="anyURI">
+   			<enumeration value="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" />
+   			<enumeration value="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" />
+   			<enumeration value="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" />
+   		</restriction>
+   	</simpleType>
+   	<simpleType name="AssertionConsumerServiceBindingType">
+   		<restriction base="anyURI">
+   			<enumeration value="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" />
+   			<enumeration value="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" />
+   			<enumeration value="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-SOAP" />
+   		</restriction>
+   	</simpleType>
+   	
+    <simpleType name="UUID">
+	  <restriction base="string">
+	  	<minLength value="1"/>
+	  	<maxLength value="255"/>
+	   </restriction>
+	</simpleType>
+	
+	<!-- simpleType name="NamedAttributeType">
+    	<restriction base="string">
+    		<enumeration value="name"/>
+    		<enumeration value="familyName"/>
+    		<enumeration value="dateOfBirth"/>
+    		<enumeration value="fiscalNumber"/> 
+    	</restriction>
+    </simpleType -->
+
+</schema>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:cie="https://www.cartaidentita.interno.gov.it/saml-extensions" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://idserver.servizicie.local/sp1">
+  <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate> MIIEjTCCA3WgAwIBAgIJAOJIapF3WgTCMA0GCSqGSIb3DQEBCwUAMHcxCzAJBgNVBAYTAklUMQ4wDAYDVQQIDAVJVEFMWTENMAsGA1UEBwwEUk9NRTERMA8GA1UECgwITE9DQUwgSUQxETAPBgNVBAMMCExPQ0FMIENBMSMwIQYJKoZIhvcNAQkBFhRhLmFudGV0b21hc29AaXB6cy5pdDAeFw0xODExMTAwNzE1MDlaFw0yMzExMDkwNzE1MDlaMIGMMQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSVRBTFkxDTALBgNVBAcMBFJPTUUxFTATBgNVBAoMDExPQ0FMIERPTUFJTjEiMCAGA1UEAwwZaWRzZXJ2ZXIuc2Vydml6aWNpZS5sb2NhbDEjMCEGCSqGSIb3DQEJARYUYS5hbnRldG9tYXNvQGlwenMuaXQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDkgZfnyK2MytbB/UbJYlhLaxMcWTpxLzRdDaSEo/M5mdcjNdDIXJ/Vf/h6vTRG3WuPBsc132nhzHvwT4ai93w+QDbg7gdOxrC2ChXrFo9Hv/gBfibV8/+b4PvN5HYboudHkUcqVVmlqqpEGSSHU2qs9cF9NP9q61kNV3lKNTT2VIXqOK3jrbevJyNxO1O1DiaAQiDbzxKy409K9OClIZX/BMg6aYW6yxEzmhez3OD6AEnIn+ytRPHq6AAZWqovIhx6UiOmgSF5Eibc23v2tobN4s53bwleFhYRXny2Nt9O0oC/zvBH2voBEV+DxYMYrDyf4lMgqCXoVdphHCtW5QG9AgMBAAGjggEEMIIBADCBkwYDVR0jBIGLMIGIoXukeTB3MQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSVRBTFkxDTALBgNVBAcMBFJPTUUxETAPBgNVBAoMCExPQ0FMIElEMREwDwYDVQQDDAhMT0NBTCBDQTEjMCEGCSqGSIb3DQEJARYUYS5hbnRldG9tYXNvQGlwenMuaXSCCQCw+L3Qi4uIxjAJBgNVHRMEAjAAMAsGA1UdDwQEAwIE8DBQBgNVHREESTBHghlpZHNlcnZlci5zZXJ2aXppY2llLmxvY2FsgippZHNlcnZlci5zZXJ2aXppY2llLmxvY2FsLjEyNy4wLjAuMS54aXAuaW8wDQYJKoZIhvcNAQELBQADggEBAJjbtkT6qNN6CQQaVYnQHBktfh6wdck+i0xLaWDoVXazDjBFbEj3Qy9ismrzKEXyiUZKOt12n4sk72REMLTy7abreN0ePaqASmQ39Ftw7ugM+F2RDnswhbSX9Yf8xgL+0rTCRq69QdQxux7MoHg8+beZqKDCEFbpbtzEsHGDPTwOsX8hFl1FbEsSn6oWUF0j+bqJvkLorjLXpW0JM9bhZakVhM5jzYiTDEkvUIERZErE4XmKoJr0qt0NqDM9TCXr3l8xL29fD2Cky6bz/kXZ2lNVo/CHH4nB6QOKHTLivIhsLQHqMdX4XsqWbdSD3cNoOZ+plAl5Xz1wSq2xXJEkWlc=
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idserver.servizicie.local/Shibboleth.sso/SLO/Redirect"/>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idserver.servizicie.local/Shibboleth.sso/SAML2/POST" index="0" isDefault="true"/>
+    <md:AttributeConsumingService index="0">
+      <md:ServiceName xml:lang="">urn:uuid:86eabbc2-6023-4f8d-a7dc-22401f5ac4fe</md:ServiceName>
+      <md:RequestedAttribute Name="name"/>
+      <md:RequestedAttribute Name="familyName"/>
+      <md:RequestedAttribute Name="dateOfBirth"/>
+      <md:RequestedAttribute Name="fiscalNumber"/>
+    </md:AttributeConsumingService>
+  </md:SPSSODescriptor>
+  <md:Organization>
+      <md:OrganizationName xml:lang="it">Istituto Service Provider di Esempio</md:OrganizationName>
+      <md:OrganizationDisplayName xml:lang="it">ISPE</md:OrganizationDisplayName>
+      <md:OrganizationURL xml:lang="it">https://ispesempio.gov.it/it/index.html</md:OrganizationURL>
+  </md:Organization>
+  <md:ContactPerson contactType="administrative">
+      <md:Extensions>
+          <cie:Public/>
+          <cie:IPACode>codiceIPA_soggetto</cie:IPACode>
+          <cie:Municipality>Z999</cie:Municipality>
+      </md:Extensions>
+      <md:Company>Istituto Service Provider di Esempio</md:Company>
+      <md:EmailAddress>info@ispesempio.gov.it</md:EmailAddress>
+      <md:TelephoneNumber>+390011223344</md:TelephoneNumber>
+  </md:ContactPerson>
+  <md:ContactPerson contactType="technical">
+      <md:Extensions>
+          <cie:Private/>
+          <cie:VATNumber>IT01234567890</cie:VATNumber>
+          <cie:FiscalCode>9876543210</cie:FiscalCode>
+          <cie:NACE2Code>codiceATECO_referenteTecnico</cie:NACE2Code>
+          <cie:Municipality>Z999</cie:Municipality>
+      </md:Extensions>
+      <md:Company>Partner Tecnologico per Soluzioni di Identità Federata s.r.l.</md:Company>
+      <md:EmailAddress>info.cie@partnertecnologicoidfederata.com</md:EmailAddress>
+      <md:TelephoneNumber>+390999135792</md:TelephoneNumber>
+  </md:ContactPerson>
+</md:EntityDescriptor>

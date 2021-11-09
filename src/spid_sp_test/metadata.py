@@ -75,6 +75,7 @@ class SpidSpMetadataCheck(
 
     def xsd_check(self, xsds_files: list = ["saml-schema-metadata-2.0.xsd"]):
         _method = f"{self.__class__.__name__}.xsd_check"
+        msg = f"Test {self.metadata_url}"
         test_id = ["1.0.0"]
         logger.debug(self.metadata.decode())
         _orig_pos = os.getcwd()
@@ -542,7 +543,7 @@ class SpidSpMetadataCheck(
                     test_id=["1.1.1", "1.1.3", "1.1.5"],
                     **_data,
                 )
-                _attr = acs.get(attr)
+                _attr = acs.get(attr) or "0"
                 if attr == "index":
                     self._assertTrue(
                         int(_attr) >= 0,
@@ -953,14 +954,15 @@ class SpidSpMetadataCheck(
         )
 
     def test_profile_cie_sp(self):
+        self.xsds_files_path = f"{BASE_DIR}/xsd/cie/"
+        self.xsd_check(xsds_files=["saml-schema-metadata-sp-cie.xsd"])
+
         self.test_profile_saml2core()
         self.test_SPSSODescriptor_SPID()
         self.test_contactperson_email()
         self.test_AttributeConsumingService_SPID(
             allowed_attributes=constants.CIE_ATTRIBUTES
         )
-        # TODO: ask the validation xsd to IPZS :)
-        # self.xsd_check(xsds_files = [
 
     def test_profile_cie_sp_public(self):
         self.test_profile_cie_sp()

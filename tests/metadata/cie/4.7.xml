@@ -1,0 +1,94 @@
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                     xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                     xmlns:cie="https://www.cartaidentita.interno.gov.it/saml-extensions"
+                     entityID="https://entityidsp4.7"
+					 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					 xsi:schemaLocation="urn:oasis:names:tc:SAML:2.0:metadata https://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
+
+
+	<md:SPSSODescriptor AuthnRequestsSigned="true"
+                      WantAssertionsSigned="true"
+                      protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+		
+		
+		<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                            Location="https://url_esempio_SLO_Redirect" />
+		<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" 
+                            Location="url_esempio_SLO_POST"/>
+		<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" 
+                            Location="url_esempio_SLO_SOAP"/>
+		<md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+		<md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                 Location="https://url_esempio_POST"
+                                 index="0"
+                                 isDefault="true" />
+		<md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                                 Location="https://url_esempio_Redirect"
+                                 index="1"
+                                 isDefault="false" />
+		<md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-SOAP"
+                                 Location="https://url_esempio_SOAP"
+                                 index="2" /> 
+		<md:AttributeConsumingService index="0">
+			<md:ServiceName xml:lang="it">urn:uuid:a83e1df8-0dd3-46c0-b4e3-f6c650177056</md:ServiceName>
+			<md:ServiceDescription xml:lang="it">DESCRIZIONE CATEGORIA SERVIZI ONLINE</md:ServiceDescription>
+			<md:RequestedAttribute Name="name" />
+			<md:RequestedAttribute Name="familyName" />
+			<md:RequestedAttribute Name="dateOfBirth" />
+			<md:RequestedAttribute Name="fiscalNumber" />
+		</md:AttributeConsumingService>
+		<md:AttributeConsumingService index="1">
+			<md:ServiceName xml:lang="it">urn:uuid:bd042d58-d402-4970-83dc-70cd1882bf62</md:ServiceName>
+			<md:ServiceDescription xml:lang="en">ATTRIBUTE SET DESCRIPTION</md:ServiceDescription>
+			<md:RequestedAttribute Name="name" />
+			<md:RequestedAttribute Name="familyName" />
+			<md:RequestedAttribute Name="dateOfBirth" />
+			<md:RequestedAttribute Name="fiscalNumber" />
+		</md:AttributeConsumingService>
+		<md:AttributeConsumingService index="2">
+			<md:ServiceName xml:lang="it">urn:uuid:a16cb8fd-62c6-4ff5-88ea-7dd3bdcb4c4e</md:ServiceName>
+			<md:RequestedAttribute Name="name" />
+			<md:RequestedAttribute Name="familyName" />
+			<md:RequestedAttribute Name="dateOfBirth" />
+			<md:RequestedAttribute Name="fiscalNumber" />
+		</md:AttributeConsumingService>
+	</md:SPSSODescriptor>
+	<md:Organization>
+		<md:OrganizationName xml:lang="it">Istituto Service Provider</md:OrganizationName>
+		<md:OrganizationName xml:lang="en">Service Provider Institute</md:OrganizationName>
+		<md:OrganizationDisplayName xml:lang="it">ISP</md:OrganizationDisplayName>
+		<md:OrganizationDisplayName xml:lang="en">SPI</md:OrganizationDisplayName>
+		<md:OrganizationURL xml:lang="it">https://www.isp.it</md:OrganizationURL>
+		<md:OrganizationURL xml:lang="en">https://www.isp.it</md:OrganizationURL>
+	</md:Organization>
+	<md:ContactPerson contactType="administrative">
+		<md:Extensions>
+			<cie:Public/>
+			<cie:IPACode>codiceIPA_SP</cie:IPACode>
+			<cie:IPACategory>categoriaIPA_SP</cie:IPACategory>
+			<cie:NACE2Code>codiceATECO_SP</cie:NACE2Code>
+			<cie:VATNumber>IT01234567890</cie:VATNumber>
+			<cie:FiscalCode>9876543210</cie:FiscalCode>
+			<cie:Municipality>codiceISTAT_SP</cie:Municipality>
+			<cie:Province>sigla_provincia_SP</cie:Province>
+			<cie:Country>IT</cie:Country>                 
+		</md:Extensions>
+		<md:Company>Istituto Service Provider</md:Company>
+		<md:EmailAddress>info@isp.gov.it</md:EmailAddress>
+		<md:TelephoneNumber>+390011223344</md:TelephoneNumber>
+	</md:ContactPerson>
+	<md:ContactPerson contactType="technical">
+		<md:Extensions>
+			<cie:Private/>
+			<cie:VATNumber>IT01234567890</cie:VATNumber>
+			<cie:FiscalCode>9876543210</cie:FiscalCode>
+			<cie:NACE2Code>codiceATECO_partnerTecnologico</cie:NACE2Code>
+			<cie:Municipality>codiceISTAT_partnerTecnologico</cie:Municipality>
+			<cie:Province>sigla_provincia_partnerTecnologico</cie:Province>   
+			<cie:Country>IT</cie:Country>
+		</md:Extensions>
+		<md:Company>Partner Tecnologico per Soluzioni di Identità Federata s.r.l.</md:Company>
+		<md:EmailAddress>info.cie@partnertecnologicoidfederata.com</md:EmailAddress>
+		<md:TelephoneNumber>+390999135792</md:TelephoneNumber>
+	</md:ContactPerson>
+</md:EntityDescriptor>

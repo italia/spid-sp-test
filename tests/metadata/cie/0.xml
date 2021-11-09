@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:cie="https://www.cartaidentita.interno.gov.it/saml-extensions" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://idserver.servizicie.local/sp">
+  <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate>MIIEjTCCA3WgAwIBAgIJAOJIapF3WgTCMA0GCSqGSIb3DQEBCwUAMHcxCzAJBgNVBAYTAklUMQ4wDAYDVQQIDAVJVEFMWTENMAsGA1UEBwwEUk9NRTERMA8GA1UECgwITE9DQUwgSUQxETAPBgNVBAMMCExPQ0FMIENBMSMwIQYJKoZIhvcNAQkBFhRhLmFudGV0b21hc29AaXB6cy5pdDAeFw0xODExMTAwNzE1MDlaFw0yMzExMDkwNzE1MDlaMIGMMQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSVRBTFkxDTALBgNVBAcMBFJPTUUxFTATBgNVBAoMDExPQ0FMIERPTUFJTjEiMCAGA1UEAwwZaWRzZXJ2ZXIuc2Vydml6aWNpZS5sb2NhbDEjMCEGCSqGSIb3DQEJARYUYS5hbnRldG9tYXNvQGlwenMuaXQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDkgZfnyK2MytbB/UbJYlhLaxMcWTpxLzRdDaSEo/M5mdcjNdDIXJ/Vf/h6vTRG3WuPBsc132nhzHvwT4ai93w+QDbg7gdOxrC2ChXrFo9Hv/gBfibV8/+b4PvN5HYboudHkUcqVVmlqqpEGSSHU2qs9cF9NP9q61kNV3lKNTT2VIXqOK3jrbevJyNxO1O1DiaAQiDbzxKy409K9OClIZX/BMg6aYW6yxEzmhez3OD6AEnIn+ytRPHq6AAZWqovIhx6UiOmgSF5Eibc23v2tobN4s53bwleFhYRXny2Nt9O0oC/zvBH2voBEV+DxYMYrDyf4lMgqCXoVdphHCtW5QG9AgMBAAGjggEEMIIBADCBkwYDVR0jBIGLMIGIoXukeTB3MQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSVRBTFkxDTALBgNVBAcMBFJPTUUxETAPBgNVBAoMCExPQ0FMIElEMREwDwYDVQQDDAhMT0NBTCBDQTEjMCEGCSqGSIb3DQEJARYUYS5hbnRldG9tYXNvQGlwenMuaXSCCQCw+L3Qi4uIxjAJBgNVHRMEAjAAMAsGA1UdDwQEAwIE8DBQBgNVHREESTBHghlpZHNlcnZlci5zZXJ2aXppY2llLmxvY2FsgippZHNlcnZlci5zZXJ2aXppY2llLmxvY2FsLjEyNy4wLjAuMS54aXAuaW8wDQYJKoZIhvcNAQELBQADggEBAJjbtkT6qNN6CQQaVYnQHBktfh6wdck+i0xLaWDoVXazDjBFbEj3Qy9ismrzKEXyiUZKOt12n4sk72REMLTy7abreN0ePaqASmQ39Ftw7ugM+F2RDnswhbSX9Yf8xgL+0rTCRq69QdQxux7MoHg8+beZqKDCEFbpbtzEsHGDPTwOsX8hFl1FbEsSn6oWUF0j+bqJvkLorjLXpW0JM9bhZakVhM5jzYiTDEkvUIERZErE4XmKoJr0qt0NqDM9TCXr3l8xL29fD2Cky6bz/kXZ2lNVo/CHH4nB6QOKHTLivIhsLQHqMdX4XsqWbdSD3cNoOZ+plAl5Xz1wSq2xXJEkWlc=
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:KeyDescriptor use="encryption">
+        <ds:KeyInfo>
+            <ds:X509Data>
+                <ds:X509Certificate>MIIEgzCCA2ugAwIBAgIJAJR0ceHG6T7fMA0GCSqGSIb3DQEBCwUAMIHXMQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSXRhbHkxHDAaBgNVBAcME0dhcmJhZ25hdGUgTWlsYW5lc2UxJjAkBgNVBAoMHUNvbXVuZSBkaSBHYXJiYWduYXRlIE1pbGFuZXNlMQ8wDQYDVQQLDAZIRVJBTEQxNjA0BgNVBAMMLXByb2NlZGltZW50aS5jb211bmUuZ2FyYmFnbmF0ZS1taWxhbmVzZS5taS5pdDEpMCcGCSqGSIb3DQEJARYaaGVyYWxkQHNpbmV0aW5mb3JtYXRpY2EuaXQwHhcNMTcxMjAxMTM1NzA2WhcNMjcxMjAxMTM1NzA2WjCB1zELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBUl0YWx5MRwwGgYDVQQHDBNHYXJiYWduYXRlIE1pbGFuZXNlMSYwJAYDVQQKDB1Db211bmUgZGkgR2FyYmFnbmF0ZSBNaWxhbmVzZTEPMA0GA1UECwwGSEVSQUxEMTYwNAYDVQQDDC1wcm9jZWRpbWVudGkuY29tdW5lLmdhcmJhZ25hdGUtbWlsYW5lc2UubWkuaXQxKTAnBgkqhkiG9w0BCQEWGmhlcmFsZEBzaW5ldGluZm9ybWF0aWNhLml0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyZBSUp8lobMLtFaJODyHZCpihfLEr3aUdih2PS0R+r/9HtwZjPovbP2eI30K/f32S1foowqprRfxhKLELWzIeEhtq8c18xvTVfWUWCkUWLBfSr5QePiF03DSj1qgOzgVTgfEdbIcUghU0uh71CYRqoI2f0YyPPePaSz5m/ulUizf/nrTS5mwLC+k4SJ91X2hTSqfEBZR9AGGugALYOaeml8gKT5X6TmVH18pkd2ByEhXrnxZzFw08N2QsX1U9juhJzFLNiJwKpgY0FBY8ihElOUTeNRs42PMOUXn0/aNt6kF8uYg6vsZxEsaKtd5FJ5ccFawBYIouPNCKIzgPgYiswIDAQABo1AwTjAdBgNVHQ4EFgQUj5sxiXwRYPa8v5ySzlx0kRqDmrswHwYDVR0jBBgwFoAUj5sxiXwRYPa8v5ySzlx0kRqDmrswDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAUwm3VOQn6hVLMRuzbAzGa+Ctu1mVXIfVfpcbR2oWKOLS6QpW7oAHM0wVCO2LkNJ9SQFJ1pslHeY/HFBanbJplwYZleFVluLRh55RXlR387nZggxjV4a9Ya6YGCHhaNlUXhRLBhHSkT9bD0gvYwqBh2lsKwXSBx+hF6YQ3904aNXz6wheg5JTfUkJuIYDfWin/3sDErEhzWjn9yw5q0FDi7FwOIxYHAvRq5IitgxijoKLvrY5pdJ1cvNhGA5e+Ylg4WaluH0jbW1iEpSrAwcRharZpVn2aGm6LKnT5b7yAaCHqLAb/++6SwMg8btC+3vJwnWmCwRgOLfLM+pfjNEX/Q==</ds:X509Certificate>
+            </ds:X509Data>
+        </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idserver.servizicie.local/Shibboleth.sso/SLO/Redirect"/>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idserver.servizicie.local/Shibboleth.sso/SLO/POST"/>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idserver.servizicie.local/Shibboleth.sso/SAML2/POST" index="0" isDefault="true"/>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idserver.servizicie.local/Shibboleth.sso/SAML2/Redirect" index="1" isDefault="false"/> 
+    <md:AttributeConsumingService index="0">
+      <md:ServiceName xml:lang="it">urn:uuid:86eabbc2-6023-4f8d-a7dc-22401f5ac4fe</md:ServiceName>
+      <md:ServiceDescription xml:lang="it">DESCRIZIONE CATEGORIA SERVIZI ONLINE</md:ServiceDescription>
+      <md:RequestedAttribute Name="name"/>
+      <md:RequestedAttribute Name="familyName"/>
+      <md:RequestedAttribute Name="dateOfBirth"/>
+      <md:RequestedAttribute Name="fiscalNumber"/>
+    </md:AttributeConsumingService>
+    <md:AttributeConsumingService index="1">
+      <md:ServiceName xml:lang="it">urn:uuid:ac63496d-5107-4f00-b884-8a95c9f30787</md:ServiceName>
+      <md:ServiceDescription xml:lang="en">ATTRIBUTE SET DESCRIPTION</md:ServiceDescription>
+      <md:RequestedAttribute Name="name"/>
+      <md:RequestedAttribute Name="familyName"/>
+      <md:RequestedAttribute Name="dateOfBirth"/>
+      <md:RequestedAttribute Name="fiscalNumber"/>
+    </md:AttributeConsumingService>
+    <md:AttributeConsumingService index="2">
+      <md:ServiceName xml:lang="it">urn:uuid:24bd81f5-d6b2-458f-8d12-0e08ade2c3d2</md:ServiceName>
+      <md:RequestedAttribute Name="name"/>
+      <md:RequestedAttribute Name="familyName"/>
+      <md:RequestedAttribute Name="dateOfBirth"/>
+      <md:RequestedAttribute Name="fiscalNumber"/>
+    </md:AttributeConsumingService>
+  </md:SPSSODescriptor>
+  <md:Organization>
+    <md:OrganizationName xml:lang="it">Istituto Poligrafico e Zecca dello Stato S.p.A.</md:OrganizationName>
+    <md:OrganizationName xml:lang="en">Istituto Poligrafico e Zecca dello Stato S.p.A.</md:OrganizationName>
+    <md:OrganizationDisplayName xml:lang="it">IPZS</md:OrganizationDisplayName>
+    <md:OrganizationDisplayName xml:lang="en">IPZS</md:OrganizationDisplayName>
+    <md:OrganizationURL xml:lang="it">https://www.ipzs.it</md:OrganizationURL> 
+    <md:OrganizationURL xml:lang="en">https://www.ipzs.it</md:OrganizationURL>
+  </md:Organization>
+  <md:ContactPerson contactType="administrative">
+    <md:Extensions>
+      <cie:Private/>
+      <cie:VATNumber>IT01234567890</cie:VATNumber>
+      <cie:FiscalCode>9876543210</cie:FiscalCode>
+      <cie:NACE2Code>18.12.00</cie:NACE2Code>
+      <cie:Municipality>H501</cie:Municipality>
+      <cie:Province>sigla_provincia_SP</cie:Province>
+      <cie:Country>IT</cie:Country>
+    </md:Extensions>
+    <md:Company>Istituto Poligrafico e Zecca dello Stato S.p.A.</md:Company>
+    <md:EmailAddress>informazioni@ipzs.it</md:EmailAddress>
+    <md:TelephoneNumber>+390685081</md:TelephoneNumber>
+  </md:ContactPerson>
+</md:EntityDescriptor>

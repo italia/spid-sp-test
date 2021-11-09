@@ -1,0 +1,119 @@
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                     xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                     xmlns:cie="https://www.cartaidentita.interno.gov.it/saml-extensions"
+                     entityID="https://entityidsp4.9b"
+					 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					 xsi:schemaLocation="urn:oasis:names:tc:SAML:2.0:metadata https://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
+
+
+	<md:SPSSODescriptor AuthnRequestsSigned="true"
+                      WantAssertionsSigned="true"
+                      protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+		<md:KeyDescriptor use="signing">
+			<ds:KeyInfo>
+				<ds:X509Data>
+					<ds:X509Certificate>
+MIID7zCCAtegAwIBAgIUSvx7P8QbDF19RQVrtQtG7agIWQYwDQYJKoZIhvcNAQELBQAwgYYxCzAJ
+BgNVBAYTAklUMQ4wDAYDVQQIDAVJdGFseTENMAsGA1UEBwwEUm9tZTENMAsGA1UECgwESVBaUzEM
+MAoGA1UECwwDUiZEMRkwFwYDVQQDDBBGcmFuY2VzY28gTWFyaW5vMSAwHgYJKoZIhvcNAQkBFhFm
+YS5tYXJpbm9AaXB6cy5pdDAeFw0yMTAyMDIxNzE4MTBaFw0yMjAyMDIxNzE4MTBaMIGGMQswCQYD
+VQQGEwJJVDEOMAwGA1UECAwFSXRhbHkxDTALBgNVBAcMBFJvbWUxDTALBgNVBAoMBElQWlMxDDAK
+BgNVBAsMA1ImRDEZMBcGA1UEAwwQRnJhbmNlc2NvIE1hcmlubzEgMB4GCSqGSIb3DQEJARYRZmEu
+bWFyaW5vQGlwenMuaXQwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDFJhnjVljKnlak
+pDPVVxhxDV37bCma+MdW+8onUfIS0H1fWUWqz8P8ux7/2wRuL7QhJSjJ7/gLf358ZFBwEKgeBr/p
+s8O6oZ2pq5aaLjbC97qbVQybtjOsxBjAHmJsMtxH3X3kZP6bc973JOgm8muz4Hj1UI2sBotsYaU1
+Rioo9obFR+Sy+ScQkBmuk2rqAYYdR2ggBjHKWx+hoy+TvEpBwzOMRSbpI+bWkooBHhetYT5qYQom
+C5d5/60S+UEHyXu2Su0/28XtWzzi+7u0U+s61egDmCE0ln0xtexayjiGN5m52wR0dFDETg7S7zow
+CanhGzz/IEnYNLxESsY1FGWjAgMBAAGjUzBRMB0GA1UdDgQWBBTqL7qvcb4UJLPNMH/TPID22Rm0
+pzAfBgNVHSMEGDAWgBTqL7qvcb4UJLPNMH/TPID22Rm0pzAPBgNVHRMBAf8EBTADAQH/MA0GCSqG
+SIb3DQEBCwUAA4IBAQB2eh25+kkeXg5e476Orgj1e+M3lp32SWEFjZbw7gPmNm1m+RwONUmN6vGw
+g+I0LVsvEE62+jv6UAm5yN31KBPOk8vqlEoy5Ty854sKXGP8N3nATzwcNdkcOsQK+hH50JvEUKQJ
+bwDv7j23nEIGYQ+DdGNX3XdK5dHLWni/jJOZC9G31nCXkb8Q1Co8NngOcdgHkHEltg1y6Bj08X2q
+xPYOgltckapkT1S5bviwxkDmgMjL5xfwZcBrAjxS77AnWHeIGh2PwhoKJQO/HY48JtYRfcEJzQn9
+82FVoaipBCDzUdp5kfRYFggWOfI7veG+aipuFjxmxUdJLEDOessMi2zk
+					</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</md:KeyDescriptor>
+		<md:KeyDescriptor use="encryption">
+			<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+				<ds:X509Data>
+					<ds:X509Certificate>MIIEgzCCA2ugAwIBAgIJAJR0ceHG6T7fMA0GCSqGSIb3DQEBCwUAMIHXMQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSXRhbHkxHDAaBgNVBAcME0dhcmJhZ25hdGUgTWlsYW5lc2UxJjAkBgNVBAoMHUNvbXVuZSBkaSBHYXJiYWduYXRlIE1pbGFuZXNlMQ8wDQYDVQQLDAZIRVJBTEQxNjA0BgNVBAMMLXByb2NlZGltZW50aS5jb211bmUuZ2FyYmFnbmF0ZS1taWxhbmVzZS5taS5pdDEpMCcGCSqGSIb3DQEJARYaaGVyYWxkQHNpbmV0aW5mb3JtYXRpY2EuaXQwHhcNMTcxMjAxMTM1NzA2WhcNMjcxMjAxMTM1NzA2WjCB1zELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBUl0YWx5MRwwGgYDVQQHDBNHYXJiYWduYXRlIE1pbGFuZXNlMSYwJAYDVQQKDB1Db211bmUgZGkgR2FyYmFnbmF0ZSBNaWxhbmVzZTEPMA0GA1UECwwGSEVSQUxEMTYwNAYDVQQDDC1wcm9jZWRpbWVudGkuY29tdW5lLmdhcmJhZ25hdGUtbWlsYW5lc2UubWkuaXQxKTAnBgkqhkiG9w0BCQEWGmhlcmFsZEBzaW5ldGluZm9ybWF0aWNhLml0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyZBSUp8lobMLtFaJODyHZCpihfLEr3aUdih2PS0R+r/9HtwZjPovbP2eI30K/f32S1foowqprRfxhKLELWzIeEhtq8c18xvTVfWUWCkUWLBfSr5QePiF03DSj1qgOzgVTgfEdbIcUghU0uh71CYRqoI2f0YyPPePaSz5m/ulUizf/nrTS5mwLC+k4SJ91X2hTSqfEBZR9AGGugALYOaeml8gKT5X6TmVH18pkd2ByEhXrnxZzFw08N2QsX1U9juhJzFLNiJwKpgY0FBY8ihElOUTeNRs42PMOUXn0/aNt6kF8uYg6vsZxEsaKtd5FJ5ccFawBYIouPNCKIzgPgYiswIDAQABo1AwTjAdBgNVHQ4EFgQUj5sxiXwRYPa8v5ySzlx0kRqDmrswHwYDVR0jBBgwFoAUj5sxiXwRYPa8v5ySzlx0kRqDmrswDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAUwm3VOQn6hVLMRuzbAzGa+Ctu1mVXIfVfpcbR2oWKOLS6QpW7oAHM0wVCO2LkNJ9SQFJ1pslHeY/HFBanbJplwYZleFVluLRh55RXlR387nZggxjV4a9Ya6YGCHhaNlUXhRLBhHSkT9bD0gvYwqBh2lsKwXSBx+hF6YQ3904aNXz6wheg5JTfUkJuIYDfWin/3sDErEhzWjn9yw5q0FDi7FwOIxYHAvRq5IitgxijoKLvrY5pdJ1cvNhGA5e+Ylg4WaluH0jbW1iEpSrAwcRharZpVn2aGm6LKnT5b7yAaCHqLAb/++6SwMg8btC+3vJwnWmCwRgOLfLM+pfjNEX/Q==</ds:X509Certificate>
+				</ds:X509Data>
+			</ds:KeyInfo>
+		</md:KeyDescriptor>
+		<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" 
+                            Location="url_esempio_SLO_POST"/>
+		<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" 
+                            Location="url_esempio_SLO_SOAP"/>
+		<md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+		<md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                 Location="https://url_esempio_POST"
+                                 index="0"
+                                 isDefault="true" />
+		<md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-SOAP"
+                                 Location="https://url_esempio_SOAP"
+                                 index="2" /> 
+		<md:AttributeConsumingService index="0">
+			<md:ServiceName xml:lang="it">urn:uuid:a83e1df8-0dd3-46c0-b4e3-f6c650177056</md:ServiceName>
+			<md:ServiceDescription xml:lang="it">DESCRIZIONE CATEGORIA SERVIZI ONLINE</md:ServiceDescription>
+			<md:RequestedAttribute Name="name" />
+			<md:RequestedAttribute Name="familyName" />
+			<md:RequestedAttribute Name="dateOfBirth" />
+			<md:RequestedAttribute Name="fiscalNumber" />
+		</md:AttributeConsumingService>
+		<md:AttributeConsumingService index="1">
+			<md:ServiceName xml:lang="it">urn:uuid:bd042d58-d402-4970-83dc-70cd1882bf62</md:ServiceName>
+			<md:ServiceDescription xml:lang="en">ATTRIBUTE SET DESCRIPTION</md:ServiceDescription>
+			<md:RequestedAttribute Name="name" />
+			<md:RequestedAttribute Name="familyName" />
+			<md:RequestedAttribute Name="dateOfBirth" />
+			<md:RequestedAttribute Name="fiscalNumber" />
+		</md:AttributeConsumingService>
+		<md:AttributeConsumingService index="2">
+			<md:ServiceName xml:lang="it">urn:uuid:a16cb8fd-62c6-4ff5-88ea-7dd3bdcb4c4e</md:ServiceName>
+			<md:RequestedAttribute Name="name" />
+			<md:RequestedAttribute Name="familyName" />
+			<md:RequestedAttribute Name="dateOfBirth" />
+			<md:RequestedAttribute Name="fiscalNumber" />
+		</md:AttributeConsumingService>
+	</md:SPSSODescriptor>
+	<md:Organization>
+		<md:OrganizationName xml:lang="it">Istituto Service Provider</md:OrganizationName>
+		<md:OrganizationName xml:lang="en">Service Provider Institute</md:OrganizationName>
+		<md:OrganizationDisplayName xml:lang="it">ISP</md:OrganizationDisplayName>
+		<md:OrganizationDisplayName xml:lang="en">SPI</md:OrganizationDisplayName>
+		<md:OrganizationURL xml:lang="it">https://www.isp.it</md:OrganizationURL>
+		<md:OrganizationURL xml:lang="en">https://www.isp.it</md:OrganizationURL>
+	</md:Organization>
+	<md:ContactPerson contactType="administrative">
+		<md:Extensions>
+			<cie:Public/>
+			<cie:IPACode>codiceIPA_SP</cie:IPACode>
+			<cie:IPACategory>categoriaIPA_SP</cie:IPACategory>
+			<cie:NACE2Code>codiceATECO_SP</cie:NACE2Code>
+			<cie:VATNumber>IT01234567890</cie:VATNumber>
+			<cie:FiscalCode>9876543210</cie:FiscalCode>
+			<cie:Municipality>codiceISTAT_SP</cie:Municipality>
+			<cie:Province>sigla_provincia_SP</cie:Province>
+			<cie:Country>IT</cie:Country>                 
+		</md:Extensions>
+		<md:Company>Istituto Service Provider</md:Company>
+		<md:EmailAddress>info@isp.gov.it</md:EmailAddress>
+		<md:TelephoneNumber>+390011223344</md:TelephoneNumber>
+	</md:ContactPerson>
+	<md:ContactPerson contactType="technical">
+		<md:Extensions>
+			<cie:Private/>
+			<cie:VATNumber>IT01234567890</cie:VATNumber>
+			<cie:FiscalCode>9876543210</cie:FiscalCode>
+			<cie:NACE2Code>codiceATECO_partnerTecnologico</cie:NACE2Code>
+			<cie:Municipality>codiceISTAT_partnerTecnologico</cie:Municipality>
+			<cie:Province>sigla_provincia_partnerTecnologico</cie:Province>   
+			<cie:Country>IT</cie:Country>
+		</md:Extensions>
+		<md:Company>Partner Tecnologico per Soluzioni di Identità Federata s.r.l.</md:Company>
+		<md:EmailAddress>info.cie@partnertecnologicoidfederata.com</md:EmailAddress>
+		<md:TelephoneNumber>+390999135792</md:TelephoneNumber>
+	</md:ContactPerson>
+</md:EntityDescriptor>

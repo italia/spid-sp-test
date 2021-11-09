@@ -49,7 +49,6 @@
    <md:ContactPerson contactType="administrative">
       <md:Extensions>
          <cie:Public />
-         <cie:FiscalCode>01234567890</cie:FiscalCode>
          <cie:IPACode>abcd_000</cie:IPACode>
          <cie:Municipality>C351</cie:Municipality>
          <cie:Province>CT</cie:Province>
