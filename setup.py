@@ -36,11 +36,11 @@ setup(
                                                  recursive=True)]
     },
     install_requires=[
-                'pysaml2>=6.5.1',
-                'xmlschema==1.7.1',
-                'requests>=2.25.1',
-                'lxml>=4.6.2',
-                'Jinja2>=2.11.3',
-                # 'sslyze>=4.0.4', # todo
-              ],
+        'pysaml2>=6.5.1',
+        'xmlschema==1.7.1',
+        'requests>=2.25.1',
+        'lxml>=4.6.2',
+        'Jinja2>=2.11.3',
+        # 'sslyze>=4.0.4', # todo
+      ],
     )
