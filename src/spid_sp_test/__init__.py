@@ -6,7 +6,7 @@ from .constants import HTTP_NO_PORT_REGEX
 
 
 BASE_DIR = Path(__file__).resolve().parent
-__version__ = "1.0.0-rc"
+__version__ = "1.0.0-rc1"
 __name__ = "spid_sp_test"
 logger = logging.getLogger(__name__)
 

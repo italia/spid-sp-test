@@ -816,8 +816,8 @@ class SpidSpMetadataCheck(
                     if ename == "OrganizationURL" and self.production:
                         ouv = element.text.strip()
 
-                        if not (ouv.startswith("http://")or ouv.startswith("https://")):
-                            OrganizationURLvalue = f"https://{ouv}"
+                        if not (ouv.startswith("http://") or ouv.startswith("https://")):
+                            ouv = f"https://{ouv}"
 
                         self._assertIsValidHttpUrl(
                             ouv,
