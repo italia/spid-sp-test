@@ -15,8 +15,9 @@ spid-sp-test can:
 
 - test a SAML2 SPID/CIE Metadata file or http url
 - test a SAML2 SPID/CIE AuthnRequest file or or http url
+- test a SAML2 eIDAS FICEP SP Metadata file or http url
+- test many kinds of SPID SP, see [Profiles](#profiles)
 - test ACS behaviour, how a SP replies to a SAML2 Response
-- test many kinds of SP, see [Profiles](#profiles)
 - dump the responses sent to an ACS and the HTML of the SP response
 - handle Attributes to send in Responses or test configurations of the Responses via json configuration files
 - configure response template with Jinja2
@@ -55,6 +56,7 @@ with one of the following profile name:
 - **spid-sp-op-public-lite**: Public Spid SP Gestore Lite
 - **cie-sp-public**: Public CIE SP
 - **cie-sp-private**: Private CIE SP
+- **fice-eidas-sp**: eIDAS FICEP SP
 
 ## Setup
 
@@ -93,12 +95,11 @@ An example of CI [is here](https://github.com/italia/spid-django/blob/6baa2fe54a
 Run `spid_sp_test -h` for inline documentation.
 
 ````
-usage: spid_sp_test [-h] [--metadata-url METADATA_URL] [--idp-metadata] [-l [LIST [LIST ...]]] [--extra] [--authn-url AUTHN_URL] [-tr] [-nsr]
-                    [-tp TEMPLATE_PATH] [-tn [TEST_NAMES [TEST_NAMES ...]]] [-tj [TEST_JSONS [TEST_JSONS ...]]] [-aj ATTR_JSON]
-                    [-o REPORT_OUTPUT_FILE] [-rf {json,html}] [-d {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-xp XMLSEC_PATH] [--production]
+usage: spid_sp_test [-h] [--metadata-url METADATA_URL] [--idp-metadata] [-l [LIST [LIST ...]]] [--extra] [--authn-url AUTHN_URL] [-tr] [-nsr] [-tp TEMPLATE_PATH] [-tn [TEST_NAMES [TEST_NAMES ...]]]
+                    [-tj [TEST_JSONS [TEST_JSONS ...]]] [-aj ATTR_JSON] [-o REPORT_OUTPUT_FILE] [-rf {json,html}] [-d {CRITICAL,ERROR,WARNING,INFO,DEBUG}] [-xp XMLSEC_PATH] [--production]
                     [--response-html-dumps RESPONSE_HTML_DUMPS] [--exit-zero]
-                    [-pr {saml2-sp,spid-sp-public,spid-sp-private,spid-sp-ag-public-full,spid-sp-ag-public-lite,spid-sp-op-public-full,spid-sp-op-public-lite,cie-sp-public,cie-sp-private}]
-                    [-ap AUTHN_PLUGIN] [-rm REQUEST_METHOD] [-rb REQUEST_BODY] [-rct REQUEST_CONTENT_TYPE]
+                    [-pr {saml2-sp,spid-sp-public,spid-sp-private,spid-sp-ag-public-full,spid-sp-ag-public-lite,spid-sp-op-public-full,spid-sp-op-public-lite,cie-sp-public,cie-sp-private,ficep-eidas-sp}]
+                    [-ap AUTHN_PLUGIN] [-rm REQUEST_METHOD] [-rb REQUEST_BODY] [-rct REQUEST_CONTENT_TYPE] [-prs] [-pas] [--xsds-files-path XSDS_FILES_PATH] [-v]
 
 
 src/spid_sp_test/spid_sp_test -h for help
