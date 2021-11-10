@@ -117,6 +117,24 @@ SPID_ATTRIBUTES = [
 
 CIE_ATTRIBUTES = ["dateOfBirth", "familyName", "fiscalNumber", "name"]
 
+FICEP_MIN_ATTRIBUTES = [
+    "fiscalNumber",
+    "spidCode",
+    "name",
+    "familyName",
+    "dateOfBirth",
+]
+
+FICEP_FULL_ATTRIBUTES = [
+    *FICEP_MIN_ATTRIBUTES,
+    "placeOfBirth",
+    "address",
+    "gender",
+]
+
+FICEP_MINIMUM_SET_SERVICENAME = "eIDAS Natural Person Minimum Attribute Set"
+FICEP_FULL_SET_SERVICENAME = "eIDAS Natural Person Full Attribute Set"
+
 SPID_LEVELS = [
     "https://www.spid.gov.it/SpidL1",
     "https://www.spid.gov.it/SpidL2",
@@ -139,26 +157,6 @@ ONE_YEAR = 365
 
 MINIMUM_CERTIFICATE_LENGHT = 2048  # type: int
 DESIRED_CERTIFICATE_LENGHT = 3072  # type: int
-
-FICEP_MINIMUM_SET_SERVICENAME = "eIDAS Natural Person Minimum Attribute Set"
-FICEP_FULL_SET_SERVICENAME = "eIDAS Natural Person Full Attribute Set"
-
-FICEP_MIN_ATTRIBUTES = [
-    "spidCode",
-    "name",
-    "familyName",
-    "dateOfBirth",
-]
-
-FICEP_FULL_ATTRIBUTES = [
-    "spidCode",
-    "name",
-    "familyName",
-    "dateOfBirth",
-    "placeOfBirth",
-    "address",
-    "gender",
-]
 
 NODE_NAME = "urn:oasis:names:tc:SAML:2.0:assertion:Assertion"
 EMAIL_REGEXP = r"^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,6}$"

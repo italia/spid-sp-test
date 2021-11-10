@@ -212,6 +212,7 @@ if __name__ == '__main__':
             'spid-sp-op-public-lite',
             'cie-sp-public',
             'cie-sp-private',
+            'ficep-eidas-sp'
         ),
         help="which profile to check; defaults to spid-sp-public if omitted"
     )

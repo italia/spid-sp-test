@@ -980,3 +980,13 @@ class SpidSpMetadataCheck(
         self.test_Contacts_PubPriv(contact_type="administrative")
         self.test_Contacts_PubPriv(contact_type="technical")
         self.test_extensions_cie(ext_type="Private")
+
+    def test_profile_ficep_eidas_sp(self):
+        self.xsd_check(xsds_files=["saml-schema-metadata-2.0.xsd"])
+
+        self.test_profile_saml2core()
+        self.test_SPSSODescriptor_SPID()
+        self.test_contactperson_email()
+        self.test_AttributeConsumingService_SPID(
+            allowed_attributes=constants.FICEP_FULL_ATTRIBUTES
+        )
