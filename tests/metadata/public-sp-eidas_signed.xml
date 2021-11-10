@@ -55,7 +55,7 @@ gfXAssrzQ25uCd7raqhJRw==</ds:SignatureValue>
 			<md:RequestedAttribute FriendlyName="Nome" Name="name"/>
 			<md:RequestedAttribute FriendlyName="Cognome" Name="familyName"/>
 			<md:RequestedAttribute FriendlyName="Data di nascita" Name="dateOfBirth"/>
-			<md:RequestedAttribute FriendlyName="Luogo di nascita" Name="plceOfBirth"/>
+			<md:RequestedAttribute FriendlyName="Luogo di nascita" Name="placeOfBirth"/>
 			<md:RequestedAttribute FriendlyName="Domicilio fisico" Name="address"/>
 			<md:RequestedAttribute FriendlyName="Sesso" Name="gender"/>
 		</md:AttributeConsumingService>

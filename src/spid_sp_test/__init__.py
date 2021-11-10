@@ -1,6 +1,5 @@
 import logging
 import re
-import sys
 
 from pathlib import Path
 from .constants import HTTP_NO_PORT_REGEX

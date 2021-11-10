@@ -760,7 +760,6 @@ class SpidSpMetadataCheck(
             )
         return self.is_ok(_method)
 
-
     def test_Organization(self):
         """Test the compliance of Organization element"""
         orgs = self.doc.xpath("//EntityDescriptor/Organization")
@@ -815,14 +814,13 @@ class SpidSpMetadataCheck(
                     )
 
                     if ename == "OrganizationURL" and self.production:
-                        OrganizationURLvalue = element.text.strip()
-                        if not (
-                            OrganizationURLvalue.startswith("http://")
-                            or OrganizationURLvalue.startswith("https://")
-                        ):
-                            OrganizationURLvalue = f"https://{OrganizationURLvalue}"
+                        ouv = element.text.strip()
+
+                        if not (ouv.startswith("http://")or ouv.startswith("https://")):
+                            OrganizationURLvalue = f"https://{ouv}"
+
                         self._assertIsValidHttpUrl(
-                            OrganizationURLvalue,
+                            ouv,
                             f"The {ename} element MUST be a valid URL",
                             test_id=["1.5.10"],
                             **_data,

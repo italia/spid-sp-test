@@ -34,10 +34,17 @@ def test_ag_lite():
     es = run_cmd(f'{DIR}/pub-ag-lite_signed.xml --profile spid-sp-ag-public-lite')
     assert es == 0
 
+
 def test_ag_full():
     es = run_cmd(f'{DIR}/pub-ag-full_signed.xml --profile spid-sp-ag-public-full')
     assert es == 0
 
+
 def test_public_cie_sp():
     es = run_cmd(f'{DIR}/public-sp-cie_signed.xml --profile cie-sp-public')
+    assert es == 0
+
+
+def test_public_ficep_sp():
+    es = run_cmd(f'{DIR}/public-sp-eidas_signed.xml --profile ficep-eidas-sp')
     assert es == 0
