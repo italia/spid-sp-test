@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:cie="https://www.cartaidentita.interno.gov.it/saml-extensions" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://www.public-sp.it" ID="id-9DH0mAtqONiJQF0IB">
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:cie="https://www.cartaidentita.interno.gov.it/saml-extensions" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://www.public-sp.it" ID="id-9DH0mAtqONiJQF0IB">
 
 <ds:Signature Id="Signature1">
 <ds:SignedInfo>
@@ -11,15 +11,15 @@
 <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
 </ds:Transforms>
 <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-<ds:DigestValue>XBwMjVPN8ob5MEKyUBYo+Dr2zR4BNc/brHfMLkgctuc=</ds:DigestValue>
+<ds:DigestValue>r2bFazimJsBReYBs7SUqXNvcjrfGZlFB7fPTo4D2h+Q=</ds:DigestValue>
 </ds:Reference>
 </ds:SignedInfo>
-<ds:SignatureValue>q8o/r5DOdyySm7opNuxBBm/ImMxDic64PnIj3MtjJ7vPwPBtAd0SsfiLxDmyDCvG
-KfVm0pxTzpYXaWYyBSJO50sDl2dM6bCnFjTxrDXcTygNXv8U0STVUtfx3SBnRAAq
-cueP5xybfDFl0vNup+TjyChuq1okzt8AYbF0aznf+X0ovQbMIBgbBOnTvwRJFbPN
-wM7+W0x5JLka3a5YKVY8X+Iu4pfqOd+AoPaluhoap5EUQ6zNd6RhRB3LHT52NRa+
-XJJRyLjvMLQJt5Q1+x/Pmjo60CX14viThg1J7kQvG2yUCKUnfQT4HBVvUHLDN2WO
-GFYoDviaOfNHzbW0tYmtEQ==</ds:SignatureValue>
+<ds:SignatureValue>YamEQavZib9764ZYs6ttPuftgofvBxTaqYAbPoQzp8ewxhp5KpWvWDRsbxmFpPcn
+a6Pm+a6EIhL5p1ZD5c9v/EzJ23bLE+XNx6UgRyztJwB1M0eDhl7QOq1do7KTLKp9
+UAw8WKJ9ISf9QH2qm2OveCkYeE7UCx0IPOzCBOaL6Uzj4vGU/U/2SVN/QbvbP5WJ
+H00XnMLmFFsY/baQZh2kbaUg08OSapeYlzXBHHhZigzIUtc1rLdpl7lZqvPQh+z7
+DYz9KzInO9l2FKg3s1J6JccMuSOzYU8BwVdmDMOUJZg9JUjBk5wTVccEXxeNTF9p
+hugjwtQ+kbxyWOlvmtwOEw==</ds:SignatureValue>
 <ds:KeyInfo>
 <ds:X509Data>
 <ds:X509Certificate>MIIEGDCCAwCgAwIBAgIJAOrYj9oLEJCwMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdDAeFw0xOTA0MTExMDAyMDhaFw0yNTAzMDgxMDAyMDhaMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK8kJVo+ugRrbbv9xhXCuVrqi4B7/MQzQc62ocwlFFujJNd4m1mXkUHFbgvwhRkQqo2DAmFeHiwCkJT3K1eeXIFhNFFroEzGPzONyekLpjNvmYIs1CFvirGOj0bkEiGaKEs+/umzGjxIhy5JQlqXE96y1+Izp2QhJimDK0/KNij8I1bzxseP0Ygc4SFveKS+7QO+PrLzWklEWGMs4DM5Zc3VRK7g4LWPWZhKdImC1rnS+/lEmHSvHisdVp/DJtbSrZwSYTRvTTz5IZDSq4kAzrDfpj16h7b3t3nFGc8UoY2Ro4tRZ3ahJ2r3b79yK6C5phY7CAANuW3gDdhVjiBNYs0CAwEAAaOByjCBxzAdBgNVHQ4EFgQU3/7kV2tbdFtphbSA4LH7+w8SkcwwgZcGA1UdIwSBjzCBjIAU3/7kV2tbdFtphbSA4LH7+w8SkcyhaaRnMGUxCzAJBgNVBAYTAklUMQ4wDAYDVQQIEwVJdGFseTENMAsGA1UEBxMEUm9tZTENMAsGA1UEChMEQWdJRDESMBAGA1UECxMJQWdJRCBURVNUMRQwEgYDVQQDEwthZ2lkLmdvdi5pdIIJAOrYj9oLEJCwMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAJNFqXg/V3aimJKUmUaqmQEEoSc3qvXFITvT5f5bKw9yk/NVhR6wndL+z/24h1OdRqs76blgH8k116qWNkkDtt0AlSjQOx5qvFYh1UviOjNdRI4WkYONSw+vuavcx+fB6O5JDHNmMhMySKTnmRqTkyhjrch7zaFIWUSV7hsBuxpqmrWDoLWdXbV3eFH3mINA5AoIY/m0bZtzZ7YNgiFWzxQgekpxd0vcTseMnCcXnsAlctdir0FoCZztxMuZjlBjwLTtM6Ry3/48LMM8Z+lw7NMciKLLTGQyU8XmKKSSOh0dGh5Lrlt5GxIIJkH81C0YimWebz8464QPL3RbLnTKg+c=</ds:X509Certificate>
@@ -28,17 +28,6 @@ GFYoDviaOfNHzbW0tYmtEQ==</ds:SignatureValue>
 </ds:Signature>
 
    <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
-
-    <md:Extensions>
-        <mdui:UIInfo>
-            <mdui:DisplayName xml:lang="it">example CIE SP</mdui:DisplayName>
-            <mdui:Description xml:lang="it">CIE SP</mdui:Description>
-            <mdui:Logo height="60" width="80">https://auth.example.it/static/img/logo.svg</mdui:Logo>
-            <mdui:InformationURL xml:lang="it">https://ds.auth.example.it/info_page/</mdui:InformationURL>
-            <mdui:PrivacyStatementURL xml:lang="it">https://www.example.it/portale/privacy/</mdui:PrivacyStatementURL>
-        </mdui:UIInfo>
-    </md:Extensions>
-
       <md:KeyDescriptor use="signing">
          <ds:KeyInfo>
             <ds:X509Data>
