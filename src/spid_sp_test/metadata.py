@@ -719,6 +719,48 @@ class SpidSpMetadataCheck(
             )
         return self.is_ok(_method)
 
+    def test_AttributeConsumingService_FICEP(
+        self, allowed_attributes=constants.SPID_ATTRIBUTES
+    ):
+        acss = self.doc.xpath(
+            "//EntityDescriptor/SPSSODescriptor/AttributeConsumingService"
+        )
+        desc = [etree.tostring(ent).decode() for ent in acss if acss]
+        _method = f"{self.__class__.__name__}.test_AttributeConsumingService_FICEP"
+        _data = dict(
+            references=[""],
+            method=_method,
+        )
+        _desc = "".join(desc)[:128]
+        for acs in acss:
+            idx = int(acs.get("index"))
+            ras = acs.xpath("./RequestedAttribute")
+            if idx == 99:
+                _alw_attr = constants.FICEP_MIN_ATTRIBUTES
+            elif idx == 100:
+                _alw_attr = constants.FICEP_FULL_ATTRIBUTES
+            else:
+                continue
+
+            for ra in ras:
+                self._assertTrue(
+                    ra.get("Name") in _alw_attr,
+                    f'The "{ra.attrib.values()[0]}" attribute in RequestedAttribute element MUST be valid',
+                    description=f"one of [{', '.join(allowed_attributes)}]",
+                    **_data,
+                    test_id=["1.2.7"],
+                )
+
+            al = acs.xpath("RequestedAttribute/@Name")
+            self._assertTrue(
+                len(al) == len(set(al)),
+                "AttributeConsumigService MUST not contain duplicated RequestedAttribute",
+                description=_desc,
+                **_data,
+            )
+        return self.is_ok(_method)
+
+
     def test_Organization(self):
         """Test the compliance of Organization element"""
         orgs = self.doc.xpath("//EntityDescriptor/Organization")
@@ -987,6 +1029,5 @@ class SpidSpMetadataCheck(
         self.test_profile_saml2core()
         self.test_SPSSODescriptor_SPID()
         self.test_contactperson_email()
-        self.test_AttributeConsumingService_SPID(
-            allowed_attributes=constants.FICEP_FULL_ATTRIBUTES
-        )
+        self.test_AttributeConsumingService_SPID()
+        self.test_AttributeConsumingService_FICEP()
