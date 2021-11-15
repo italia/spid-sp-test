@@ -404,7 +404,7 @@ class SpidSpMetadataCheck(
         """Test the compliance of KeyDescriptor element(s)"""
         _method = f"{self.__class__.__name__}.test_KeyDescriptor"
         kds = self.doc.xpath(
-            "//EntityDescriptor/SPSSODescriptor" '/KeyDescriptor[@use="signing"]'
+            "//EntityDescriptor/SPSSODescriptor/KeyDescriptor[@use='signing']"
         )
         _data = dict(references=["TR pag. 19"], method=_method)
         self._assertTrue(
@@ -417,7 +417,7 @@ class SpidSpMetadataCheck(
         desc = [etree.tostring(ent).decode() for ent in kds if kds]
 
         for kd in kds:
-            certs = kd.xpath("./KeyInfo/X509Data/X509Certificate")
+            certs = kd.xpath("./KeyInfo/X509Data/X509Certificate[string-length(text()) > 0]")
             self._assertTrue(
                 len(certs) >= 1,
                 "At least one signing x509 MUST be present",
@@ -429,9 +429,9 @@ class SpidSpMetadataCheck(
         kds = self.doc.xpath(
             "//EntityDescriptor/SPSSODescriptor" '/KeyDescriptor[@use="encryption"]'
         )
-
         for kd in kds:
-            certs = kd.xpath("./KeyInfo/X509Data/X509Certificate")
+            certs = kd.xpath("./KeyInfo/X509Data/X509Certificate[string-length(text()) > 0]")
+
             self._assertTrue(
                 len(certs) >= 1,
                 "At least one encryption x509 MUST be present",
