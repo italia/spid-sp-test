@@ -5,6 +5,7 @@ import logging
 import os
 import requests
 import xmlschema
+import re
 import sys
 import subprocess
 import urllib3
@@ -13,6 +14,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from lxml import etree
 from tempfile import NamedTemporaryFile
+from .compliant_certificates import check_certificate
 from .metadata_public import SpidSpMetadataCheckPublic
 from .metadata_private import SpidSpMetadataCheckPrivate
 from .metadata_ag import SpidSpMetadataCheckAG
@@ -241,11 +243,44 @@ class SpidSpMetadataCheck(
 
         return self.is_ok(_method)
 
+    def test_spid_compliant_certificates(self, sector:str="public"):
+        certs = self.doc.xpath(
+            '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
+            "/KeyInfo/X509Data/X509Certificate/text()"
+        )
+        _method = f"{self.__class__.__name__}.test_spid_compliant_certificates"
+
+        for e in certs:
+            e = re.sub(r'[\n\t\s]', '', e)
+            cert_file = NamedTemporaryFile(suffix=".pem")
+            cert_file.write(
+                f"-----BEGIN CERTIFICATE-----\n{e}\n-----END CERTIFICATE-----".encode()
+            )
+            cert_file.seek(0)
+            try:
+                res = check_certificate(cert_file.name, sector)
+                for ee in res:
+                    self._assertTrue(
+                        ee["result"] == "success",
+                        f'SPID Compliant Certificates {ee["description"]}',
+                        test_id=[""],
+                        description=ee["value"],
+                    )
+            except Exception as e:
+                self._assertTrue(
+                    False,
+                    "SPID Compliant certificates critical failure",
+                    test_id=[""],
+                    description=e.args,
+                )
+        return self.is_ok(_method)
+
     def test_xmldsig(self):
         """Verify the SP metadata signature"""
         tmp_file = NamedTemporaryFile(suffix=".xml")
         tmp_file.write(self.metadata)
         tmp_file.seek(0)
+
         xmlsec_cmd = [
             "xmlsec1",
             "--verify",
@@ -888,6 +923,7 @@ class SpidSpMetadataCheck(
         self.test_Contacts_VATFC()
         self.test_Contacts_IPACode()
         self.test_extensions_public_private(ext_type="Public")
+        self.test_spid_compliant_certificates(sector="public")
 
     def test_profile_spid_sp_private(self):
         self.test_profile_spid_sp()
@@ -895,6 +931,7 @@ class SpidSpMetadataCheck(
         self.test_Contacts_PubPriv(contact_type="billing")
         self.test_Extensions_PubPriv()
         self.test_extensions_public_private(ext_type="Private")
+        self.test_spid_compliant_certificates(sector="private")
 
         # invalid ! to be removed soon
         # self.test_contactperson_email(
@@ -915,6 +952,7 @@ class SpidSpMetadataCheck(
         self.test_Contacts_VATFC()
         self.test_extensions_public_ag()
         self.test_Extensions_PubPriv()
+        self.test_spid_compliant_certificates(sector="public")
 
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
@@ -939,6 +977,7 @@ class SpidSpMetadataCheck(
 
         # The entityID MUST contain the activity code “pub-ag-lite”
         self.test_entityid_contains(value="pub-ag-lite")
+        self.test_spid_compliant_certificates(sector="public")
 
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
@@ -958,8 +997,8 @@ class SpidSpMetadataCheck(
 
     def test_profile_spid_sp_op_public_full(self):
         self.test_profile_spid_sp()
-
         self.test_Contacts_VATFC()
+        self.test_spid_compliant_certificates(sector="public")
 
         # The entityID MUST contain the activity code “pub-op-full”
         self.test_entityid_contains(value="pub-op-full")
@@ -978,6 +1017,7 @@ class SpidSpMetadataCheck(
 
         self.test_Contacts_VATFC()
         self.test_extensions_public_private(ext_type="Public")
+        self.test_spid_compliant_certificates(sector="public")
 
         # The entityID MUST contain the activity code “pub-op-lite”
         self.test_entityid_contains(value="pub-op-lite")

@@ -329,8 +329,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             cert_file = NamedTemporaryFile(suffix=".pem")
 
             # cert clean up ...
-            for i in (' ', ):
-                cert = cert.replace(i, '')
             cert = re.sub(r'[\n\t\s]', '', cert)
 
             cert_file.write(
