@@ -1019,7 +1019,6 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             references=["TR pag. 10"],
             method=_method,
         )
-
         if not self.IS_HTTP_REDIRECT:
             sign = self.doc.xpath("//AuthnRequest/Signature")
             # desc = [etree.tostring(ent).decode() for ent in sign if sign]
@@ -1030,49 +1029,50 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 **_data,
             )
 
-            method = sign[0].xpath("./SignedInfo/SignatureMethod")
-            self._assertTrue(
-                (len(method) == 1),
-                "The SignatureMethod element MUST be present",
-                **_data,
-            )
+            if sign:
+                method = sign[0].xpath("./SignedInfo/SignatureMethod")
+                self._assertTrue(
+                    (len(method) == 1),
+                    "The SignatureMethod element MUST be present",
+                    **_data,
+                )
 
-            self._assertTrue(
-                ("Algorithm" in method[0].attrib),
-                "The Algorithm attribute MUST be present " "in SignatureMethod element",
-                **_data,
-            )
+                self._assertTrue(
+                    ("Algorithm" in method[0].attrib),
+                    "The Algorithm attribute MUST be present " "in SignatureMethod element",
+                    **_data,
+                )
 
-            alg = method[0].get("Algorithm")
-            self._assertTrue(
-                alg in constants.ALLOWED_XMLDSIG_ALGS,
-                "The signature algorithm MUST be valid",
-                description=f"One of {', '.join(constants.ALLOWED_XMLDSIG_ALGS)}",
-                **_data,
-            )  # noqa
+                alg = method[0].get("Algorithm")
+                self._assertTrue(
+                    alg in constants.ALLOWED_XMLDSIG_ALGS,
+                    "The signature algorithm MUST be valid",
+                    description=f"One of {', '.join(constants.ALLOWED_XMLDSIG_ALGS)}",
+                    **_data,
+                )  # noqa
 
-            method = sign[0].xpath("./SignedInfo/Reference/DigestMethod")
-            self._assertTrue(
-                (len(method) == 1),
-                "The DigestMethod element MUST be present",
-                **_data,
-            )
+                method = sign[0].xpath("./SignedInfo/Reference/DigestMethod")
+                self._assertTrue(
+                    (len(method) == 1),
+                    "The DigestMethod element MUST be present",
+                    **_data,
+                )
 
-            self._assertTrue(
-                ("Algorithm" in method[0].attrib),
-                "The Algorithm attribute MUST be present " "in DigestMethod element",
-                **_data,
-            )
+                self._assertTrue(
+                    ("Algorithm" in method[0].attrib),
+                    "The Algorithm attribute MUST be present " "in DigestMethod element",
+                    **_data,
+                )
 
-            alg = method[0].get("Algorithm")
-            self._assertTrue(
-                alg in constants.ALLOWED_DGST_ALGS,
-                (
-                    ("The digest algorithm MUST be one of [%s]")
-                    % (", ".join(constants.ALLOWED_DGST_ALGS))
-                ),
-                **_data,
-            )
+                alg = method[0].get("Algorithm")
+                self._assertTrue(
+                    alg in constants.ALLOWED_DGST_ALGS,
+                    (
+                        ("The digest algorithm MUST be one of [%s]")
+                        % (", ".join(constants.ALLOWED_DGST_ALGS))
+                    ),
+                    **_data,
+                )
 
             # save the grubbed certificate for future analysis
             # cert = sign[0].xpath('./KeyInfo/X509Data/X509Certificate')[0]

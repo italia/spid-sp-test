@@ -923,7 +923,8 @@ class SpidSpMetadataCheck(
         self.test_Contacts_VATFC()
         self.test_Contacts_IPACode()
         self.test_extensions_public_private(ext_type="Public")
-        self.test_spid_compliant_certificates(sector="public")
+        if self.production:
+            self.test_spid_compliant_certificates(sector="public")
 
     def test_profile_spid_sp_private(self):
         self.test_profile_spid_sp()
@@ -931,7 +932,8 @@ class SpidSpMetadataCheck(
         self.test_Contacts_PubPriv(contact_type="billing")
         self.test_Extensions_PubPriv()
         self.test_extensions_public_private(ext_type="Private")
-        self.test_spid_compliant_certificates(sector="private")
+        if self.production:
+            self.test_spid_compliant_certificates(sector="private")
 
         # invalid ! to be removed soon
         # self.test_contactperson_email(
@@ -952,7 +954,8 @@ class SpidSpMetadataCheck(
         self.test_Contacts_VATFC()
         self.test_extensions_public_ag()
         self.test_Extensions_PubPriv()
-        self.test_spid_compliant_certificates(sector="public")
+        if self.production:
+            self.test_spid_compliant_certificates(sector="public")
 
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
@@ -977,7 +980,8 @@ class SpidSpMetadataCheck(
 
         # The entityID MUST contain the activity code “pub-ag-lite”
         self.test_entityid_contains(value="pub-ag-lite")
-        self.test_spid_compliant_certificates(sector="public")
+        if self.production:
+            self.test_spid_compliant_certificates(sector="public")
 
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
@@ -998,7 +1002,8 @@ class SpidSpMetadataCheck(
     def test_profile_spid_sp_op_public_full(self):
         self.test_profile_spid_sp()
         self.test_Contacts_VATFC()
-        self.test_spid_compliant_certificates(sector="public")
+        if self.production:
+            self.test_spid_compliant_certificates(sector="public")
 
         # The entityID MUST contain the activity code “pub-op-full”
         self.test_entityid_contains(value="pub-op-full")
@@ -1017,7 +1022,8 @@ class SpidSpMetadataCheck(
 
         self.test_Contacts_VATFC()
         self.test_extensions_public_private(ext_type="Public")
-        self.test_spid_compliant_certificates(sector="public")
+        if self.production:
+            self.test_spid_compliant_certificates(sector="public")
 
         # The entityID MUST contain the activity code “pub-op-lite”
         self.test_entityid_contains(value="pub-op-lite")
@@ -1065,6 +1071,9 @@ class SpidSpMetadataCheck(
         self.xsd_check(xsds_files=["saml-schema-metadata-2.0.xsd"])
 
         self.test_profile_saml2core()
+        if self.production:
+            self.test_spid_compliant_certificates(sector="public")
+
         self.test_SPSSODescriptor_SPID()
         self.test_contactperson_email()
         self.test_AttributeConsumingService_SPID()
