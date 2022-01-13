@@ -513,7 +513,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     (value in allowed_destinations),
                     "The Destination attribute SHOULD be the address to "
                     "which the request has been sent but can also be the EntityID of IdP (Av. SPID n.11)",
-                    description=value,
+                    description=f"{value} not in {allowed_destinations}",
                     **_data,
                 )
 
