@@ -57,7 +57,7 @@ with one of the following profile name:
 - **spid-sp-op-public-lite**: Public Spid SP Gestore Lite
 - **cie-sp-public**: Public CIE SP
 - **cie-sp-private**: Private CIE SP
-- **fice-eidas-sp**: eIDAS FICEP SP
+- **ficep-eidas-sp**: eIDAS FICEP SP
 
 ## Setup
 
