@@ -1,6 +1,7 @@
 # spid-sp-test
 
 ![CI build](https://github.com/italia/spid-sp-test/workflows/spid-sp-test/badge.svg)
+![pypi](https://img.shields.io/pypi/v/spid-sp-test.svg)
 ![License](https://img.shields.io/badge/license-EUPL%201.2-blue)
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
 [![Downloads](https://pepy.tech/badge/spid-sp-test)](https://pepy.tech/project/spid-sp-test)
@@ -56,7 +57,7 @@ with one of the following profile name:
 - **spid-sp-op-public-lite**: Public Spid SP Gestore Lite
 - **cie-sp-public**: Public CIE SP
 - **cie-sp-private**: Private CIE SP
-- **fice-eidas-sp**: eIDAS FICEP SP
+- **ficep-eidas-sp**: eIDAS FICEP SP
 
 ## Setup
 
