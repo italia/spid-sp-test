@@ -148,7 +148,7 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '-o', '--report-output-file', required=False,
-        help="the report will be dumped in a specified path"
+        help="the report will be dumped in a specified path, require  -rf {json,html} option"
     )
 
     parser.add_argument(
