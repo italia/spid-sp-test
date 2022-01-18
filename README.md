@@ -60,12 +60,21 @@ with one of the following profile name:
 - **ficep-eidas-sp**: eIDAS FICEP SP
 
 ## Setup
+### Prerequisite
+- LibXML2
+- xmlsec with openssl engine support
+- python3
+- pip for automated installation with Python packages manager
 
+### Setup in Debian like distro with virtual env
 ````
+# install prerequisite
 apt install libxml2-dev libxmlsec1-dev libxmlsec1-openssl xmlsec1 python3-pip python3-virtualenv
+# initialize virtual env
 virtualenv -p python3 env
 source env/bin/activate
 
+# install spid-sp-test 
 pip install spid-sp-test --upgrade --no-cache
 ````
 
