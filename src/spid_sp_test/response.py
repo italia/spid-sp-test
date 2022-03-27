@@ -11,7 +11,9 @@ import string
 
 
 from copy import deepcopy
-from jinja2 import Environment, Markup, FileSystemLoader, Template, select_autoescape
+from jinja2 import Environment, FileSystemLoader, Template, select_autoescape
+from markupsafe import Markup
+
 from lxml import etree
 
 from saml2.sigver import CryptoBackendXmlSec1, XmlsecError
