@@ -10,6 +10,19 @@
 spid-sp-test is a SAML2 SPID/CIE Service Provider validation tool that can be executed from the command line.
 This tool was born by separating the test library already present in [spid-saml-check](https://github.com/italia/spid-saml-check).
 
+## Summary
+
+* [Features](#features)
+* [Setup](#setup)
+* [Overview](#overview)
+* [Examples](#examples)
+* [Common usages](#common-usages)
+* [Docker](#docker)
+* [Unit tests](#unit-tests)
+* [Authors](#authors)
+* [References](#references)
+
+
 ## Features
 
 spid-sp-test can:
@@ -60,6 +73,7 @@ with one of the following profile name:
 - **ficep-eidas-sp**: eIDAS FICEP SP
 
 ## Setup
+
 ### Prerequisite
 - LibXML2
 - xmlsec with openssl engine support
@@ -168,26 +182,7 @@ Test Satosa-Saml2Spid using its authn plugin and a SP that supports idp hinting
 spid_sp_test --metadata-url https://localhost:10000/spidSaml2/metadata --authn-url "http://localhost:8000/saml2/login/?idp=https://localhost:10000/Saml2IDP/metadata&next=/saml2/echo_attributes&idphint=https%253A%252F%252Flocalhost%253A8080" -ap spid_sp_test.plugins.authn_request.SatosaSaml2Spid --extra -tr
 ````
 
-
-## Examples with Docker
-
-Before starting you have to obtain the `italia/spid-sp-test` image. You can pull it from Docker Hub
-
-    $ export SSTVER=0.9.0
-    $ docker pull italia/spid-sp-test:$SSTVER
-
-or build locally
-
-    $ docker build --tag italia/spid-sp-test:$SSTVER .
-
-The container working directory is set to `/spid` therefore, local files should be mounted relatively to `/spid` path.
-
-    $ docker run -ti --rm \
-        -v "$(pwd)/tests/metadata:/spid/mymetadata:ro" \
-        -v "$(pwd)/tests/metadata:/spid/dumps:rw" \
-        italia/spid-sp-test:$SSTVER --metadata-url file://mymetadata/spid-django-other.xml
-
-## Test Responses and html dumps
+### Test Responses and html dumps
 
 By enabling the response dump with the `--response-html-dumps HTML_PATH` option, you will get N html files (page of your SP) as follows:
 
@@ -198,7 +193,7 @@ By enabling the response dump with the `--response-html-dumps HTML_PATH` option,
 Here [an example](README.response-example.md) of **1_True.html**, where `1` is the test name and `True` is the status.
 
 
-## Extending tests
+### Extending the tests
 
 spid-sp-test offers the possibility to extend and configure new response tests to be performed. The user can:
 
@@ -228,6 +223,24 @@ value that will be rendered in the template. Each template can load these variab
 use which ones was statically defined in it.
 
 Finally you have batteries included and some options as well, at your taste.
+
+
+## Docker
+
+Before starting you have to obtain the `italia/spid-sp-test` image. You can pull it from Docker Hub
+
+    $ docker pull ghcr.io/italia/spid-sp-test:v1.1.5
+
+or build locally
+
+    $ docker build --tag italia/spid-sp-test:v1.1.5 .
+
+The container working directory is set to `/spid` therefore, local files should be mounted relatively to `/spid` path.
+
+    $ docker run -ti --rm \
+        -v "$(pwd)/tests/metadata:/spid/mymetadata:ro" \
+        -v "$(pwd)/tests/metadata:/spid/dumps:rw" \
+        italia/spid-sp-test:v1.1.5 --metadata-url file://mymetadata/spid-django-other.xml
 
 ## Unit tests
 
