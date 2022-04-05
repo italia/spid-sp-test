@@ -415,3 +415,29 @@ ISO3166_CODES = [
 ]
 
 XML_NAMESPACES = {"spid": "https://spid.gov.it/saml-extensions"}
+NAMESPACE = 'urn:oasis:names:tc:SAML:2.0:assertion'
+# TEMPLATE = '{urn:oasis:names:tc:SAML:2.0:assertion}%s'
+# XSI_NAMESPACE = 'http://www.w3.org/2001/XMLSchema-instance'
+SAMLP_NAMESPACE = 'urn:oasis:names:tc:SAML:2.0:protocol'
+XSI_NAMESPACE = 'http://www.w3.org/2001/XMLSchema-instance'
+XS_NAMESPACE = 'http://www.w3.org/2001/XMLSchema'
+MD_NAMESPACE = "urn:oasis:names:tc:SAML:2.0:metadata"
+MDUI_NAMESPACE = "urn:oasis:names:tc:SAML:metadata:ui"
+DS_NAMESPACE = 'http://www.w3.org/2000/09/xmldsig#'
+XENC_NAMESPACE = "http://www.w3.org/2001/04/xmlenc#"
+ALG_NAMESPACE = "urn:oasis:names:tc:SAML:metadata:algsupport"
+MDATTR_NAMESPACE = "urn:oasis:names:tc:SAML:metadata:attribute"
+IDPDISC = "urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol"
+
+OASIS_DEFAULT_NS_PREFIXES = {'saml': NAMESPACE,
+                             'samlp': SAMLP_NAMESPACE,
+                             'ds': DS_NAMESPACE,
+                             'xsi': XSI_NAMESPACE,
+                             'xs': XS_NAMESPACE,
+                             'mdui': MDUI_NAMESPACE,
+                             'md': MD_NAMESPACE,
+                             'xenc': XENC_NAMESPACE,
+                             'alg': ALG_NAMESPACE,
+                             'mdattr': MDATTR_NAMESPACE,
+                             'idpdisc': IDPDISC
+}

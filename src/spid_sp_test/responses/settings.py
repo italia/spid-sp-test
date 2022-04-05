@@ -78,6 +78,13 @@ SIGNATURE_TMPL = """
             </ds:Reference>
         </ds:SignedInfo>
         <ds:SignatureValue />
+
+        <ds:KeyInfo>
+            <ds:X509Data>
+                <ds:X509Certificate />
+            </ds:X509Data>
+        </ds:KeyInfo>
+
     </ds:Signature>
 """
 
@@ -131,6 +138,113 @@ RESPONSE_TESTS = {
             "certificate": f"{BASE_DIR}/certificates/test_public.cert",
             "privateKey": f"{BASE_DIR}/certificates/test_private.key",
         },
+    },
+    "5": {
+        "name": "05. Response - Firma non valida con presenza x509 alternativo",
+        "description": "Response firmata con certificato diverso da quello registrato su SP, con x509 presente nella Response. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
+        "sign_credentials": {
+            "certificate": f"{BASE_DIR}/certificates/test_public.cert",
+            "privateKey": f"{BASE_DIR}/certificates/test_private.key",
+        },
+    },
+    "xsw1": {
+        "name": "xsw1. Wrapping attack",
+        "description": "XSW1 Wrapping attack. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
+        "response_wrappers": ["spid_sp_test.responses.response_wraps.xsw1"]
+    },
+    "xsw2": {
+        "name": "xsw2. Wrapping attack",
+        "description": "XSW2 Wrapping attack. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
+        "response_wrappers": ["spid_sp_test.responses.response_wraps.xsw2"]
+    },
+    "xsw3": {
+        "name": "xsw3. Wrapping attack",
+        "description": "XSW3 Wrapping attack. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
+        "response_wrappers": ["spid_sp_test.responses.response_wraps.xsw3"]
+    },
+    "xsw4": {
+        "name": "xsw4. Wrapping attack",
+        "description": "XSW4 Wrapping attack. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
+        "response_wrappers": ["spid_sp_test.responses.response_wraps.xsw4"]
+    },
+    "xsw5": {
+        "name": "xsw5. Wrapping attack",
+        "description": "XSW5 Wrapping attack. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
+        "response_wrappers": ["spid_sp_test.responses.response_wraps.xsw5"]
+    },
+    "xsw6": {
+        "name": "xsw6. Wrapping attack",
+        "description": "XSW6 Wrapping attack. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
+        "response_wrappers": ["spid_sp_test.responses.response_wraps.xsw6"]
+    },
+    "xsw7": {
+        "name": "xsw7. Wrapping attack",
+        "description": "XSW7 Wrapping attack. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
+        "response_wrappers": ["spid_sp_test.responses.response_wraps.xsw7"]
+    },
+    "xsw8": {
+        "name": "xsw8. Wrapping attack",
+        "description": "XSW8 Wrapping attack. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response": {
+            "X509Certificate": f"{BASE_DIR}/certificates/test_public.cert",
+        },
+        "response_wrappers": ["spid_sp_test.responses.response_wraps.xsw8"]
+    },
+    # "xxe": {
+        # "name": "XXE. attack",
+        # "description": "XXE attack. Risultato atteso: KO",
+        # "status_codes": HTTP_STATUS_ERROR_CODES,
+        # "path": "xxe.xml",
+        # "response": {},
+    # },
+    "xslt": {
+        "name": "XSLT. attack",
+        "description": "XSLT attack. Risultato atteso: KO",
+        "status_codes": HTTP_STATUS_ERROR_CODES,
+        "path": "base.xml",
+        "response_wrappers": ["spid_sp_test.responses.response_wraps.xslt"]
     },
     "8": {
         "name": "08. Response - ID non specificato",

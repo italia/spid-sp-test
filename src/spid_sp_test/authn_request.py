@@ -56,7 +56,7 @@ def build_authn_post_data(
             "RelayState": "/",
         }
     else:
-        raise SAMLRequestNotFound(f"{authn_request_str}")
+        raise SAMLRequestNotFound(f"{authn_request_str[:128]}")
     return data
 
 
@@ -137,7 +137,10 @@ def get_authn_request(
         elif "?" in authn_request_str and "&" in authn_request_str:
             binding = "redirect"
         else:
-            raise Exception(f"Can't detect authn request from f{authn_request_url}")
+            raise Exception(
+                f"Can't detect authn request from f{authn_request_url}:"
+                f"{authn_request_str[:128]}"
+            )
     else:
         req_dict = {"verify": verify_ssl, "allow_redirects": False}
         # trigger the authn request
