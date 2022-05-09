@@ -40,6 +40,16 @@ def test_ag_full():
     assert es == 0
 
 
+def test_ag_lite_priv():
+    es = run_cmd(f'{DIR}/pri-ag-lite_signed.xml --profile spid-sp-ag-private-lite')
+    assert es == 0
+
+
+def test_ag_full_priv():
+    es = run_cmd(f'{DIR}/pri-ag-full_signed.xml --profile spid-sp-ag-private-full')
+    assert es == 0
+
+
 def test_public_cie_sp():
     es = run_cmd(f'{DIR}/public-sp-cie_signed.xml --profile cie-sp-public')
     assert es == 0

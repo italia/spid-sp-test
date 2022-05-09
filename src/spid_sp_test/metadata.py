@@ -942,6 +942,7 @@ class SpidSpMetadataCheck(
 
         self.test_Contacts_VATFC(private=True)
         self.test_Contacts_Priv()
+        self.test_Contacts_Priv_VAT()
         self.xsd_check(
             xsds_files=["saml-schema-metadata-2.0.xsd", "spid-invoicing.xsd"]
         )
@@ -996,6 +997,60 @@ class SpidSpMetadataCheck(
         # The PublicServicesLightAggregator element MUST be present
         self.test_extensions_public_ag(
             ext_types=["//ContactPerson/Extensions/PublicServicesLightAggregator"],
+            must=True,
+        )
+
+    def test_profile_spid_sp_ag_private_full(self):
+        self.test_profile_spid_sp()
+
+        self.test_extensions_public_private(ext_type="Private", entity_type="spid:aggregated")
+        self.test_Contacts_Priv(contact_type="billing")
+
+        self.test_Contacts_VATFC(private=True, entity_type="spid:aggregated")
+        self.test_extensions_public_ag()
+        self.test_Extensions_PubPriv()
+        if self.production:
+            self.test_spid_compliant_certificates(sector="private")
+
+        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
+
+        # The entityID MUST not contain the query-string part
+        self.test_entityid_qs()
+
+        # The entityID MUST contain the activity code “pub-ag-full”
+        self.test_entityid_contains(value="pri-ag-full")
+
+        # The PrivateServicesFullAggregator element MUST be present
+        self.test_extensions_public_ag(
+            ext_types=["//ContactPerson/Extensions/PrivateServicesFullAggregator"],
+            must=True,
+        )
+
+    def test_profile_spid_sp_ag_private_lite(self):
+        self.test_profile_spid_sp()
+        self.test_extensions_public_private(ext_type="Private")
+
+        # The entityID MUST contain the activity code “pub-ag-lite”
+        self.test_entityid_contains(value="pri-ag-lite")
+        if self.production:
+            self.test_spid_compliant_certificates(sector="private")
+
+        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
+
+        # TODO
+        # If the ContactPerson is of spid:entityType “spid:aggregator”
+        # the Extensions element MUST contain the element spid:KeyDescriptor
+        # with attribute use “spid:validation”
+
+        # The PublicServicesLightAggregator element MUST be present
+        self.test_extensions_public_ag(
+            ext_types=["//ContactPerson/Extensions/PrivateServicesLightAggregator"],
             must=True,
         )
 

@@ -8,14 +8,19 @@ from .constants import XML_NAMESPACES
 from .indicepa import get_indicepa_by_ipacode
 
 
+def compose_contact_type_entity_type(contact_type:str="other", entity_type:str=None):
+    xpatt = f"//ContactPerson[@contactType='{contact_type}'"
+    if entity_type:
+        xpatt += f" and @spid:entityType='{entity_type}'"
+    xpatt += "]"
+    return xpatt
+
+
 class SpidSpMetadataCheckPublic(object):
-    def test_Contacts_PubPriv(self, contact_type="other", entity_type=""):
+    def test_Contacts_PubPriv(self, contact_type:str="other", entity_type:str=None):
         _method = f"{self.__class__.__name__}.test_Contacts_PubPriv"
-        xpatt = f"//ContactPerson[@contactType='{contact_type}'"
-        if entity_type:
-            xpatt += f" and @spid:entityType='{entity_type}']"
-        else:
-            xpatt += "]"
+
+        xpatt = compose_contact_type_entity_type(contact_type, entity_type)
 
         _data = dict(references=["TR pag. 19"], method=_method)
         entity_desc = self.doc.xpath(xpatt, namespaces=XML_NAMESPACES)
@@ -144,7 +149,6 @@ class SpidSpMetadataCheckPublic(object):
         return self.is_ok(_method)
 
     def test_Contacts_IPACode(self):
-        self.doc.xpath("//ContactPerson")
         _method = f"{self.__class__.__name__}.test_Contacts_IPACode"
         _data = dict(references=[""], method=_method)
         if self.production:
@@ -168,13 +172,17 @@ class SpidSpMetadataCheckPublic(object):
 
         return self.is_ok(_method)
 
-    def test_extensions_public_private(self, ext_type="Public", contact_type="other"):
+    def test_extensions_public_private(self, ext_type="Public", contact_type="other", entity_type:str=""):
         ext_type_not = "Private" if ext_type == "Public" else "Public"
         _method = f"{self.__class__.__name__}.test_extensions_public_private"
         _data = dict(references=[""], method=_method)
         # only if other, billing doesn't have any Private element in it!
+
+        xpatt = compose_contact_type_entity_type(contact_type, entity_type)
+
         ctype = self.doc.xpath(
-            f'//ContactPerson[@contactType="{contact_type}"]/Extensions/{ext_type.title()}'
+            f'//{xpatt}/Extensions/{ext_type.title()}',
+            namespaces=XML_NAMESPACES
         )
         self._assertTrue(
             ctype,
@@ -188,18 +196,23 @@ class SpidSpMetadataCheckPublic(object):
                 test_id = ['1.11.8', '1.12.6'], **_data
             )
 
-        ctype = self.doc.xpath(f"//ContactPerson/Extensions/{ext_type_not.title()}")
+        ctype = self.doc.xpath(
+            f"{xpatt}/Extensions/{ext_type_not.title()}",
+            namespaces=XML_NAMESPACES
+        )
         self._assertFalse(
             ctype, f"The {ext_type_not.title()} element MUST not be present",
             test_id = ['1.11.9', '1.12.7'], **_data
         )
         return self.is_ok(_method)
 
-    def test_Contacts_VATFC(self, private=False):
-        self.doc.xpath("//ContactPerson")
+    def test_Contacts_VATFC(self, private=False, contact_type:str="other", entity_type:str=""):
         _method = f"{self.__class__.__name__}.test_Contacts_VATFC"
         _data = dict(references=[""], method=_method)
-        vats = self.doc.xpath("//ContactPerson/Extensions/VATNumber")
+
+        xpatt = compose_contact_type_entity_type(contact_type, entity_type)
+
+        vats = self.doc.xpath(f"{xpatt}/Extensions/VATNumber", namespaces=XML_NAMESPACES)
         self._assertTrue(
             (len(vats) <= 1),
             "only one VATNumber element must be present",
@@ -217,7 +230,7 @@ class SpidSpMetadataCheckPublic(object):
                 **_data,
             )
 
-        fcs = self.doc.xpath("//ContactPerson/Extensions/FiscalCode")
+        fcs = self.doc.xpath(f"{xpatt}/Extensions/FiscalCode", namespaces=XML_NAMESPACES)
         if fcs:
             self._assertTrue(
                 (len(fcs) == 1),

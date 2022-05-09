@@ -208,6 +208,8 @@ if __name__ == '__main__':
             'spid-sp-private',
             'spid-sp-ag-public-full',
             'spid-sp-ag-public-lite',
+            'spid-sp-ag-private-full',
+            'spid-sp-ag-private-lite',
             'spid-sp-op-public-full',
             'spid-sp-op-public-lite',
             'cie-sp-public',
