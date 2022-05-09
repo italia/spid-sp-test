@@ -48,7 +48,6 @@ class AbstractSpidCheck(object):
         test_id: str = "",
     ):
         msg = f"{title}"
-        getattr(self.logger, level, "debug")(f"{method}: {msg}")
         value = f"{description}" if not traceback else f"{description}: {traceback }"
 
         data = {
@@ -69,6 +68,8 @@ class AbstractSpidCheck(object):
             data["result"] = "warning"
             self.results.append(data)
             self.warnings.append(data)
+        else:
+            getattr(self.logger, level, "debug")(f"{method}: {msg}")
 
     def handle_error(
         self,
