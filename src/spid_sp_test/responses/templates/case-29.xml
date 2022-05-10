@@ -1,2 +1,3 @@
 {% extends "base.xml" %}
-{% block AssertionIssuer %}<saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">diversodaentityididp</saml:Issuer>{% endblock %}
+{% block Issuer %}<saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">diversodaentityididp</saml:Issuer>{% endblock %}
+{% block AssertionIssuer %}<saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">{{Issuer}}</saml:Issuer>{% endblock %}
