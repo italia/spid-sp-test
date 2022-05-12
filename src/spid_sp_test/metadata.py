@@ -243,7 +243,7 @@ class SpidSpMetadataCheck(
 
         return self.is_ok(_method)
 
-    def test_spid_compliant_certificates(self, sector:str="public"):
+    def test_spid_compliant_certificates(self, sector:str = "public"):
         certs = self.doc.xpath(
             '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
             "/KeyInfo/X509Data/X509Certificate/text()"

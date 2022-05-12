@@ -14,7 +14,7 @@ def _get_tests(report:dict):
     return _res
 
 
-def check_certificate(cert_path:str, sector:str="public"):
+def check_certificate(cert_path:str, sector:str = "public"):
     _cert = PosixPath(cert_path)
     _val = validate(_cert, sector)
 
