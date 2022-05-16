@@ -923,8 +923,8 @@ class SpidSpMetadataCheck(
         self.test_Contacts_IPACode(public=True)
         self.test_Extensions_PubPriv()
         self.test_extensions_type() # check che esista una sola "activity" extension
-        self.test_extensions_type(ext_type=["Public"],must=True) 
-        self.test_extensions_type(ext_type=["Private"],denied=True)       
+        self.test_extensions_type(ext_types=["Public"],must=True) 
+        self.test_extensions_type(ext_types=["Private"],denied=True)       
         if self.production:
             self.test_spid_compliant_certificates(sector="Public")
 
@@ -941,8 +941,8 @@ class SpidSpMetadataCheck(
         self.test_Extensions_PubPriv()
         self.test_Extensions_PubPriv(contact_type="billing", org_chk=False)
         self.test_extensions_type() # check che esista una sola "activity" extension
-        self.test_extensions_type(ext_type=["Private"],must=True) 
-        self.test_extensions_type(ext_type=["Public"],denied=True)       
+        self.test_extensions_type(ext_types=["Private"],must=True) 
+        self.test_extensions_type(ext_types=["Public"],denied=True)       
         if self.production:
             self.test_spid_compliant_certificates(sector="private")
 # invalid ! to be removed soon
@@ -1134,21 +1134,21 @@ class SpidSpMetadataCheck(
         self.test_profile_cie_sp()
         self.test_contactperson_email(contact_type="administrative")
         self.test_extensions_public_private(
-            ext_type="Public", contact_type="administrative"
+            ext_types=["Public"], contact_type="administrative"
         )
         self.test_Contacts_PubPriv(contact_type="administrative")
-        self.test_extensions_cie(ext_type="Public")
+        self.test_extensions_cie(ext_types=["Public"])
 
     def test_profile_cie_sp_private(self):
         self.test_profile_cie_sp()
         self.test_contactperson_email(contact_type="administrative")
         self.test_contactperson_email(contact_type="technical")
         self.test_extensions_public_private(
-            ext_type="Private", contact_type="technical"
+            ext_types=["Private"], contact_type="technical"
         )
         self.test_Contacts_PubPriv(contact_type="administrative")
         self.test_Contacts_PubPriv(contact_type="technical")
-        self.test_extensions_cie(ext_type="Private")
+        self.test_extensions_cie(ext_types=["Private"])
 
     def test_profile_ficep_eidas_sp(self):
         self.xsd_check(xsds_files=["saml-schema-metadata-2.0.xsd"])
