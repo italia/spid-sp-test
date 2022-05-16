@@ -1134,21 +1134,21 @@ class SpidSpMetadataCheck(
         self.test_profile_cie_sp()
         self.test_contactperson_email(contact_type="administrative")
         self.test_extensions_public_private(
-            ext_types=["Public"], contact_type="administrative"
+            ext_type="Public", contact_type="administrative"
         )
         self.test_Contacts_PubPriv(contact_type="administrative")
-        self.test_extensions_cie(ext_types=["Public"])
+        self.test_extensions_cie(ext_type="Public")
 
     def test_profile_cie_sp_private(self):
         self.test_profile_cie_sp()
         self.test_contactperson_email(contact_type="administrative")
         self.test_contactperson_email(contact_type="technical")
         self.test_extensions_public_private(
-            ext_types=["Private"], contact_type="technical"
+            ext_type="Private", contact_type="technical"
         )
         self.test_Contacts_PubPriv(contact_type="administrative")
         self.test_Contacts_PubPriv(contact_type="technical")
-        self.test_extensions_cie(ext_types=["Private"])
+        self.test_extensions_cie(ext_type="Private")
 
     def test_profile_ficep_eidas_sp(self):
         self.xsd_check(xsds_files=["saml-schema-metadata-2.0.xsd"])
