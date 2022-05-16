@@ -913,200 +913,226 @@ class SpidSpMetadataCheck(
         self.test_SPSSODescriptor_SPID()
         self.test_AssertionConsumerService_SPID()
         self.test_AttributeConsumingService_SPID()
-        self.test_contactperson_email()
-        self.test_contactperson_phone()
 
     def test_profile_spid_sp_public(self):
         self.test_profile_spid_sp()
+        self.test_contactperson_email()
+        self.test_contactperson_phone()
         self.test_Contacts_PubPriv()
-        self.test_Extensions_PubPriv()
         self.test_Contacts_VATFC()
-        self.test_Contacts_IPACode()
-        self.test_extensions_public_private(ext_type="Public")
+        self.test_Contacts_IPACode(public=True)
+        self.test_Extensions_PubPriv()
+        self.test_extensions_type() # check che esista una sola "activity" extension
+        self.test_extensions_type(ext_types=["Public"],must=True) 
+        self.test_extensions_type(ext_types=["Private"],denied=True)       
         if self.production:
-            self.test_spid_compliant_certificates(sector="public")
+            self.test_spid_compliant_certificates(sector="Public")
 
     def test_profile_spid_sp_private(self):
         self.test_profile_spid_sp()
+        self.test_contactperson_email()
+        self.test_contactperson_email(contact_type="billing")
+        self.test_contactperson_phone()
         self.test_Contacts_PubPriv()
         self.test_Contacts_PubPriv(contact_type="billing")
+        self.test_Contacts_VATFC(private=True)
+        self.test_Contacts_IPACode(private=True)
+        self.test_Contacts_Priv(contact_type="billing")
         self.test_Extensions_PubPriv()
-        self.test_extensions_public_private(ext_type="Private")
+        self.test_Extensions_PubPriv(contact_type="billing", org_chk=False)
+        self.test_extensions_type() # check che esista una sola "activity" extension
+        self.test_extensions_type(ext_types=["Private"],must=True) 
+        self.test_extensions_type(ext_types=["Public"],denied=True)       
         if self.production:
             self.test_spid_compliant_certificates(sector="private")
-
-        # invalid ! to be removed soon
-        # self.test_contactperson_email(
-        # email_xpath="//ContactPerson/Extensions/CessionarioCommittente/EmailAddress"
-        # )
-
-        self.test_Contacts_VATFC(private=True)
-        self.test_Contacts_Priv()
-        self.test_Contacts_Priv_VAT()
+# invalid ! to be removed soon
+# self.test_contactperson_email(
+# email_xpath="//ContactPerson/Extensions/CessionarioCommittente/EmailAddress"
+# )
         self.xsd_check(
             xsds_files=["saml-schema-metadata-2.0.xsd", "spid-invoicing.xsd"]
         )
 
     def test_profile_spid_sp_ag_public_full(self):
         self.test_profile_spid_sp()
+        self.test_contactperson_email(entity_type="spid:aggregator")
+        self.test_contactperson_email(entity_type="spid:aggregated")
+        self.test_contactperson_phone(entity_type="spid:aggregator")
+        self.test_contactperson_phone(entity_type="spid:aggregated")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator") # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated") # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present      
+        self.test_Contacts_IPACode(entity_type="spid:aggregator")
+        self.test_Contacts_IPACode(entity_type="spid:aggregated",public=True)
+        self.test_Contacts_VATFC(entity_type="spid:aggregator")
+        self.test_Contacts_VATFC(entity_type="spid:aggregated")
+        self.test_Extensions_PubPriv(entity_type="spid:aggregator", org_chk=False)
+        self.test_Extensions_PubPriv(entity_type="spid:aggregated")
+        self.test_extensions_type() # check che esista una sola "activity" extension
+        self.test_extensions_type(entity_type="spid:aggregator",ext_types=["PublicServicesFullAggregator"],must=True)
+        self.test_extensions_type(entity_type="spid:aggregated",ext_types=["Public"],must=True)
+        self.test_entityid_qs() # The entityID MUST not contain the query-string part
+        self.test_entityid_contains(value="pub-ag-full") # The entityID MUST contain the activity code “pub-ag-full”
 
-        self.test_extensions_public_private(ext_type="Public")
-        self.test_Contacts_IPACode()
-        self.test_Contacts_VATFC()
-        self.test_extensions_public_ag()
-        self.test_Extensions_PubPriv()
         if self.production:
             self.test_spid_compliant_certificates(sector="public")
-
-        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
-        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
-        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
-        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
-
-        # The entityID MUST not contain the query-string part
-        self.test_entityid_qs()
-
-        # The entityID MUST contain the activity code “pub-ag-full”
-        self.test_entityid_contains(value="pub-ag-full")
-
-        # The PublicServicesFullAggregator element MUST be present
-        self.test_extensions_public_ag(
-            ext_types=["//ContactPerson/Extensions/PublicServicesFullAggregator"],
-            must=True,
-        )
 
     def test_profile_spid_sp_ag_public_lite(self):
         self.test_profile_spid_sp()
-        self.test_extensions_public_private(ext_type="Public")
+        self.test_contactperson_email(entity_type="spid:aggregator")
+        self.test_contactperson_email(entity_type="spid:aggregated")
+        self.test_contactperson_phone(entity_type="spid:aggregator")
+        self.test_contactperson_phone(entity_type="spid:aggregated")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator") # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated") # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present      
+        self.test_Contacts_IPACode(entity_type="spid:aggregator")
+        self.test_Contacts_IPACode(entity_type="spid:aggregated",public=True)
+        self.test_Contacts_VATFC(entity_type="spid:aggregator")
+        self.test_Contacts_VATFC(entity_type="spid:aggregated")
+        self.test_Extensions_PubPriv(entity_type="spid:aggregator", org_chk=False)
+        self.test_Extensions_PubPriv(entity_type="spid:aggregated")
+        self.test_extensions_type()                             # check che esista una sola "activity" extension
+        self.test_extensions_type(entity_type="spid:aggregator",ext_types=["PublicServicesLightAggregator"],must=True)
+        self.test_extensions_type(entity_type="spid:aggregated",ext_types=["Public"],must=True)
+        self.test_entityid_qs()                                 # The entityID MUST not contain the query-string part
+        self.test_entityid_contains(value="pub-ag-lite")        # The entityID MUST contain the activity code “pub-ag-lite”
 
-        # The entityID MUST contain the activity code “pub-ag-lite”
-        self.test_entityid_contains(value="pub-ag-lite")
         if self.production:
             self.test_spid_compliant_certificates(sector="public")
-
-        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
-        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
-        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
-        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
 
         # TODO
         # If the ContactPerson is of spid:entityType “spid:aggregator”
         # the Extensions element MUST contain the element spid:KeyDescriptor
         # with attribute use “spid:validation”
 
-        # The PublicServicesLightAggregator element MUST be present
-        self.test_extensions_public_ag(
-            ext_types=["//ContactPerson/Extensions/PublicServicesLightAggregator"],
-            must=True,
-        )
+
 
     def test_profile_spid_sp_ag_private_full(self):
         self.test_profile_spid_sp()
+        self.test_contactperson_email(entity_type="spid:aggregator")
+        self.test_contactperson_email(entity_type="spid:aggregated")
+        self.test_contactperson_email(contact_type="billing")
+        self.test_contactperson_phone(entity_type="spid:aggregator")
+        self.test_contactperson_phone(entity_type="spid:aggregated")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator")   # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated")   # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present      
+        self.test_Contacts_PubPriv(contact_type="billing")          # The ContactPerson element of contactType “billing”
+        self.test_Contacts_IPACode(entity_type="spid:aggregator")
+        self.test_Contacts_IPACode(entity_type="spid:aggregated",private=True)
+        self.test_Contacts_VATFC(entity_type="spid:aggregator")
+        self.test_Contacts_VATFC(entity_type="spid:aggregated", private=True)
+        self.test_Extensions_PubPriv(entity_type="spid:aggregator", org_chk=False)
+        self.test_Extensions_PubPriv(entity_type="spid:aggregated")
+        self.test_Extensions_PubPriv(contact_type="billing", org_chk=False)
+        self.test_extensions_type() # check che esista una sola "activity" extension
+        self.test_extensions_type(entity_type="spid:aggregator",ext_types=["PrivateServicesFullAggregator"],must=True)
+        self.test_extensions_type(entity_type="spid:aggregated",ext_types=["Private"],must=True)
+        self.test_entityid_qs() # The entityID MUST not contain the query-string part
+        self.test_entityid_contains(value="pri-ag-full") # The entityID MUST contain the activity code “pri-ag-full”
 
-        self.test_extensions_public_private(ext_type="Private", entity_type="spid:aggregated")
         self.test_Contacts_Priv(contact_type="billing")
+        self.test_Contacts_Priv_VAT(entity_type="spid:aggregated")
 
-        self.test_Contacts_VATFC(private=True, entity_type="spid:aggregated")
-        self.test_extensions_public_ag()
-        self.test_Extensions_PubPriv()
         if self.production:
             self.test_spid_compliant_certificates(sector="private")
 
-        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
-        # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
-        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
-        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
-
-        # The entityID MUST not contain the query-string part
-        self.test_entityid_qs()
-
-        # The entityID MUST contain the activity code “pub-ag-full”
-        self.test_entityid_contains(value="pri-ag-full")
-
-        # The PrivateServicesFullAggregator element MUST be present
-        self.test_extensions_public_ag(
-            ext_types=["//ContactPerson/Extensions/PrivateServicesFullAggregator"],
-            must=True,
-        )
 
     def test_profile_spid_sp_ag_private_lite(self):
         self.test_profile_spid_sp()
-        self.test_extensions_public_private(ext_type="Private")
+        self.test_contactperson_email(entity_type="spid:aggregator")
+        self.test_contactperson_email(entity_type="spid:aggregated")
+        self.test_contactperson_email(contact_type="billing")
+        self.test_contactperson_phone(entity_type="spid:aggregator")
+        self.test_contactperson_phone(entity_type="spid:aggregated")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator")   # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated")   # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present      
+        self.test_Contacts_PubPriv(contact_type="billing")          # The ContactPerson element of contactType “billing”
+        self.test_Contacts_IPACode(entity_type="spid:aggregator")
+        self.test_Contacts_IPACode(entity_type="spid:aggregated",private=True)
+        self.test_Contacts_VATFC(entity_type="spid:aggregator")
+        self.test_Contacts_VATFC(entity_type="spid:aggregated", private=True)
+        self.test_Extensions_PubPriv(entity_type="spid:aggregator", org_chk=False)
+        self.test_Extensions_PubPriv(entity_type="spid:aggregated")
+        self.test_Extensions_PubPriv(contact_type="billing", org_chk=False)
+        self.test_extensions_type()                             # check che esista una sola "activity" extension
+        self.test_extensions_type(entity_type="spid:aggregator",ext_types=["PrivateServicesLightAggregator"],must=True)
+        self.test_extensions_type(entity_type="spid:aggregated",ext_types=["Private"],must=True)
+        self.test_entityid_qs()                                 # The entityID MUST not contain the query-string part
+        self.test_entityid_contains(value="pri-ag-lite")        # The entityID MUST contain the activity code “pri-ag-lite”
 
-        # The entityID MUST contain the activity code “pub-ag-lite”
-        self.test_entityid_contains(value="pri-ag-lite")
+        self.test_Contacts_Priv(contact_type="billing")
+        self.test_Contacts_Priv_VAT(entity_type="spid:aggregated")
+
         if self.production:
             self.test_spid_compliant_certificates(sector="private")
-
-        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
-        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
-        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
-        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
 
         # TODO
         # If the ContactPerson is of spid:entityType “spid:aggregator”
         # the Extensions element MUST contain the element spid:KeyDescriptor
         # with attribute use “spid:validation”
 
-        # The PublicServicesLightAggregator element MUST be present
-        self.test_extensions_public_ag(
-            ext_types=["//ContactPerson/Extensions/PrivateServicesLightAggregator"],
-            must=True,
-        )
-
+ 
     def test_profile_spid_sp_op_public_full(self):
         self.test_profile_spid_sp()
-        self.test_Contacts_VATFC()
+        self.test_contactperson_email(entity_type="spid:aggregator")
+        self.test_contactperson_phone(entity_type="spid:aggregator")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator")   # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        self.test_Contacts_IPACode(entity_type="spid:aggregator",public=True)
+        self.test_Contacts_VATFC(entity_type="spid:aggregator", private=True,must=True)
+        self.test_Extensions_PubPriv(entity_type="spid:aggregator")
+        self.test_extensions_type()                             # check che esista una sola "activity" extension
+        self.test_extensions_type(entity_type="spid:aggregator",ext_types=["PublicServicesFullOperator"],must=True)
+        self.test_entityid_qs()                                 # The entityID MUST not contain the query-string part
+        self.test_entityid_contains(value="pub-op-full")     # The entityID MUST contain the activity code “pub-op-full”
+
+        self.test_Contacts_Priv(contact_type="billing")
+        self.test_Contacts_Priv_VAT(entity_type="spid:aggregated")
+
         if self.production:
-            self.test_spid_compliant_certificates(sector="public")
+            self.test_spid_compliant_certificates(sector="public")  # TODO: siamo sicuri che non sia privato??
 
-        # The entityID MUST contain the activity code “pub-op-full”
-        self.test_entityid_contains(value="pub-op-full")
-
-        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
-        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
-
-        # The PublicServicesFullOperator element MUST be present
-        self.test_extensions_public_ag(
-            ext_types=["//ContactPerson/Extensions/PublicServicesFullOperator"],
-            must=True,
-        )
 
     def test_profile_spid_sp_op_public_lite(self):
         self.test_profile_spid_sp()
+        self.test_contactperson_email(entity_type="spid:aggregator")
+        self.test_contactperson_email(entity_type="spid:aggregated")
+        self.test_contactperson_phone(entity_type="spid:aggregator")
+        self.test_contactperson_phone(entity_type="spid:aggregated")
+        self.test_Contacts_PubPriv(entity_type="spid:aggregator") # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
+        self.test_Contacts_PubPriv(entity_type="spid:aggregated") # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present      
+        self.test_Contacts_IPACode(entity_type="spid:aggregator")
+        self.test_Contacts_IPACode(entity_type="spid:aggregated",public=True)
+        self.test_Contacts_VATFC(entity_type="spid:aggregator")
+        self.test_Contacts_VATFC(entity_type="spid:aggregated")
+        self.test_Extensions_PubPriv(entity_type="spid:aggregator")
+        self.test_Extensions_PubPriv(entity_type="spid:aggregated", org_check=False)
+        self.test_extensions_type()                             # check che esista una sola "activity" extension
+        self.test_extensions_type(entity_type="spid:aggregator",ext_types=["PublicServicesLightOperator"],must=True)
+        self.test_extensions_type(entity_type="spid:aggregated",ext_types=["Public"],must=True)
+        self.test_entityid_qs()                                 # The entityID MUST not contain the query-string part
+        self.test_entityid_contains(value="pub-op-lite")        # The entityID MUST contain the activity code “pub-op-lite”
 
-        self.test_Contacts_VATFC()
-        self.test_extensions_public_private(ext_type="Public")
         if self.production:
             self.test_spid_compliant_certificates(sector="public")
 
-        # The entityID MUST contain the activity code “pub-op-lite”
-        self.test_entityid_contains(value="pub-op-lite")
+        # TODO
+        # If the ContactPerson is of spid:entityType “spid:aggregator”
+        # the Extensions element MUST contain the element spid:KeyDescriptor
+        # with attribute use “spid:validation”
 
-        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
-        # Only one ContactPerson element of contactType “other” and spid:entityType “spid:aggregated” MUST be present
-        self.test_Contacts_PubPriv(entity_type="spid:aggregator")
-        self.test_Contacts_PubPriv(entity_type="spid:aggregated")
-
-        # The PublicServicesLightOperator element MUST be present
-        self.test_extensions_public_ag(
-            ext_types=["//ContactPerson/Extensions/PublicServicesLightOperator"],
-            must=True,
-        )
-
+ 
     def test_profile_cie_sp(self):
         self.xsds_files_path = f"{BASE_DIR}/xsd/cie/"
         self.xsd_check(xsds_files=["saml-schema-metadata-sp-cie.xsd"])
 
         self.test_profile_saml2core()
         self.test_SPSSODescriptor_SPID()
-        self.test_contactperson_email()
         self.test_AttributeConsumingService_SPID(
             allowed_attributes=constants.CIE_ATTRIBUTES
         )
 
     def test_profile_cie_sp_public(self):
         self.test_profile_cie_sp()
+        self.test_contactperson_email(contact_type="administrative")
         self.test_extensions_public_private(
             ext_type="Public", contact_type="administrative"
         )
@@ -1115,6 +1141,8 @@ class SpidSpMetadataCheck(
 
     def test_profile_cie_sp_private(self):
         self.test_profile_cie_sp()
+        self.test_contactperson_email(contact_type="administrative")
+        self.test_contactperson_email(contact_type="technical")
         self.test_extensions_public_private(
             ext_type="Private", contact_type="technical"
         )
