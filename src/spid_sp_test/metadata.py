@@ -269,7 +269,7 @@ class SpidSpMetadataCheck(
             except Exception as e:
                 self._assertTrue(
                     False,
-                    "SPID Compliant certificates critical failure: {e}",
+                    "SPID Compliant certificates validation failure",
                     test_id=[""],
                     description=e.args,
                 )
