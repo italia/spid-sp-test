@@ -420,7 +420,6 @@ def test_cie_metadata_6_14b():
 def test_cie_metadata_6_15a():
     metadata_url = 'file://tests/metadata/cie/6.15a.xml'
     md = get_md_check(metadata_url, **md_kwargs)
-    md.test_contactperson_email(contact_type="administrative")
     md.test_contactperson_email(contact_type="technical")
     assert not md.errors
 
