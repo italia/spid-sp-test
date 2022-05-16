@@ -4,8 +4,6 @@ from . constants import XML_NAMESPACES
 from . metadata_public import compose_contact_type_entity_type
 
 
-
-
 class SpidSpMetadataCheckAG(object):
     def test_extensions_type(
         self,
@@ -27,7 +25,6 @@ class SpidSpMetadataCheckAG(object):
     ):
         _method = f"{self.__class__.__name__}.test_extensions_type"
         _data = dict(
-            test_id="",
             references=[],
             method=_method,
         )
@@ -73,7 +70,6 @@ class SpidSpMetadataCheckAG(object):
         """The entityID MUST not contain the query-string part"""
         _method = f"{self.__class__.__name__}.test_entityid_qs"
         _data = dict(
-            test_id="",
             references=[],
             method=_method,
         )
@@ -94,7 +90,6 @@ class SpidSpMetadataCheckAG(object):
         """The entityID MUST contain ..."""
         _method = f"{self.__class__.__name__}.test_entityid_contains"
         _data = dict(
-            test_id="",
             references=[],
             method=_method,
         )
