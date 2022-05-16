@@ -1077,14 +1077,13 @@ class SpidSpMetadataCheck(
         self.test_contactperson_phone(entity_type="spid:aggregator")
         self.test_Contacts_PubPriv(entity_type="spid:aggregator")   # The ContactPerson element of contactType “other” and spid:entityType “spid:aggregator” MUST be present
         self.test_Contacts_IPACode(entity_type="spid:aggregator",public=True)
-        self.test_Contacts_VATFC(entity_type="spid:aggregator", private=True,must=True)
+        self.test_Contacts_VATFC(entity_type="spid:aggregator", private=True, must=True)
         self.test_Extensions_PubPriv(entity_type="spid:aggregator")
         self.test_extensions_type()                             # check che esista una sola "activity" extension
-        self.test_extensions_type(entity_type="spid:aggregator",ext_types=["PublicServicesFullOperator"],must=True)
+        self.test_extensions_type(entity_type="spid:aggregator", ext_types=["PublicServicesFullOperator"], must=True)
         self.test_entityid_qs()                                 # The entityID MUST not contain the query-string part
         self.test_entityid_contains(value="pub-op-full")     # The entityID MUST contain the activity code “pub-op-full”
 
-        self.test_Contacts_Priv(contact_type="billing")
         self.test_Contacts_Priv_VAT(entity_type="spid:aggregated")
 
         if self.production:
