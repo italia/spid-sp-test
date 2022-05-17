@@ -113,7 +113,7 @@ class SpidSpMetadataCheckPublic(object):
         email_xpath=f"{xpatt}/EmailAddress"
         email = self.doc.xpath(f"{xpatt}/EmailAddress", namespaces=XML_NAMESPACES)
 
-        if email:
+        if email and email[0]:
             self._assertTrue(
                 email[0].text,
                 f"The {email_xpath} element MUST have a value",
