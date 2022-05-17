@@ -63,6 +63,8 @@ WMzsJM/3I13eYcBiGD10KYq08yhAtHiGD3pkkwWEUgH0km5xlGRcU0R98MAHp34m</ds:SignatureVa
     <md:ContactPerson contactType="other">
         <md:Extensions>
             <spid:IPACode>IPA</spid:IPACode>
+      <spid:VATNumber xmlns:spid="https://spid.gov.it/saml-extensions"></spid:VATNumber>
+
             <spid:Public/>
         </md:Extensions>
         <md:EmailAddress>email@public-sp.it</md:EmailAddress>

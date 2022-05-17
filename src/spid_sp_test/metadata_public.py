@@ -250,19 +250,19 @@ class SpidSpMetadataCheckPublic(object):
         xpatt = compose_contact_type_entity_type(contact_type, entity_type)
 
         vats = self.doc.xpath(f"{xpatt}/Extensions/VATNumber", namespaces=XML_NAMESPACES)
-        self._assertTrue(
-            (len(vats) <= 1),
-            "only one VATNumber element must be present",
-            description=[etree.tostring(_vats).decode() for _vats in vats],
-            test_id = ['01.11.05','01.17.15 '],**_data,
-        )
         if vats:
+            self._assertTrue(
+                (len(vats) <= 1),
+                "only one VATNumber element must be present",
+                description=[etree.tostring(_vats).decode() for _vats in vats],
+                test_id = ['01.11.05','01.17.15 '],**_data,
+            )
             self._assertTrue(
                 vats[0].text, "The VATNumber element MUST have a value",
                 test_id = ['01.11.06','01.17.16'], **_data
             )
             self._assertTrue(
-                (vats[0].text[:2] in ISO3166_CODES),
+                (vats[0].text and vats[0].text[:2] in ISO3166_CODES),
                 "The VATNumber element MUST start with a valid ISO3166 Code",
                 test_id = ['01.11.10','01.17.17'], **_data
             )
