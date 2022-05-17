@@ -56,15 +56,13 @@ WMzsJM/3I13eYcBiGD10KYq08yhAtHiGD3pkkwWEUgH0km5xlGRcU0R98MAHp34m</ds:SignatureVa
         </md:AttributeConsumingService>
     </md:SPSSODescriptor>
     <md:Organization>
+        <md:OrganizationName xml:lang="it">Public SP</md:OrganizationName>
         <md:OrganizationDisplayName xml:lang="it">Public SP</md:OrganizationDisplayName>
         <md:OrganizationURL xml:lang="it">https://www.public-sp.it</md:OrganizationURL>
-        <md:OrganizationName xml:lang="it">Public SP</md:OrganizationName>
     </md:Organization>
     <md:ContactPerson contactType="other">
         <md:Extensions>
             <spid:IPACode>IPA</spid:IPACode>
-      <spid:VATNumber xmlns:spid="https://spid.gov.it/saml-extensions"></spid:VATNumber>
-
             <spid:Public/>
         </md:Extensions>
         <md:EmailAddress>email@public-sp.it</md:EmailAddress>

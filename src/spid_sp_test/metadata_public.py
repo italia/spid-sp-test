@@ -113,7 +113,7 @@ class SpidSpMetadataCheckPublic(object):
         email_xpath=f"{xpatt}/EmailAddress"
         email = self.doc.xpath(f"{xpatt}/EmailAddress", namespaces=XML_NAMESPACES)
 
-        if email and email[0]:
+        if email and len(email) > 0:
             self._assertTrue(
                 email[0].text,
                 f"The {email_xpath} element MUST have a value",
@@ -197,10 +197,9 @@ class SpidSpMetadataCheckPublic(object):
                     public, "The IPACode element MUST be present",
                     test_id = ['01.11.02','01.18.03','01.20.02'], **_data
                 )
-        # TODO: non funziona se aggiungo ipacode al file del SP_privato non se ne accorge
-        if private :
+        if private:
             self._assertFalse(
-                ipacode,
+                len(ipacode) == 0,
                 "The IPACode element MUST NOT be present",
                 description=ipacode,
                 test_id = ['01.11.01','01.20.01'], **_data,
