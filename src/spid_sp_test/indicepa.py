@@ -33,12 +33,12 @@ def get_indicepa_by_ipacode(value):
         response = requests.post(API_URL, headers=header, data=qs_final, timeout=5)
     except Exception as e:  # pragma: no cover
         logger.error(e)
-        return {-1, {}}
+        return [-1, {"errore": f"{e}"}]
     else:
         res = response.json()
         try:
             result = (res["risposta"]["paginazione"]["numeroRigheTotali"], res)
             return result
-        except KeyError:  # pragma: no cover
+        except KeyError as e:  # pragma: no cover
             logger.error(f"{API_URL} invalid response")
-            return {-1, {}}
+            return [-1, {"errore": f"{e}"}]

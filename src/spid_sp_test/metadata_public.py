@@ -113,7 +113,7 @@ class SpidSpMetadataCheckPublic(object):
         email_xpath=f"{xpatt}/EmailAddress"
         email = self.doc.xpath(f"{xpatt}/EmailAddress", namespaces=XML_NAMESPACES)
 
-        if email:
+        if email and len(email) > 0:
             self._assertTrue(
                 email[0].text,
                 f"The {email_xpath} element MUST have a value",
@@ -197,10 +197,9 @@ class SpidSpMetadataCheckPublic(object):
                     public, "The IPACode element MUST be present",
                     test_id = ['01.11.02','01.18.03','01.20.02'], **_data
                 )
-        # TODO: non funziona se aggiungo ipacode al file del SP_privato non se ne accorge
-        if private :
+        if private:
             self._assertFalse(
-                ipacode,
+                len(ipacode) == 0,
                 "The IPACode element MUST NOT be present",
                 description=ipacode,
                 test_id = ['01.11.01','01.20.01'], **_data,
@@ -250,19 +249,19 @@ class SpidSpMetadataCheckPublic(object):
         xpatt = compose_contact_type_entity_type(contact_type, entity_type)
 
         vats = self.doc.xpath(f"{xpatt}/Extensions/VATNumber", namespaces=XML_NAMESPACES)
-        self._assertTrue(
-            (len(vats) <= 1),
-            "only one VATNumber element must be present",
-            description=[etree.tostring(_vats).decode() for _vats in vats],
-            test_id = ['01.11.05','01.17.15 '],**_data,
-        )
         if vats:
+            self._assertTrue(
+                (len(vats) <= 1),
+                "only one VATNumber element must be present",
+                description=[etree.tostring(_vats).decode() for _vats in vats],
+                test_id = ['01.11.05','01.17.15 '],**_data,
+            )
             self._assertTrue(
                 vats[0].text, "The VATNumber element MUST have a value",
                 test_id = ['01.11.06','01.17.16'], **_data
             )
             self._assertTrue(
-                (vats[0].text[:2] in ISO3166_CODES),
+                (vats[0].text and vats[0].text[:2] in ISO3166_CODES),
                 "The VATNumber element MUST start with a valid ISO3166 Code",
                 test_id = ['01.11.10','01.17.17'], **_data
             )
