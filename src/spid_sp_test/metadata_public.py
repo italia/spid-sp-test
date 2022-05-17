@@ -198,7 +198,7 @@ class SpidSpMetadataCheckPublic(object):
                     test_id = ['01.11.02','01.18.03','01.20.02'], **_data
                 )
         if private:
-            self._assertFalse(
+            self._assertTrue(
                 len(ipacode) == 0,
                 "The IPACode element MUST NOT be present",
                 description=ipacode,
