@@ -73,7 +73,6 @@ class AbstractSpidCheck(object):
         elif level in ("debug"):
             self.logger.debug(f"{method}: {msg}")
 
-
     def handle_error(
         self,
         error_message,

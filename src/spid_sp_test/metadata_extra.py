@@ -105,9 +105,8 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
                 self._assertTrue(
                     (
-                        datetime.datetime.strptime(
-                            sign_cert[3], "%b %d %H:%M:%S %Y"
-                        ) >= datetime.datetime.now()
+                        datetime.datetime.strptime(sign_cert[3], "%b %d %H:%M:%S %Y")
+                        >= datetime.datetime.now()
                     ),
                     f"The certificate #{i} is expired. It was valid till {sign_cert[3]}",
                     **_data,
@@ -148,8 +147,11 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
             if attr == "protocolSupportEnumeration":
                 a = _spsso.get(attr)
                 self._assertTrue(
-                    a, f"The {attr} attribute MUST have a value", description=a, 
-                    test_id=["01.06.02"], **_data
+                    a,
+                    f"The {attr} attribute MUST have a value",
+                    description=a,
+                    test_id=["01.06.02"],
+                    **_data,
                 )
 
                 self._assertTrue(

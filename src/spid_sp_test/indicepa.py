@@ -37,8 +37,12 @@ def get_indicepa_by_ipacode(value):
     else:
         res = response.json()
         try:
-            result = (res["risposta"]["paginazione"]["numeroRigheTotali"], res)
-            return result
+            nrt = res["risposta"]["paginazione"]["numeroRigheTotali"]
+            result = (nrt, res)
+            if nrt <= 0:
+                return [-1, {"errore": f"risultato vuoto per {qs_final}"}]
+            else:
+                return result
         except KeyError as e:  # pragma: no cover
             logger.error(f"{API_URL} invalid response")
             return [-1, {"errore": f"{e}"}]

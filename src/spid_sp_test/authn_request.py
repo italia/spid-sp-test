@@ -246,11 +246,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             del_ns(self.doc)
         except Exception as e:
             _method = f"Error parsing AuthnRequest: {self.authn_request_decoded}"
-            self.handle_init_errors(
-                method = _method,
-                description = f"{e}",
-                traceback=e
-            )
+            self.handle_init_errors(method=_method, description=f"{e}", traceback=e)
 
         # binding detection
         self.IS_HTTP_REDIRECT = self.authn_request.get("Signature")
@@ -332,7 +328,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
             cert_file = NamedTemporaryFile(suffix=".pem")
 
             # cert clean up ...
-            cert = re.sub(r'[\n\t\s]', '', cert)
+            cert = re.sub(r"[\n\t\s]", "", cert)
 
             cert_file.write(
                 f"-----BEGIN CERTIFICATE-----\n{cert}\n-----END CERTIFICATE-----".encode()
@@ -348,9 +344,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
             if self.IS_HTTP_REDIRECT:
                 _sigalg = self.authn_request.get("SigAlg", "")
-                quoted_req = urllib.parse.quote_plus(
-                    self.authn_request["SAMLRequest"]
-                )
+                quoted_req = urllib.parse.quote_plus(self.authn_request["SAMLRequest"])
                 quoted_rs = urllib.parse.quote_plus(
                     self.authn_request.get("RelayState") or ""
                 )
@@ -416,20 +410,12 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     lines = [msg]
                     if err.stderr:
                         stderr = "stderr: " + "\nstderr: ".join(
-                            list(
-                                filter(
-                                    None, err.stderr.decode().split(r"\n")
-                                )
-                            )
+                            list(filter(None, err.stderr.decode().split(r"\n")))
                         )
                         lines.append(stderr)
                     if err.stdout:
                         stdout = "stdout: " + "\nstdout: ".join(
-                            list(
-                                filter(
-                                    None, err.stdout.decode().split(r"\n")
-                                )
-                            )
+                            list(filter(None, err.stdout.decode().split(r"\n")))
                         )
                         lines.append(stdout)
                     _lines = "\n".join(lines)
@@ -925,7 +911,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
         elif len(e) == 1:
             e = e[0]
-            _data['description'] = e
+            _data["description"] = e
             for attr in ["NotBefore", "NotOnOrAfter"]:
                 self._assertTrue(
                     (attr in e.attrib),
@@ -933,7 +919,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     **_data,
                 )
                 value = e.get(attr)
-                _data['description'] = value
+                _data["description"] = value
                 self._assertTrue(
                     value,
                     f"The {attr} attribute MUST have a value",
@@ -1042,7 +1028,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
                 self._assertTrue(
                     ("Algorithm" in method[0].attrib),
-                    "The Algorithm attribute MUST be present " "in SignatureMethod element",
+                    "The Algorithm attribute MUST be present "
+                    "in SignatureMethod element",
                     **_data,
                 )
 
@@ -1063,7 +1050,8 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
 
                 self._assertTrue(
                     ("Algorithm" in method[0].attrib),
-                    "The Algorithm attribute MUST be present " "in DigestMethod element",
+                    "The Algorithm attribute MUST be present "
+                    "in DigestMethod element",
                     **_data,
                 )
 
