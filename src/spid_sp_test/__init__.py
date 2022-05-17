@@ -62,14 +62,17 @@ class AbstractSpidCheck(object):
             # here report as json
             data["result"] = "success"
             self.results.append(data)
+            self.logger.info(f"{method}: {msg}")
         elif level in ("error", "critical"):
             self.handle_error(title, description, traceback)
         elif level == "warning":
             data["result"] = "warning"
             self.results.append(data)
             self.warnings.append(data)
-        else:
-            getattr(self.logger, level, "debug")(f"{method}: {msg}")
+            self.logger.warning(f"{method}: {msg}")
+        elif level in ("debug"):
+            self.logger.debug(f"{method}: {msg}")
+
 
     def handle_error(
         self,
