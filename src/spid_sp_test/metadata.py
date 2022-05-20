@@ -239,6 +239,7 @@ class SpidSpMetadataCheck(
 
         return self.is_ok(_method)
 
+
     def test_spid_compliant_certificates(self, sector: str = "public"):
         certs = self.doc.xpath(
             '//SPSSODescriptor/KeyDescriptor[@use="signing"]'
@@ -265,7 +266,7 @@ class SpidSpMetadataCheck(
             except Exception as e:
                 self._assertTrue(
                     False,
-                    "SPID Compliant certificates critical failure",
+                    "SPID Compliant certificates validation failure",
                     test_id=[""],
                     description=e.args,
                 )
