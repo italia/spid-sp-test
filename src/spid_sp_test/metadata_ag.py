@@ -1,36 +1,69 @@
 import urllib
 
+from .constants import XML_NAMESPACES, SPID_PROFILES
+from .metadata_public import compose_contact_type_entity_type
+
 
 class SpidSpMetadataCheckAG(object):
-    def test_extensions_public_ag(
+    def test_extensions_type(
         self,
-        ext_types=[
-            "//ContactPerson/Extensions/PublicServicesFullAggregator",
-            "//ContactPerson/Extensions/PublicServicesLightAggregator",
-            "//ContactPerson/Extensions/PrivateServicesFullAggregator",
-            "//ContactPerson/Extensions/PrivateServicesLightAggregator",
-            "//ContactPerson/Extensions/PublicServicesFullOperator",
-            "//ContactPerson/Extensions/PublicServicesLightOperator",
-        ],
-        must=False,
+        ext_types=SPID_PROFILES,
+        contact_type: str = "other",
+        entity_type: str = None,
     ):
-        _method = f"{self.__class__.__name__}.test_extensions_public_ag"
+        _method = f"{self.__class__.__name__}.test_extensions_type"
         _data = dict(
-            test_id="",
             references=[],
             method=_method,
         )
-        for ext_type in ext_types:
-            ctype = self.doc.xpath(ext_type)
-            if must:
+
+        xpatt = compose_contact_type_entity_type(contact_type, entity_type)
+
+        for ext_type in SPID_PROFILES:
+            ext = f"{xpatt}/Extensions/{ext_type}"
+            ctype = self.doc.xpath(ext, namespaces=XML_NAMESPACES)
+
+            if ext_type in ext_types:
                 self._assertTrue(
-                    ctype, f"The {ext_type} element MUST be present", **_data
+                    ctype,
+                    f"The {ext} element MUST be present",
+                    test_id=[
+                        "01.19.07-12",
+                        "01.21.05",
+                        "01.21.06",
+                        "01.21.09",
+                        "01.12.02",
+                        "01.12.05",
+                    ],
+                    **_data,
+                )
+            else:
+                self._assertFalse(
+                    ctype,
+                    f"The {ext} element MUST not be present",
+                    test_id=[
+                        "01.19.07-12",
+                        "01.21.05",
+                        "01.21.06",
+                        "01.21.09",
+                        "01.12.02",
+                        "01.12.05",
+                    ],
+                    **_data,
                 )
 
             if ctype:
                 self._assertFalse(
                     ctype[0].text,
-                    f"The {ext_type.title()} element MUST be empty",
+                    f"The {ext} element MUST be empty",
+                    test_id=[
+                        "01.12.03",
+                        "01.12.06",
+                        "01.19.00-05",
+                        "01.21.01",
+                        "01.21.02",
+                        "01.21.03",
+                    ],
                     **_data,
                 )
 
@@ -40,7 +73,6 @@ class SpidSpMetadataCheckAG(object):
         """The entityID MUST not contain the query-string part"""
         _method = f"{self.__class__.__name__}.test_entityid_qs"
         _data = dict(
-            test_id="",
             references=[],
             method=_method,
         )
@@ -53,6 +85,7 @@ class SpidSpMetadataCheckAG(object):
             qs[1],
             ("The entityID MUST not contain the query-string part"),
             description=eid,
+            test_id=["01.16.02"],
             **_data,
         )
         return self.is_ok(_method)
@@ -61,7 +94,6 @@ class SpidSpMetadataCheckAG(object):
         """The entityID MUST contain ..."""
         _method = f"{self.__class__.__name__}.test_entityid_contains"
         _data = dict(
-            test_id="",
             references=[],
             method=_method,
         )
@@ -71,6 +103,7 @@ class SpidSpMetadataCheckAG(object):
             value in eid,
             (f"The entityID MUST contain {value}"),
             description=eid,
+            test_id=["01.16.03-10"],
             **_data,
         )
         return self.is_ok(_method)

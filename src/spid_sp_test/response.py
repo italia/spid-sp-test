@@ -54,7 +54,7 @@ class SpidSpResponse(object):
         attributes={},
         template_path="./templates",
         status_codes=None,
-        **kwargs
+        **kwargs,
     ):
 
         try:
@@ -76,8 +76,12 @@ class SpidSpResponse(object):
             loader=FileSystemLoader(searchpath=template_path),
             autoescape=select_autoescape(["xml"]),
         )
-        self.template_name = kwargs.get('template_name') or self.conf.get("path", "base.xml")
-        self.private_key = self.conf.get("sign_credentials", {}).get("privateKey") or kwargs.get('private_key')
+        self.template_name = kwargs.get("template_name") or self.conf.get(
+            "path", "base.xml"
+        )
+        self.private_key = self.conf.get("sign_credentials", {}).get(
+            "privateKey"
+        ) or kwargs.get("private_key")
         # not used here ... so, commented.
         # self.public_cert = self.conf.get("sign_credentials", {}).get("certificate")  or kwargs.get('public_cert')
 
@@ -166,9 +170,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             f"//SPSSODescriptor/AttributeConsumingService[@index={self.acs_index}]"
             "/RequestedAttribute"
         )
-        self.requested_attrs = [
-            i.attrib["Name"] for i in self.requested_attrs_raw
-        ]
+        self.requested_attrs = [i.attrib["Name"] for i in self.requested_attrs_raw]
 
         # attributes
         if self.attr_json:
@@ -178,7 +180,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             # returns ONLY the requested attributes shown in the metadata
             # otherwise it returns all the attributes (for test purpose)
             self.user_attrs = {
-                i:settings.ATTRIBUTES[i] for i in self.requested_attrs
+                i: settings.ATTRIBUTES[i] for i in self.requested_attrs
             } or settings.ATTRIBUTES
 
     def do_authnrequest(self):
@@ -203,7 +205,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         now = datetime.datetime.utcnow()
 
-        self.acs_index = self.authnreq_attrs.get('AttributeConsumingServiceIndex')
+        self.acs_index = self.authnreq_attrs.get("AttributeConsumingServiceIndex")
         self.acs_url = self.metadata_etree.xpath(
             f"//SPSSODescriptor/AssertionConsumerService[@index={self.acs_index}]"
         )[0].attrib["Location"]
@@ -239,7 +241,9 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         }
         self.relay_state = self.kwargs.get("relay_state")
 
-    def sign(self, xmlstr, assertion=True, response=True, key_file=None, cert_file=None):
+    def sign(
+        self, xmlstr, assertion=True, response=True, key_file=None, cert_file=None
+    ):
         """
         Sign an XML statement.
         """
@@ -249,10 +253,12 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         com_list = [
             self.crypto_backend.xmlsec,
-            "--sign", "--privkey-pem", _certs,
+            "--sign",
+            "--privkey-pem",
+            _certs,
             # "--xxe" # just for XXE check, DON'T use this param in the real wold!
         ]
-        logger.debug(' '.join(com_list))
+        logger.debug(" ".join(com_list))
 
         asser_placeholder = "<!-- Assertion Signature here -->"
         if assertion and asser_placeholder in xmlstr:
@@ -373,7 +379,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         self.logger.debug(msg)
         return res
 
-    def post_xml(self, xml:str, conf:dict = {}):
+    def post_xml(self, xml: str, conf: dict = {}):
         """
         here just for wrapping attacks
         """
@@ -398,7 +404,8 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 result = self.sign(
                     xmlstr,
                     key_file=response_obj.private_key,
-                    cert_file=response_obj.response_attrs.get("X509Certificate"))
+                    cert_file=response_obj.response_attrs.get("X509Certificate"),
+                )
             except XmlsecError as e:
                 logger.error(f"{msg}: Exception during xmlsec signature ({e})")
                 logger.debug("{xmlstr}")

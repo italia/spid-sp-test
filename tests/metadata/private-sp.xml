@@ -57,12 +57,12 @@
       <spid:VATNumber
         xmlns:spid="https://spid.gov.it/saml-extensions">IT00000000000
       </spid:VATNumber>
+            <spid:IPACode>IPA</spid:IPACode>
       <spid:Private
         xmlns:spid="https://spid.gov.it/saml-extensions"/>
     </md:Extensions>
     <md:Company>PrivateSP</md:Company>
-    <md:EmailAddress>email@private-sp.it</md:EmailAddress>
-    <md:TelephoneNumber>12345678</md:TelephoneNumber>
+   <md:TelephoneNumber>12345678</md:TelephoneNumber>
   </md:ContactPerson>
   <md:ContactPerson contactType="billing">
     <md:Extensions>
@@ -88,7 +88,6 @@
       </fpa:CessionarioCommittente>
     </md:Extensions>
     <md:Company>PrivateSP</md:Company>
-    <md:EmailAddress>email@private-sp.it</md:EmailAddress>
-    <md:TelephoneNumber>12345678</md:TelephoneNumber>
+   <md:TelephoneNumber>12345678</md:TelephoneNumber>
   </md:ContactPerson>
 </md:EntityDescriptor>

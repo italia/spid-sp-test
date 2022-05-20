@@ -49,7 +49,7 @@
         </md:AttributeConsumingService>
     </md:SPSSODescriptor>
     <md:Organization>
-        <md:OrganizationName xml:lang="it">Aggregated</md:OrganizationName>
+        <md:OrganizationName xml:lang="it">Operator</md:OrganizationName>
         <md:OrganizationDisplayName xml:lang="it">Aggregated Display Name</md:OrganizationDisplayName>
         <md:OrganizationURL xml:lang="it">https://www.aggregated.it/</md:OrganizationURL>
     </md:Organization>

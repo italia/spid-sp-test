@@ -1,2 +1,4 @@
 {% extends "base.xml" %}
-{% block AttributeStatement %}{% endblock AttributeStatement %}
+{% block AttributeStatement %}
+<saml:AttributeStatement></saml:AttributeStatement>
+{% endblock AttributeStatement %}

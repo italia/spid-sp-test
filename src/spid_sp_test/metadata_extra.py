@@ -105,9 +105,8 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
 
                 self._assertTrue(
                     (
-                        datetime.datetime.strptime(
-                            sign_cert[3], "%b %d %H:%M:%S %Y"
-                        ) >= datetime.datetime.now()
+                        datetime.datetime.strptime(sign_cert[3], "%b %d %H:%M:%S %Y")
+                        >= datetime.datetime.now()
                     ),
                     f"The certificate #{i} is expired. It was valid till {sign_cert[3]}",
                     **_data,
@@ -131,7 +130,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
             self._assertTrue(
                 False,
                 "SPSSODescriptor element not found",
-                test_id=[""],
+                test_id=["01.06.00"],
                 **_data,
             )
             return self.is_ok(_method)
@@ -141,14 +140,18 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                 (attr in _spsso.attrib),
                 f"The {attr} attribute MUST be present",
                 description=spsso[0].attrib,
-                test_id=["1.6.1", "1.6.7"],
+                test_id=["01.06.01", "01.06.07"],
                 **_data,
             )
 
             if attr == "protocolSupportEnumeration":
                 a = _spsso.get(attr)
                 self._assertTrue(
-                    a, f"The {attr} attribute MUST have a value", description=a, **_data
+                    a,
+                    f"The {attr} attribute MUST have a value",
+                    description=a,
+                    test_id=["01.06.02"],
+                    **_data,
                 )
 
                 self._assertTrue(
@@ -156,7 +159,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     f"The {attr} attribute MUST be "
                     "urn:oasis:names:tc:SAML:2.0:protocol",
                     description=a,
-                    test_id=["1.6.6"],
+                    test_id=["01.06.06"],
                     **_data,
                 )
 
@@ -167,7 +170,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                     f"The {attr} attribute MUST have a value",
                     description=a,
                     **_data,
-                    test_id=["1.6.8"],
+                    test_id=["01.06.08"],
                 )
 
                 if a:
@@ -175,7 +178,7 @@ class SpidSpMetadataCheckExtra(SpidSpMetadataCheck):
                         a.lower() == "true",
                         f"The {attr} attribute MUST be true",
                         description=a,
-                        test_id=["1.6.9"],
+                        test_id=["01.06.09"],
                         **_data,
                     )
         return self.is_ok(_method)
