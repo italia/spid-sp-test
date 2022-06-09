@@ -130,7 +130,7 @@ class SpidSpMetadataCheckPublic(object):
         email_xpath = f"{xpatt}/EmailAddress"
         email = self.doc.xpath(f"{xpatt}/EmailAddress", namespaces=XML_NAMESPACES)
 
-        if email and len(email) > 0:
+        if email and len(email) > 0 and email[0].text:
             self._assertTrue(
                 email[0].text,
                 f"The {email_xpath} element MUST have a value",
@@ -166,7 +166,7 @@ class SpidSpMetadataCheckPublic(object):
         phone_xpath = f"{xpatt}/TelephoneNumber"
         phone = self.doc.xpath(f"{xpatt}/TelephoneNumber", namespaces=XML_NAMESPACES)
 
-        if phone:
+        if phone and len(phone) > 0 and phone[0].text:
             phone = phone[0].text
             self._assertTrue(
                 phone,
