@@ -205,10 +205,13 @@ class SpidSpResponseCheck(AbstractSpidCheck):
 
         now = datetime.datetime.utcnow()
 
-        self.acs_index = self.authnreq_attrs.get("AssertionConsumerServiceIndex")
-        if(self.acs_index is not None):
+        self.acs_index = self.authnreq_attrs.get("AttributeConsumingServiceIndex")
+
+        assertion_consumer_service_index = self.authnreq_attrs.get("AssertionConsumerServiceIndex")
+
+        if(assertion_consumer_service_index is not None):
             self.acs_url = self.metadata_etree.xpath(
-                f"//SPSSODescriptor/AssertionConsumerService[@index={self.acs_index}]"
+                f"//SPSSODescriptor/AssertionConsumerService[@index={assertion_consumer_service_index}]"
             )[0].attrib["Location"]
         else:
             self.acs_url = self.authnreq_attrs.get("AssertionConsumerServiceURL")
