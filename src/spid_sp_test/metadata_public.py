@@ -217,13 +217,26 @@ class SpidSpMetadataCheckPublic(object):
                     test_id=["01.11.03", "01.17.13"],
                     **_data,
                 )
-                res = get_indicepa_by_ipacode(ipacode.text)
-                self._assertTrue(
-                    res[0] > 0,
-                    "The IPACode element MUST have a valid value present on IPA",
-                    test_id=["01.11.04", "01.17.14"],
-                    **_data,
-                )
+                if ipacode.text == "__aggrsint":
+                    self._assertFalse(
+                        entity_type == "spid:aggregated",
+                        ("The IPACode __aggrsint should be used only for test metadata."),
+                        level="warning",
+                        **_data,
+                    )
+                    self._assertTrue(
+                        entity_type == "spid:aggregated",
+                        ("The IPACode __aggrsint could be used only for test metadata in the aggregated contact."),
+                        **_data,
+                    )
+                else:
+                    res = get_indicepa_by_ipacode(ipacode.text)
+                    self._assertTrue(
+                        res[0] > 0,
+                        "The IPACode element MUST have a valid value present on IPA",
+                        test_id=["01.11.04", "01.17.14"],
+                        **_data,
+                    )
             else:
                 self._assertFalse(
                     public,
@@ -311,12 +324,25 @@ class SpidSpMetadataCheckPublic(object):
                 test_id=["01.11.06", "01.17.16"],
                 **_data,
             )
-            self._assertTrue(
-                (vats[0].text and vats[0].text[:2] in ISO3166_CODES),
-                "The VATNumber element MUST start with a valid ISO3166 Code",
-                test_id=["01.11.10", "01.17.17"],
-                **_data,
-            )
+            if vats[0].text == "__aggrsint":
+                self._assertFalse(
+                    entity_type == "spid:aggregated",
+                    ("The VATNumber __aggrsint should be used only for test metadata."),
+                    level="warning",
+                    **_data,
+                )
+                self._assertTrue(
+                    entity_type == "spid:aggregated",
+                    ("The VATNumber __aggrsint could be used only for test metadata in the aggregated contact."),
+                    **_data,
+                )
+            else:
+                self._assertTrue(
+                    (vats[0].text and vats[0].text[:2] in ISO3166_CODES),
+                    "The VATNumber element MUST start with a valid ISO3166 Code",
+                    test_id=["01.11.10", "01.17.17"],
+                    **_data,
+                )
 
         fcs = self.doc.xpath(
             f"{xpatt}/Extensions/FiscalCode", namespaces=XML_NAMESPACES
