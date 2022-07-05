@@ -207,7 +207,7 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
         self.request_content_type = request_content_type
         self.xsds_files = xsds_files or self.xsds_files
         self.xsds_files_path = xsds_files_path or f"{BASE_DIR}/xsd"
-
+        
     def load(self):
         try:
             self.authn_request = get_authn_request(
