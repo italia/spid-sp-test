@@ -208,7 +208,7 @@ class SpidSpMetadataCheckPublic(object):
             f"{xpatt}/Extensions/IPACode", namespaces=XML_NAMESPACES
         )
 
-        if public and self.production:
+        if self.production:
             if ipacode:
                 ipacode = ipacode[0]
                 self._assertTrue(
@@ -237,6 +237,7 @@ class SpidSpMetadataCheckPublic(object):
                     test_id=["01.11.02", "01.18.03", "01.20.02"],
                     **_data,
                 )
+
         elif public:
             if ipacode[0].text == "__aggrsint":
                 self._assertFalse(

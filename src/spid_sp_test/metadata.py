@@ -461,7 +461,7 @@ class SpidSpMetadataCheck(
             )
 
         kds = self.doc.xpath(
-            "//EntityDescriptor/SPSSODescriptor" '/KeyDescriptor[@use="encryption"]'
+            '//EntityDescriptor/SPSSODescriptor/KeyDescriptor[@use="encryption"]'
         )
         for kd in kds:
             certs = kd.xpath(
