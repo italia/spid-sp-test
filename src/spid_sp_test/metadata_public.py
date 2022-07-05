@@ -208,7 +208,7 @@ class SpidSpMetadataCheckPublic(object):
             f"{xpatt}/Extensions/IPACode", namespaces=XML_NAMESPACES
         )
 
-        if self.production:
+        if public and self.production:
             if ipacode:
                 ipacode = ipacode[0]
                 self._assertTrue(
@@ -217,26 +217,19 @@ class SpidSpMetadataCheckPublic(object):
                     test_id=["01.11.03", "01.17.13"],
                     **_data,
                 )
-                if ipacode.text == "__aggrsint":
-                    self._assertFalse(
-                        entity_type == "spid:aggregated",
-                        ("The IPACode __aggrsint should be used only for test metadata."),
-                        level="warning",
-                        **_data,
-                    )
-                    self._assertTrue(
-                        entity_type == "spid:aggregated",
-                        ("The IPACode __aggrsint could be used only for test metadata in the aggregated contact."),
-                        **_data,
-                    )
-                else:
-                    res = get_indicepa_by_ipacode(ipacode.text)
-                    self._assertTrue(
-                        res[0] > 0,
-                        "The IPACode element MUST have a valid value present on IPA",
-                        test_id=["01.11.04", "01.17.14"],
-                        **_data,
-                    )
+                self._assertTrue(
+                    entity_type == "spid:aggregated",
+                    ("The IPACode __aggrsint could be used only for test metadata in the aggregated contact."),
+                    level="error",
+                    **_data,
+                )
+                res = get_indicepa_by_ipacode(ipacode.text)
+                self._assertTrue(
+                    res[0] > 0,
+                    "The IPACode element MUST have a valid value present on IPA",
+                    test_id=["01.11.04", "01.17.14"],
+                    **_data,
+                )
             else:
                 self._assertFalse(
                     public,
@@ -244,7 +237,16 @@ class SpidSpMetadataCheckPublic(object):
                     test_id=["01.11.02", "01.18.03", "01.20.02"],
                     **_data,
                 )
-        if private:
+        elif public:
+            if ipacode[0].text == "__aggrsint":
+                self._assertFalse(
+                    entity_type == "spid:aggregated",
+                    ("The IPACode __aggrsint should be used only for test metadata."),
+                    level="warning",
+                    **_data,
+                )
+        
+        elif private:
             self._assertTrue(
                 len(ipacode) == 0,
                 "The IPACode element MUST NOT be present",
@@ -332,8 +334,9 @@ class SpidSpMetadataCheckPublic(object):
                     **_data,
                 )
                 self._assertTrue(
-                    entity_type == "spid:aggregated",
+                    entity_type == "spid:aggregator",
                     ("The VATNumber __aggrsint could be used only for test metadata in the aggregated contact."),
+                    level="error",
                     **_data,
                 )
             else:
