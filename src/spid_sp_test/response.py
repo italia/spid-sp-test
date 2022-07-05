@@ -204,7 +204,6 @@ class SpidSpResponseCheck(AbstractSpidCheck):
         ].attrib["NameQualifier"]
 
         now = datetime.datetime.utcnow()
-
         self.acs_index = self.authnreq_attrs.get("AttributeConsumingServiceIndex")
 
         assertion_consumer_service_index = self.authnreq_attrs.get("AssertionConsumerServiceIndex")
