@@ -239,7 +239,7 @@ class SpidSpMetadataCheckPublic(object):
                 )
 
         elif public:
-            if ipacode[0].text == "__aggrsint":
+            if ipacode and ipacode[0].text == "__aggrsint":
                 self._assertFalse(
                     entity_type == "spid:aggregated",
                     ("The IPACode __aggrsint should be used only for test metadata."),
