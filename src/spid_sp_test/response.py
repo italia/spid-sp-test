@@ -399,6 +399,13 @@ class SpidSpResponseCheck(AbstractSpidCheck):
                 xml = func(xml, conf)
         return xml
 
+    def test_profile_cie_sp_public(self):
+        cie_test_names = list(self.test_names)
+        cie_test_names.remove('70')
+        cie_test_names.remove('71')
+        self.test_names = cie_test_names
+        self.test_profile_spid_sp()
+
     def test_profile_spid_sp(self):
         for i in self.test_names:
             self.do_authnrequest()
