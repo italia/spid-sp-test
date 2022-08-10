@@ -207,7 +207,6 @@ class SpidSpMetadataCheckPublic(object):
         ipacode = self.doc.xpath(
             f"{xpatt}/Extensions/IPACode", namespaces=XML_NAMESPACES
         )
-
         if self.production:
             if ipacode:
                 ipacode = ipacode[0]
@@ -217,7 +216,7 @@ class SpidSpMetadataCheckPublic(object):
                     test_id=["01.11.03", "01.17.13"],
                     **_data,
                 )
-                if ipacode[0].text == "__aggrsint":
+                if ipacode.text == "__aggrsint":
                     self._assertTrue(
                         False,
                         ("The IPACode __aggrsint could be used only in the aggregated contact for test metadata."),
