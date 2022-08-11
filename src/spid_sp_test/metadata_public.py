@@ -224,7 +224,7 @@ class SpidSpMetadataCheckPublic(object):
                         **_data,
                     )
                 else:
-                    res = get_indicepa_by_ipacode(ipacode.text)
+                    res = get_indicepa_by_ipacode(re.sub(r'[\s\t\n\r]*', '', ipacode.text))
                     self._assertTrue(
                         res[0] > 0,
                         "The IPACode element MUST have a valid value present on IPA",
