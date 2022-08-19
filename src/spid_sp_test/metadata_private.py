@@ -35,7 +35,7 @@ class SpidSpMetadataCheckPrivate(object):
                 tise = tise[0]
                 self._assertTrue(
                     tise.text,
-                    "If the TerzoIntermediarioSoggettoEmittente element if present it MUST have a value",
+                    "If the TerzoIntermediarioSoggettoEmittente element is present it MUST have a value",
                     description=tise,
                     test_id=["01.14.01", "01.14.02"],
                     **_data,

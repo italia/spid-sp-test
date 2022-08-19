@@ -104,7 +104,7 @@ class SpidSpMetadataCheckPublic(object):
                 if org_chk:
                     self._assertTrue(
                         company.text == org.text,
-                        f"If the Company ->{company.text}<- element if present it MUST be equal to OrganizationName ->{org.text}<-",
+                        f"If the Company ->{company.text}<- element is present it MUST be equal to OrganizationName ->{org.text}<-",
                         description=(company.text, org.text),
                         test_id=["1.10.3", "01.17.05"],
                         **_data,
