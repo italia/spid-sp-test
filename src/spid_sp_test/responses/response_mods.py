@@ -17,12 +17,12 @@ def dynamic_acr(check: SpidSpResponseCheck, response_obj: SpidSpResponse, **kwar
                 f"Spid level {level_idp} = {level_sp} and Comparison is {comparison} => Expecting OK "
             )
             response_obj.conf["status_codes"] = [200]
-        if level_idp > level_sp:
+        elif level_idp > level_sp:
             logger.debug(
                 f"Spid level {level_idp} > {level_sp} and Comparison is {comparison} => Expecting OK "
             )
             response_obj.conf["status_codes"] = [200]
-        if level_idp < level_sp and comparison == "maximum":
+        elif level_idp < level_sp and comparison == "maximum":
             logger.debug(
                 f"Spid level {level_idp} < {level_sp} and Comparison is {comparison} => Expecting OK "
             )
