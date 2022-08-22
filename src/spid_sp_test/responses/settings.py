@@ -857,7 +857,7 @@ RESPONSE_TESTS = {
     },
     "94": {
         "name": "94. Assertion - Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL1",
-        "description": "Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL1. Il SP ha accettato un ACR diverso o inferiore.",
+        "description": "Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL1. Il SP ha accettato un ACR non compatibile con Comparison e non superiore.",
         "status_codes": [200],
         "path": "base.xml",
         "response": {
@@ -868,7 +868,7 @@ RESPONSE_TESTS = {
     },
     "95": {
         "name": "95. Assertion - Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL2",
-        "description": "Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL2. Il SP ha accettato un ACR diverso o inferiore.",
+        "description": "Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL2. Il SP ha accettato un ACR non compatibile con Comparison e non superiore.",
         "status_codes": [200],
         "path": "base.xml",
         "response": {
@@ -878,7 +878,7 @@ RESPONSE_TESTS = {
     },
     "96": {
         "name": "96. Assertion - Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL3",
-        "description": "Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL3. Il SP ha accettato un ACR diverso o inferiore.",
+        "description": "Elemento AuthContextClassRef impostato su https://www.spid.gov.it/SpidL3. Il SP ha accettato un ACR non compatibile con Comparison e non superiore.",
         "status_codes": [200],
         "path": "base.xml",
         "response": {
