@@ -29,7 +29,7 @@
 			<element ref="cie:Private"/>
 			<element ref="cie:VATNumber" minOccurs="0"/>
 			<element ref="cie:FiscalCode" minOccurs="0" />
-			<element ref="cie:NACE2Code" minOccurs="0" />
+			<element ref="cie:NACE2Code" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</group>
 		
