@@ -48,7 +48,14 @@
   </xs:documentation>
  </xs:annotation>
 
- <xs:attribute name="lang" type="xs:language">
+  <xs:simpleType name="language" id="language">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[a-zA-Z]{0,8}(-[a-zA-Z0-9]{1,8})*" id="language.pattern">
+      </xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+ <xs:attribute name="lang" type="xml:language">
   <xs:annotation>
    <xs:documentation>In due course, we should install the relevant ISO 2- and 3-letter
          codes as the enumerated possible values . . .</xs:documentation>

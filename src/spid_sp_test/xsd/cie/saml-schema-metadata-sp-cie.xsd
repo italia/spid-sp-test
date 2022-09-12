@@ -111,6 +111,7 @@
             <element ref="md:SPSSODescriptor" minOccurs="1" maxOccurs="1"/>
             <element ref="md:Organization" minOccurs="1" maxOccurs="1"/>
             <element ref="md:ContactPerson" minOccurs="1" maxOccurs="2"/>
+            <element ref="md:Extensions" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="md:AdditionalMetadataLocation" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
         <attribute name="entityID" type="md:entityIDType" use="required"/>
