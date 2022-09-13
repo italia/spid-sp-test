@@ -11,9 +11,9 @@
 				<group ref="cie:PublicGroup" maxOccurs="1"/>
 				<group ref="cie:PrivateGroup" maxOccurs="1"/>
 			</choice>
-			<element ref="cie:Municipality" minOccurs="1" maxOccurs="1"/>
-			<element ref="cie:Province" minOccurs="0" maxOccurs="1"/>
-			<element ref="cie:Country" minOccurs="0" maxOccurs="1"/>
+			<element ref="cie:Municipality" minOccurs="1" />
+			<element ref="cie:Province" minOccurs="0" />
+			<element ref="cie:Country" minOccurs="0" />
 			<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
@@ -22,14 +22,17 @@
 			<element ref="cie:Public"/>
 			<element ref="cie:IPACode" minOccurs="1"/>
 			<element ref="cie:IPACategory" minOccurs="0"/>
+			<element ref="cie:VATNumber" minOccurs="0" />
+			<element ref="cie:FiscalCode" minOccurs="0" />
+			<element ref="cie:NACE2Code" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 	</group>
 	<group name="PrivateGroup">
 		<sequence>
 			<element ref="cie:Private"/>
-			<element ref="cie:VATNumber" minOccurs="0"/>
-			<element ref="cie:FiscalCode" minOccurs="0" />
-			<element ref="cie:NACE2Code" minOccurs="0" maxOccurs="unbounded"/>
+			<element ref="cie:VATNumber" />
+			<element ref="cie:FiscalCode" />
+			<element ref="cie:NACE2Code" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 	</group>
 		
