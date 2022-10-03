@@ -1,3 +1,4 @@
+````
 export SSLLABS_SKIP=1 
 
 export DATA_DIR=./data/http___sp1_testunical_it_8000_saml2_metadata_ 
@@ -95,3 +96,4 @@ t.test_xsd()
 fname = '%s/sp-metadata-xsd-sp-av29.json' % DATA_DIR
 result = json.loads(open(fname).read())
 print(result)
+````
