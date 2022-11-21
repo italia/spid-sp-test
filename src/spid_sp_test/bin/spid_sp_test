@@ -171,13 +171,6 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '-xp', '--xmlsec-path',
-        default=get_xmlsec1_bin(),
-        required=False,
-        help="xmlsec1 executable path, eg: /usr/bin/xmlsec1"
-    )
-
-    parser.add_argument(
         '--production', '-p',
         action="store_true",
         default=False,
@@ -357,7 +350,6 @@ if __name__ == '__main__':
             authn_request_url=args.authn_url,
             relay_state=authn_check.relay_state,
             template_path=args.template_path,
-            xmlsec_binary=args.xmlsec_path,
             test_names=args.test_names[0] if args.test_names else [],
             test_jsons=args.test_jsons or [],
             attr_json=args.attr_json,

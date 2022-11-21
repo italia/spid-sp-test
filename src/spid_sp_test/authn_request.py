@@ -22,6 +22,7 @@ from spid_sp_test.utils import (
 from spid_sp_test.idp.settings import BASE as idp_eid, SAML2_IDP_CONFIG
 from spid_sp_test import constants
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
+from spid_sp_test.utils import get_xmlsec1_bin
 
 from saml2.server import Server
 
@@ -382,8 +383,9 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                 tmp_file = NamedTemporaryFile(suffix=".xml")
                 tmp_file.write(self.authn_request_decoded)
                 tmp_file.seek(0)
+                
                 cmd = (
-                    "xmlsec1 --verify --insecure --id-attr:ID "
+                    f"{get_xmlsec1_bin()} --verify --insecure --id-attr:ID "
                     '"urn:oasis:names:tc:SAML:2.0:protocol:AuthnRequest" '
                     # f'--pubkey-cert-pem {cert_file.name} '
                     # "--X509-skip-strict-checks"

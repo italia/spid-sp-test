@@ -7,7 +7,7 @@ from . import load_metadata
 
 
 def test_metadata_xsd():
-    metadata_url = 'file://tests/metadata/spid-django-other.xml'
+    metadata_url = 'file://tests/metadata/spid-django-other_signed.xml'
     md = get_md_check(metadata_url)
     md.xsd_check()
     assert not md.errors

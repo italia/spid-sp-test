@@ -1,6 +1,8 @@
 from spid_sp_test.utils import del_ns
 from spid_sp_test import constants
 from spid_sp_test import BASE_DIR, AbstractSpidCheck
+from spid_sp_test.utils import get_xmlsec1_bin
+
 import logging
 import os
 import requests
@@ -279,7 +281,7 @@ class SpidSpMetadataCheck(
         tmp_file.seek(0)
 
         xmlsec_cmd = [
-            "xmlsec1",
+            f"{get_xmlsec1_bin()}",
             "--verify",
             "--insecure",
             "--id-attr:ID",
