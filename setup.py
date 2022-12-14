@@ -41,7 +41,7 @@ setup(
         'requests>=2.25.1',
         'lxml>=4.6.2',
         'Jinja2>=2.11.3',
-        'spid_compliant_certificates>=0.4.1'
+        'spid_compliant_certificates>=0.5.3'
         # 'sslyze>=4.0.4', # todo
       ],
     )

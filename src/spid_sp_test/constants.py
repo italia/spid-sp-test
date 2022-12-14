@@ -159,7 +159,7 @@ MINIMUM_CERTIFICATE_LENGHT = 2048  # type: int
 DESIRED_CERTIFICATE_LENGHT = 3072  # type: int
 
 NODE_NAME = "urn:oasis:names:tc:SAML:2.0:assertion:Assertion"
-EMAIL_REGEXP = r"^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,6}$"
+EMAIL_REGEXP = r"^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,8}$"
 
 
 ISO3166_CODES = [
