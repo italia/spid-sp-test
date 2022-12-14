@@ -350,11 +350,17 @@ class SpidSpAuthnReqCheck(AbstractSpidCheck):
                     self.authn_request.get("RelayState") or ""
                 )
                 quoted_sigalg = urllib.parse.quote_plus(_sigalg)
-                authn_req = (
-                    f"SAMLRequest={quoted_req}&"
-                    f"RelayState={quoted_rs}&"
-                    f"SigAlg={quoted_sigalg}"
-                )
+                if quoted_rs:
+                    authn_req = (
+                        f"SAMLRequest={quoted_req}&"
+                        f"RelayState={quoted_rs}&"
+                        f"SigAlg={quoted_sigalg}"
+                    )
+                else:
+                    authn_req = (
+                        f"SAMLRequest={quoted_req}&"
+                        f"SigAlg={quoted_sigalg}"
+                    )
 
                 payload_file = NamedTemporaryFile(suffix=".xml")
                 payload_file.write(authn_req.encode())
