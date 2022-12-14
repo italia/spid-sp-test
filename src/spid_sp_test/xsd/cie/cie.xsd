@@ -7,32 +7,35 @@
 
 	<complexType name="ContactPersonSPExtensionType">
 		<sequence>
-			<choice>
-				<group ref="cie:PublicGroup" maxOccurs="1"/>
-				<group ref="cie:PrivateGroup" maxOccurs="1"/>
+			<choice minOccurs="2" maxOccurs="unbounded">
+				<choice minOccurs="1" maxOccurs="1">
+					<group ref="cie:PublicGroup" maxOccurs="1"/>
+					<group ref="cie:PrivateGroup" maxOccurs="1"/>
+				</choice>
+				<element ref="cie:IPACode"/>
+				<element ref="cie:IPACategory"/>
+				<element ref="cie:FiscalCode"/>
+				<element ref="cie:VATNumber"/>
+				<element ref="cie:NACE2Code"/>
+				<element ref="cie:Municipality"/>
+				<element ref="cie:Province"/>
+				<element ref="cie:Country"/>
 			</choice>
-			<element ref="cie:Municipality" minOccurs="1" maxOccurs="1"/>
-			<element ref="cie:Province" minOccurs="0" maxOccurs="1"/>
-			<element ref="cie:Country" minOccurs="0" maxOccurs="1"/>
 			<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
+	
 	<group name="PublicGroup">
 		<sequence>
 			<element ref="cie:Public"/>
-			<element ref="cie:IPACode" minOccurs="1"/>
-			<element ref="cie:IPACategory" minOccurs="0"/>
 		</sequence>
 	</group>
 	<group name="PrivateGroup">
 		<sequence>
 			<element ref="cie:Private"/>
-			<element ref="cie:VATNumber" minOccurs="0"/>
-			<element ref="cie:FiscalCode" minOccurs="0" />
-			<element ref="cie:NACE2Code" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</group>
-		
+	
 	<element name="Public"/>
 	<element name="Private"/>
 
@@ -68,14 +71,5 @@
 	  	<maxLength value="255"/>
 	   </restriction>
 	</simpleType>
-	
-	<!-- simpleType name="NamedAttributeType">
-    	<restriction base="string">
-    		<enumeration value="name"/>
-    		<enumeration value="familyName"/>
-    		<enumeration value="dateOfBirth"/>
-    		<enumeration value="fiscalNumber"/> 
-    	</restriction>
-    </simpleType -->
 
 </schema>
