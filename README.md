@@ -72,6 +72,8 @@ with one of the following profile name:
 - **cie-sp-private**: Private CIE SP
 - **ficep-eidas-sp**: eIDAS FICEP SP
 
+> Warning: the support for Aggregatore and Gestore doesn't cover the x.509 certificates. Spid-sp-test uses spid-compliant-certificates-python for the validation of the certificates.
+
 ## Setup
 
 ### Prerequisite
@@ -229,11 +231,11 @@ Finally you have batteries included and some options as well, at your taste.
 
 Before starting you have to obtain the `italia/spid-sp-test` image. You can pull it from Docker Hub
 
-    $ docker pull ghcr.io/italia/spid-sp-test:v1.1.5
+    $ docker pull ghcr.io/italia/spid-sp-test:latest
 
 or build locally
 
-    $ docker build --tag italia/spid-sp-test:v1.1.5 .
+    $ docker build --tag italia/spid-sp-test:latest .
 
 The container working directory is set to `/spid` therefore, local files should be mounted relatively to `/spid` path.
 
