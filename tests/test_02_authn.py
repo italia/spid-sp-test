@@ -22,6 +22,7 @@ def test_django_post():
 
 def test_django_redirect():
     """
+        Must fail
         ERROR:spid_sp_test.authn_request:The ProtocolBinding attribute must be urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST - TR pag. 8  : FAILED
     """
     es = run_cmd('spid_django_redirect.url')
