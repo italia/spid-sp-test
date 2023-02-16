@@ -2,27 +2,27 @@ import logging
 import requests
 
 
-API_URL = "https://indicepa.gov.it/PortaleServices/api/aoo"
+API_URL = "https://www.indicepa.gov.it/PortaleServices/api/ente/ricerca"
 logger = logging.getLogger(__name__)
 
 
 def get_indicepa_by_ipacode(value):
     qs = """
     {"paginazione":
-        {"campoOrdinamento":"codAoo",
+        {"campoOrdinamento":"idEnte",
          "tipoOrdinamento":"asc",
          "paginaRichiesta":1,
          "numTotalePagine":null,
          "numeroRigheTotali":null,
          "paginaCorrente":null,
          "righePerPagina":null},
-         "codiceFiscale":null,
-         "codUniAoo":null,
-         "desAoo":null,
-         "denominazioneEnte":null,
+         "codiceFiscaleRicerca":null,
+         "area":null,
+         "denominazione":null,
          "codEnte":"$IPACode",
-         "codiceCategoria":null,
-         "area":null
+         "idTipoServizioDigitale":null,
+         "lingueMinoritarie":null,
+         "codiceCategoria":null
     }"""
 
     qs_final = qs.replace("$IPACode", value)
