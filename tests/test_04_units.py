@@ -5,3 +5,6 @@ def test_indicepa():
 
 def test_indicepa_2():
     res = get_indicepa_by_ipacode('r_vda')
+
+def test_indicepa_3():
+    res = get_indicepa_by_ipacode('cnpaf_0')
