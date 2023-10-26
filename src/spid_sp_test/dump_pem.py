@@ -18,6 +18,7 @@
 import base64
 import re
 import OpenSSL
+from tempfile import NamedTemporaryFile
 
 
 def _dump_pem(xml_elem, data_dir, context, use):
@@ -29,13 +30,7 @@ def _dump_pem(xml_elem, data_dir, context, use):
     [pem.append(b64[i : i + n]) for i in range(0, len(b64), n)]
     pem.append("-----END CERTIFICATE-----")
 
-    x509 = OpenSSL.crypto.load_certificate(
-        OpenSSL.crypto.FILETYPE_ASN1, base64.b64decode(b64)
-    )
-
-    dgst = x509.digest("sha256").decode("utf-8").replace(":", "")
-
-    fname = ("%s/%s.%s.%s.pem") % (data_dir, dgst[0:16], context, use)
+    fname = NamedTemporaryFile().name
 
     with open(fname, "w") as f:
         f.write("\n".join(pem))
