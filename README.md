@@ -66,6 +66,8 @@ with one of the following profile name:
 - **spid-sp-private**: Private Spid SP
 - **spid-sp-ag-public-full**: Public Spid SP Aggregatore Full
 - **spid-sp-ag-public-lite**: Public Spid SP Aggregatore Lite
+- **spid-sp-ag-private-full**: Private Spid SP Aggregatore Full
+- **spid-sp-ag-private-lite**: Private Spid SP Aggregatore Lite
 - **spid-sp-op-public-full**: Public Spid SP Gestore Full
 - **spid-sp-op-public-lite**: Public Spid SP Gestore Lite
 - **cie-sp-public**: Public CIE SP
