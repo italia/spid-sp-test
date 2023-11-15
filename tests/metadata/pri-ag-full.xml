@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<md:EntityDescriptor
-    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" ID="bff93e4d-d684-47d8-9bba-228e50bf4fa1" entityID="https://sp.example.it/pri-ag-full/TEST"
-    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-    xmlns:spid="https://spid.gov.it/saml-extensions">
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:spid="https://spid.gov.it/saml-extensions" ID="bff93e4d-d684-47d8-9bba-228e50bf4fa1" entityID="https://sp.example.it/pri-ag-full/TEST">
 
 <ds:Signature Id="Signature1">
 <ds:SignedInfo>
@@ -105,11 +102,9 @@ ks2Byw==</ds:X509Certificate>
         <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://www.aggregator.it/sso" index="0" isDefault="true"/>
         <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://www.aggregator.it/sso" index="1" isDefault="false"/>
         <md:AttributeConsumingService index="0">
-            <md:ServiceName
-                xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Set 0
+            <md:ServiceName xml:lang="it">Set 0
             </md:ServiceName>
-            <md:ServiceDescription
-                xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Login Attribute Set 0
+            <md:ServiceDescription xml:lang="it">Login Attribute Set 0
             </md:ServiceDescription>
             <md:RequestedAttribute Name="spidCode" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
             <md:RequestedAttribute Name="name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
@@ -121,11 +116,9 @@ ks2Byw==</ds:X509Certificate>
             <md:RequestedAttribute Name="registeredOffice" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
         </md:AttributeConsumingService>
         <md:AttributeConsumingService index="1">
-            <md:ServiceName
-                xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Set 1
+            <md:ServiceName xml:lang="it">Set 1
             </md:ServiceName>
-            <md:ServiceDescription
-                xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Login Attribute Set 1
+            <md:ServiceDescription xml:lang="it">Login Attribute Set 1
             </md:ServiceDescription>
             <md:RequestedAttribute Name="spidCode" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
             <md:RequestedAttribute Name="name" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:basic"/>
@@ -140,12 +133,9 @@ ks2Byw==</ds:X509Certificate>
         </md:AttributeConsumingService>
     </md:SPSSODescriptor>
     <md:Organization>
-        <md:OrganizationName
-            xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Organizzazione fittizia per il collaudo</md:OrganizationName>
-        <md:OrganizationDisplayName
-            xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">Organizzazione fittizia per il collaudo</md:OrganizationDisplayName>
-        <md:OrganizationURL
-            xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="it">https://www.aggregator.it
+        <md:OrganizationName xml:lang="it">Organizzazione fittizia per il collaudo</md:OrganizationName>
+        <md:OrganizationDisplayName xml:lang="it">Organizzazione fittizia per il collaudo</md:OrganizationDisplayName>
+        <md:OrganizationURL xml:lang="it">https://www.aggregator.it
         </md:OrganizationURL>
     </md:Organization>
     <md:ContactPerson contactType="other" spid:entityType="spid:aggregator">
@@ -159,15 +149,14 @@ ks2Byw==</ds:X509Certificate>
     </md:ContactPerson>
     <md:ContactPerson contactType="other" spid:entityType="spid:aggregated">
         <md:Extensions>
-            <spid:FiscalCode>IT000000000000</spid:FiscalCode>
+            <spid:FiscalCode>__aggrsint</spid:FiscalCode>
             <spid:Private/>
         </md:Extensions>
         <md:Company>Organizzazione fittizia per il collaudo</md:Company>
     </md:ContactPerson>
     <md:ContactPerson contactType="billing">
     <md:Extensions>
-      <fpa:CessionarioCommittente
-        xmlns:fpa="https://spid.gov.it/invoicing-extensions">
+      <fpa:CessionarioCommittente xmlns:fpa="https://spid.gov.it/invoicing-extensions">
         <fpa:DatiAnagrafici>
           <fpa:IdFiscaleIVA>
             <fpa:IdPaese>IT</fpa:IdPaese>
