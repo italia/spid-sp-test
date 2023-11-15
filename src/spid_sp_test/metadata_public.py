@@ -336,7 +336,7 @@ class SpidSpMetadataCheckPublic(object):
                     **_data,
                 )
                 self._assertTrue(
-                    entity_type == "spid:aggregator",
+                    entity_type == "spid:aggregated",
                     ("The VATNumber __aggrsint could be used only for test metadata in the aggregated contact."),
                     level="error",
                     **_data,

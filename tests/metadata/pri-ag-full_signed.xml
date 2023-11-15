@@ -156,7 +156,7 @@ ks2Byw==</ds:X509Certificate>
     </md:ContactPerson>
     <md:ContactPerson contactType="other" spid:entityType="spid:aggregated">
         <md:Extensions>
-            <spid:FiscalCode>IT000000000000</spid:FiscalCode>
+            <spid:FiscalCode>__aggrsint</spid:FiscalCode>
             <spid:Private/>
         </md:Extensions>
         <md:Company>Organizzazione fittizia per il collaudo</md:Company>
