@@ -314,6 +314,7 @@ class SpidSpMetadataCheckPublic(object):
         vats = self.doc.xpath(
             f"{xpatt}/Extensions/VATNumber", namespaces=XML_NAMESPACES
         )
+        print(vats[0])
         if vats:
             self._assertTrue(
                 (len(vats) <= 1),
@@ -336,7 +337,7 @@ class SpidSpMetadataCheckPublic(object):
                     **_data,
                 )
                 self._assertTrue(
-                    entity_type == "spid:aggregator",
+                    entity_type == "spid:aggregated",
                     ("The VATNumber __aggrsint could be used only for test metadata in the aggregated contact."),
                     level="error",
                     **_data,
