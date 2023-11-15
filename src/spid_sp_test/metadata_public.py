@@ -314,7 +314,6 @@ class SpidSpMetadataCheckPublic(object):
         vats = self.doc.xpath(
             f"{xpatt}/Extensions/VATNumber", namespaces=XML_NAMESPACES
         )
-        print(vats[0])
         if vats:
             self._assertTrue(
                 (len(vats) <= 1),
