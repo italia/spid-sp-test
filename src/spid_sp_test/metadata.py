@@ -1184,12 +1184,10 @@ class SpidSpMetadataCheck(
     def test_profile_cie_sp_private(self):
         self.test_profile_cie_sp()
         self.test_contactperson_email(contact_type="administrative")
-        self.test_contactperson_email(contact_type="technical")
         self.test_extensions_public_private(
-            ext_type="Private", contact_type="technical"
+            ext_type="Private", contact_type="administrative"
         )
         self.test_Contacts_PubPriv(contact_type="administrative")
-        self.test_Contacts_PubPriv(contact_type="technical")
         self.test_extensions_cie(ext_type="Private")
 
     def test_profile_ficep_eidas_sp(self):
