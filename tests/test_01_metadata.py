@@ -55,6 +55,16 @@ def test_public_cie_sp():
     assert es == 0
 
 
+def test_private_cie_sp():
+    es = run_cmd(f'{DIR}/private-sp-cie.xml --profile cie-sp-private')
+    assert es == 0
+
+
+def test_private_cie_two_contacts_sp():
+    es = run_cmd(f'{DIR}/private-sp-cie-double-contacts.xml --profile cie-sp-private')
+    assert es == 0
+
+
 def test_public_ficep_sp():
     es = run_cmd(f'{DIR}/public-sp-eidas_signed.xml --profile ficep-eidas-sp')
     assert es == 0
