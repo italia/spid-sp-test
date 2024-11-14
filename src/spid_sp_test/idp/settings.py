@@ -7,7 +7,7 @@ from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT
 
 
 BASE_DIR = Path(__file__).resolve().parent
-BASE = os.environ.get("IDP_ENTITYID", "https://localhost:8080")
+BASE = os.environ.get("IDP_ENTITYID", "https://localhost:8443")
 CERT_PATH = os.environ.get("IDP_CERT_PATH", BASE_DIR)
 
 SAML2_IDP_CONFIG = {
