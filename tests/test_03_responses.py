@@ -4,5 +4,5 @@ CMD = "python3 src/spid_sp_test/bin/spid_sp_test --metadata-url file://tests/met
 
 
 def test_all_default_responses():
-    es = os.system(CMD)
+    es = os.system(f"IDP_ENTITYID=https://localhost:8080 {CMD}")
     assert es == 0
