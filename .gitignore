@@ -25,3 +25,6 @@ dumps/*
 *html/*
 *.pdf
 .DS_Store
+
+.idea/
+*.iml
