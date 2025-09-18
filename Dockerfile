@@ -1,4 +1,4 @@
-FROM python:3.8-slim-buster
+FROM python:3.8-slim-bullseye
 
 LABEL maintainer="Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>"
 

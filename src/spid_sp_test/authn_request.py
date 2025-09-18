@@ -12,6 +12,8 @@ import urllib
 import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+urllib3.util.connection.HAS_IPV6 = False
+
 
 from lxml import etree
 from spid_sp_test.utils import (
@@ -143,7 +145,7 @@ def get_authn_request(
                 f"{authn_request_str[:128]}"
             )
     else:
-        req_dict = {"verify": verify_ssl, "allow_redirects": False}
+        req_dict = {"verify": verify_ssl, "allow_redirects": True}
         # trigger the authn request
         if request_method.upper() == "GET":
             request = requests_session.get(authn_request_url, **req_dict)

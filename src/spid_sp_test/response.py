@@ -380,7 +380,7 @@ class SpidSpResponseCheck(AbstractSpidCheck):
             func = load_plugin(self.authn_plugin)
             res = func(ua, self.authn_request_url).response(url, data)
         else:
-            res = ua.post(url, data=data, allow_redirects=True)
+            res = ua.post(url, data=data, allow_redirects=True, verify=False)
         msg = f"Response http status code [{res.status_code}]: {res.content.decode()}"
         self.logger.debug(msg)
         return res

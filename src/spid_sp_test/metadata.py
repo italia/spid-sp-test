@@ -13,6 +13,8 @@ import subprocess
 import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+urllib3.util.connection.HAS_IPV6 = False
+
 
 from lxml import etree
 from tempfile import NamedTemporaryFile
